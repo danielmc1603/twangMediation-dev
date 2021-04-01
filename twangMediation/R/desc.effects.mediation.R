@@ -16,20 +16,20 @@ function(x, y_outcome = NULL)
   
   # this is just a helper function to calcualte CI and SE for TE and NDE
   get_ci_and_se <- function(eff, w, y_outcome, a_treatment) {
-    dsgn <- svydesign(id=~0, weights=~w, data=data.frame(Y=y_outcome, A=a_treatment))
-    stderr <- svyglm(Y ~ A, design = dsgn)
-    stderr <- summary(stderr)$coeff["A", "Std. Error"]
+    dsgn <- survey::svydesign(id=~0, weights=~w, data=data.frame(Y=y_outcome, A=a_treatment))
+    stderr <- survey::svyglm(Y ~ A, design = dsgn)
+    stderr <- survey:::summary(stderr)$coeff["A", "Std. Error"]
     ci <- eff + stderr * qnorm(.975) * c(-1, 1)
     return(c(eff, stderr, ci[1], ci[2]))
   }
   
   # this is just a helper function to calcualte CI and SE for NIE
   get_ci_and_se_nie <- function(eff, w, y_outcome, a_treatment, ind) {
-    dsgn <- svydesign(id=~0, weights=~wts, data=subset(data.frame(Y=y_outcome, wts=w),
+    dsgn <- survey::svydesign(id=~0, weights=~wts, data=subset(data.frame(Y=y_outcome, wts=w),
                                                        subset=(a_treatment==ind)))
     
-    stderr <- svytotal(~Y, design=dsgn)
-    stderr <- SE(stderr)
+    stderr <- survey::svytotal(~Y, design=dsgn)
+    stderr <- survey::SE(stderr)
     ci <- eff + c(stderr) * qnorm(.975) * c(-1, 1)
     return(c(eff, stderr, ci[1], ci[2]))
   }
