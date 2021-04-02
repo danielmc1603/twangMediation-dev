@@ -10,7 +10,7 @@ function(object,...)
 {
    # Get confidence intervals of effects 
     if(!is.null(object$y_outcome)) {
-      desc_effects  <- twang:::desc.effects.mediation(object)
+      desc_effects  <- desc.effects.mediation(object)
     }
     else {
       desc_effects  <- NULL
@@ -24,9 +24,9 @@ function(object,...)
     }	
     # Get summaries of model objects
     if(object$method=="ps") {
-      model_a  <- summary(object$model_a)
-      model_m0 <- summary(object$model_m0)
-      model_m1 <- summary(object$model_m1)
+      model_a  <- twang:::summary(object$model_a)
+      model_m0 <- twang:::summary(object$model_m0)
+      model_m1 <- twang:::summary(object$model_m1)
     } 
     if(object$method!="ps") {
       data <- object$data 
@@ -35,8 +35,8 @@ function(object,...)
         model_a_preds <- predict(object$model_a,type="response")
       }
       if(object$method=="crossval") {     
-        best.iter <- gbm.perf(object$model_a, method="cv",plot.it=FALSE)
-        model_a_preds <- predict(object$model_a, n.trees=best.iter, newdata=data, type="response")
+        best.iter <- gbm::gbm.perf(object$model_a, method="cv",plot.it=FALSE)
+        model_a_preds <- gbm::predict(object$model_a, n.trees=best.iter, newdata=data, type="response")
       }
 
       wts_a <- ifelse(data[,object$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
@@ -54,8 +54,8 @@ function(object,...)
         model_m_preds <- predict(object$model_m0,type="link")
       }      
         else {
-        best.iter <- gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
-        model_m_preds <- predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
+        best.iter <- gbm::gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
+        model_m_preds <- gbm::predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,object$a_treatment]==0,1,1/exp(model_m_preds))
       dx_m0 <- dx.wts(wts_m0, data = data, 

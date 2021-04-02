@@ -17,9 +17,9 @@ print.mediation <- function(object, ...)
 
   # Get summaries of ps objects
     if(object$method=="ps") {
-      model_a  <- summary(object$model_a)
-      model_m0 <- summary(object$model_m0)
-      model_m1 <- summary(object$model_m1)
+      model_a  <- twang:::summary(object$model_a)
+      model_m0 <- twang:::summary(object$model_m0)
+      model_m1 <- twang:::summary(object$model_m1)
     } 
     if(object$method!="ps") {
       data <- object$data 
@@ -39,7 +39,7 @@ print.mediation <- function(object, ...)
         model_m_preds <- predict(object$model_m0,type="link")
       }      
         else {
-        best.iter <- gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
+        best.iter <- gbm::gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
         model_m_preds <- predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,object$a_treatment]==0,1,1/exp(model_m_preds))
