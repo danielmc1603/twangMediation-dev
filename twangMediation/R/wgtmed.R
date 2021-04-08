@@ -217,15 +217,15 @@ wgtmed <- function(formula.med,
   #* Model to weights for total effect
   form <- as.formula(paste(a_treatment, "~", paste(var.names.med, collapse="+"))) 
   
-  twang:::check_missing(data[,a_treatment])
-  twang:::check_missing(data[,m_mediators])
+  twangMediation:::check_missing(data[,a_treatment])
+  twangMediation:::check_missing(data[,m_mediators])
   if (is.null(y_outcome)) {
       warning(paste("The `y_outcome` parameter is NULL. Therefore, only", 
           "weights will be returned; no effects will be calculated.\n", 
           sep = " "))
   }    
   else {
-      twang:::check_missing(data[,y_outcome])
+      twangMediation:::check_missing(data[,y_outcome])
   }
 
   # Generates weights for estimating four population mean
@@ -301,6 +301,17 @@ wgtmed <- function(formula.med,
     if(!is.null(total_effect_ps)) {
       colnames(w_11) <- colnames(w_00) <- rep(paste(total_effect_stop_rule[1],total_effect_ps$estimand,sep="."),ncol(w_11))
     } 
+
+  ##remove ATE and ATT from names 
+  names(model_a$desc) <- gsub(".ATE","",names(model_a$desc))
+  names(model_m0$desc) <- gsub(".ATT","",names(model_m0$desc))
+  names(model_m1$desc) <- gsub(".ATT","",names(model_m1$desc))
+  names(model_a$ps) <- gsub(".ATE","",names(model_a$ps))
+  names(model_m0$ps) <- gsub(".ATT","",names(model_m0$ps))
+  names(model_m1$ps) <- gsub(".ATT","",names(model_m1$ps))
+  names(model_a$w) <- gsub(".ATE","",names(model_a$w))
+  names(model_m0$w) <- gsub(".ATT","",names(model_m0$w))
+  names(model_m1$w) <- gsub(".ATT","",names(model_m1$w))
   }
   
   if(method!="ps") {
@@ -379,11 +390,11 @@ wgtmed <- function(formula.med,
         w_00_temp <- w_00[, i]
         w_10_temp <- w_10[, i]
         w_01_temp <- w_01[, i]
-        results[[effects_name]] <- twang:::calculate_effects(w_11_temp, 
+        results[[effects_name]] <- twangMediation:::calculate_effects(w_11_temp, 
             w_00_temp, w_10_temp, w_01_temp, data[,y_outcome],sampw=sampw)
-  } }
+  }}
   else {
-  results[[paste0(method,"_effects")]] <- twang:::calculate_effects(w_11, 
+  results[[paste0(method,"_effects")]] <- twangMediation:::calculate_effects(w_11, 
             w_00, w_10, w_01, data[,y_outcome],sampw=sampw)
   }
   return(results)
