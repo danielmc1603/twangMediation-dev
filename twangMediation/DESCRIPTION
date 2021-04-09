@@ -30,4 +30,5 @@ Imports:
     twang, 
     gbm (>= 1.5-3)
 License: `use_gpl3_license()`
+Encoding: UTF-8
 RoxygenNote: 7.1.1
