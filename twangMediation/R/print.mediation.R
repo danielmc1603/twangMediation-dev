@@ -17,9 +17,9 @@ print.mediation <- function(object, ...)
 
   # Get summaries of ps objects
     if(object$method=="ps") {
-      model_a  <- twang:::summary(object$model_a)
-      model_m0 <- twang:::summary(object$model_m0)
-      model_m1 <- twang:::summary(object$model_m1)
+      model_a  <- twang:::summary.ps(object$model_a)
+      model_m0 <- twang:::summary.ps(object$model_m0)
+      model_m1 <- twang:::summary.ps(object$model_m1)
     } 
     if(object$method!="ps") {
       data <- object$data 

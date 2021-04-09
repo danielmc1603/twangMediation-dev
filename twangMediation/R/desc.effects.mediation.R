@@ -18,7 +18,7 @@ function(x, y_outcome = NULL)
   get_ci_and_se <- function(eff, w, y_outcome, a_treatment) {
     dsgn <- survey::svydesign(id=~0, weights=~w, data=data.frame(Y=y_outcome, A=a_treatment))
     stderr <- survey::svyglm(Y ~ A, design = dsgn)
-    stderr <- survey:::summary(stderr)$coeff["A", "Std. Error"]
+    stderr <- summary(stderr)$coeff["A", "Std. Error"]
     ci <- eff + stderr * qnorm(.975) * c(-1, 1)
     return(c(eff, stderr, ci[1], ci[2]))
   }
