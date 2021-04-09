@@ -1,29 +1,27 @@
 Package: twangMediation
-
 Title: twang Causal Medition Modeling via Weighting
 Version: 1.0
 Authors@R: 
-    person(given = "Dan",
+    c(person(given = "Dan",
            family = "McCaffrey",
            role = c("aut", "cre"),
            email = "dmccaffrey@ets.org"),
     person(given = "Katherine",
            family = "Castellano",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "kecastellano@ets.org"),
     person(given = "Donna",
            family = "Coffman",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "donna.coffman@temple.edu"),
     person(given = "Brian",
            family = "Vegetabile",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "bvegetab@rand.org"),
     person(given = "Megan",
            family = "Schuler",
-           role = c("aut", "cre"),
-           email = "mschuler@rand.org")
-           
+           role = c("aut"),
+           email = "mschuler@rand.org"))
 Maintainer: Dan McCaffrey <dmccaffrey@ets.org>
 Description: What the package does (one paragraph).
 Depends:
@@ -32,5 +30,4 @@ Imports:
     twang, 
     gbm (>= 1.5-3)
 License: `use_gpl3_license()`
-
-
+RoxygenNote: 7.1.1
