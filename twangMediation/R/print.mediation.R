@@ -17,9 +17,9 @@ print.mediation <- function(object, ...)
 
   # Get summaries of ps objects
     if(object$method=="ps") {
-      model_a  <- twang:::summary(object$model_a)
-      model_m0 <- twang:::summary(object$model_m0)
-      model_m1 <- twang:::summary(object$model_m1)
+      model_a  <- twang:::summary.ps(object$model_a)
+      model_m0 <- twang:::summary.ps(object$model_m0)
+      model_m1 <- twang:::summary.ps(object$model_m1)
     } 
     if(object$method!="ps") {
       data <- object$data 
@@ -67,7 +67,7 @@ print.mediation <- function(object, ...)
   # to check that weights for the counterfactual 
   # mediator distributions yeild distributions of 
   # mediators that match the target
-  mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactorial_nie_1","check_counterfactorial_nie_0")]
+  mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
 
   print(list(estimates_table = estimates_table, ps_summary_tables = ps_tables, mediator_distribution = mediator_distribution_check))
 }

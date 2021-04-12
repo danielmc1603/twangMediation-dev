@@ -62,7 +62,7 @@ bal.table <- function(x,
                       timePeriods = NULL,
                       ...){
 	if(!(class(x) %in% c("mnps", "iptw", "mniptw","mediation"))){
-   bal.tab <- bal.table.ps(x, digits = digits)
+   bal.tab <- twang:::bal.table.ps(x, digits = digits)
    return(bal.tab)
    }
    else if(class(x) == "mediation"){
@@ -78,7 +78,7 @@ bal.table <- function(x,
    	}
    }
    else if(class(x) == "mnps"){
-   	bal.table.mnps(x=x, digits = digits, collapse.to = collapse.to, subset.var = subset.var,
+   	twang:::bal.table.mnps(x=x, digits = digits, collapse.to = collapse.to, subset.var = subset.var,
                      subset.treat = subset.treat, subset.stop.method = subset.stop.method,
                      es.cutoff = es.cutoff, p.cutoff = p.cutoff, ks.p.cutoff = ks.p.cutoff, ...)
    }
@@ -86,7 +86,7 @@ bal.table <- function(x,
    	if(is.null(timePeriods)) timePeriods <- 1:length(x$psList)
    	for(i in timePeriods){
    		cat("Balance at time ", x$uniqueTimes[i], ":\n")
-   		print(bal.table.mnps(x$psList[[i]], digits = digits, collapse.to = collapse.to,
+   		print(twang:::bal.table.mnps(x$psList[[i]], digits = digits, collapse.to = collapse.to,
                               subset.var = subset.var, subset.treat = subset.treat,
                               subset.stop.method = subset.stop.method, es.cutoff = es.cutoff,
                               p.cutoff = p.cutoff, ks.p.cutoff = ks.p.cutoff, ...))

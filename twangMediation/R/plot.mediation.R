@@ -300,4 +300,3 @@ plot.mediation <- function(x,
  
   par(ask=cask)
 }
-

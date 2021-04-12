@@ -163,7 +163,7 @@ wgtmed <- function(formula.med,
     			if(total_effect_ps$estimand != "ATE") stop("Total effect must be ATE. Estimand in total_effect_ps != 'ATE'")
     			if(length(total_effect_stop_rule) > 1) warning("Multiple stopping rules provided for total_effect_ps. Only the first is used")
     			if(length(total_effect_stop_rule) == 0) stop("A stopping rule must be specified for the total effects. total_effect_stop_rule must be specified.") 
-    			total_effect_wts <- get.weights(total_effect_ps, total_effect_stop_rule[1])
+    			total_effect_wts <- twang:::get.weights(total_effect_ps, total_effect_stop_rule[1])
     			var.names.tx <- total_effect_ps$gbm.obj$var.names
     }
 
@@ -217,15 +217,15 @@ wgtmed <- function(formula.med,
   #* Model to weights for total effect
   form <- as.formula(paste(a_treatment, "~", paste(var.names.med, collapse="+"))) 
   
-  twang:::check_missing(data[,a_treatment])
-  twang:::check_missing(data[,m_mediators])
+  twangMediation:::check_missing(data[,a_treatment])
+  twangMediation:::check_missing(data[,m_mediators])
   if (is.null(y_outcome)) {
       warning(paste("The `y_outcome` parameter is NULL. Therefore, only", 
           "weights will be returned; no effects will be calculated.\n", 
           sep = " "))
   }    
   else {
-      twang:::check_missing(data[,y_outcome])
+      twangMediation:::check_missing(data[,y_outcome])
   }
 
   # Generates weights for estimating four population mean
@@ -254,7 +254,7 @@ wgtmed <- function(formula.med,
           n.keep = ps_n.keep, n.grid = ps_n.grid))
     }
     #* Get p(A|X) using same covariates and stopping rules as for mediation model 
-    model_a_res <- do.call(ps, c(list(data = data, estimand = "ATE"), 
+    model_a_res <- do.call(twang:::ps, c(list(data = data, estimand = "ATE"), 
           ps_args))
 
     #* Calculate w_10 weights
@@ -262,7 +262,7 @@ wgtmed <- function(formula.med,
     #* So we run ps with "tx" = 1- tx and ATT and the estimand
     ps_args$formula <- as.formula(paste("a_treatment0~", paste(c(m_mediators, var.names.med), collapse="+"))) 
     data[,"a_treatment0"] <- 1 - data[,a_treatment]
-    model_m0_res <- do.call(ps, c(list(data = data, estimand = "ATT"), 
+    model_m0_res <- do.call(twang:::ps, c(list(data = data, estimand = "ATT"), 
       ps_args))
     
     #~ Remove a_treatment0 variable in data
@@ -281,7 +281,7 @@ wgtmed <- function(formula.med,
     #* Note p(A = 1 | M, X)/p(A = 0 | M, X) are the "ATT" weights for the crtl group when estimate = ATT
     #* So we run ps with ATT and the estimand
     ps_args$formula <- as.formula(paste(a_treatment,"~", paste(c(m_mediators, var.names.med), collapse="+"))) 
-    model_m1_res <- do.call(ps, c(list(data = data, estimand = "ATT"), 
+    model_m1_res <- do.call(twang:::ps, c(list(data = data, estimand = "ATT"), 
       ps_args))
 
     #~  1/p(A=1 | X)
@@ -301,6 +301,17 @@ wgtmed <- function(formula.med,
     if(!is.null(total_effect_ps)) {
       colnames(w_11) <- colnames(w_00) <- rep(paste(total_effect_stop_rule[1],total_effect_ps$estimand,sep="."),ncol(w_11))
     } 
+
+  ##remove ATE and ATT from names 
+  names(model_a_res$desc) <- gsub(".ATE","",names(model_a_res$desc))
+  names(model_m0_res$desc) <- gsub(".ATT","",names(model_m0_res$desc))
+  names(model_m1_res$desc) <- gsub(".ATT","",names(model_m1_res$desc))
+  names(model_a_res$ps) <- gsub(".ATE","",names(model_a_res$ps))
+  names(model_m0_res$ps) <- gsub(".ATT","",names(model_m0_res$ps))
+  names(model_m1_res$ps) <- gsub(".ATT","",names(model_m1_res$ps))
+  names(model_a_res$w) <- gsub(".ATE","",names(model_a_res$w))
+  names(model_m0_res$w) <- gsub(".ATT","",names(model_m0_res$w))
+  names(model_m1_res$w) <- gsub(".ATT","",names(model_m1_res$w))
   }
   
   if(method!="ps") {
@@ -379,11 +390,11 @@ wgtmed <- function(formula.med,
         w_00_temp <- w_00[, i]
         w_10_temp <- w_10[, i]
         w_01_temp <- w_01[, i]
-        results[[effects_name]] <- twang:::calculate_effects(w_11_temp, 
+        results[[effects_name]] <- twangMediation:::calculate_effects(w_11_temp, 
             w_00_temp, w_10_temp, w_01_temp, data[,y_outcome],sampw=sampw)
-  } }
+  }}
   else {
-  results[[paste0(method,"_effects")]] <- twang:::calculate_effects(w_11, 
+  results[[paste0(method,"_effects")]] <- twangMediation:::calculate_effects(w_11, 
             w_00, w_10, w_01, data[,y_outcome],sampw=sampw)
   }
   return(results)

@@ -90,7 +90,7 @@ function(x,digits=3, ...)
   for (i in 1:ncol(w_00)) {
        nie_1_wts[, i] <- ifelse(!is.na(w_00[, i]), w_00[, i], w_10[, i])
    }
-  names(nie_1_wts) <- paste(stopping_methods, "ATE", sep = ".")
+  names(nie_1_wts) <- stopping_methods
   balance_nie_1 <- bal.table(dx.wts(nie_1_wts, data = data, 
         vars = x$mediator_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATE"),digits=digits)
@@ -103,7 +103,7 @@ function(x,digits=3, ...)
   for (i in 1:ncol(w_11)) {
         nie_0_wts[, i] <- ifelse(!is.na(w_11[, i]), w_11[, i], w_01[, i])
   }
-  names(nie_0_wts) <- paste(stopping_methods, "ATE", sep = ".")
+  names(nie_0_wts) <- stopping_methods
 
   balance_nie_0 <- bal.table(dx.wts(nie_0_wts, data = data, 
       vars = x$mediator_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
