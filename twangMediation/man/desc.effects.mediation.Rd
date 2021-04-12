@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A mediation object}
 
-\item{y_outcome}{The outcome; if `NULL`,
+\item{y_outcome}{The outcome; if \code{NULL},
 then Y must have been provided to the
 original mediation function.}
 }

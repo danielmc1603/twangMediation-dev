@@ -22,5 +22,5 @@ The weights}
 Default : 'total_effects_wts'}
 }
 \description{
-Call this in the `weighted_mediation()` function.
+Call this in the \code{weighted_mediation()} function.
 }

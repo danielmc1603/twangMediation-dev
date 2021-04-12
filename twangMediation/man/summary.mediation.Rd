@@ -2,15 +2,15 @@
 % Please edit documentation in R/summary.mediation.R
 \name{summary.mediation}
 \alias{summary.mediation}
-\title{Displays a useful description of a `mediation` object.}
+\title{Displays a useful description of a \code{mediation} object.}
 \usage{
 \method{summary}{mediation}(object, ...)
 }
 \arguments{
-\item{object}{A `mediation` object}
+\item{object}{A \code{mediation} object}
 
 \item{...}{Additional arguments.}
 }
 \description{
-Displays a useful description of a `mediation` object.
+Displays a useful description of a \code{mediation} object.
 }

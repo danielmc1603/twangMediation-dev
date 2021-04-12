@@ -2,14 +2,14 @@
 % Please edit documentation in R/utils_mediation.R
 \name{check_subset_equal}
 \alias{check_subset_equal}
-\title{Check whether the Xs in a `ps` object are a 
+\title{Check whether the Xs in a \code{ps} object are a
 subset of the Xs in a data frame or matrix,
 and vice versa}
 \usage{
 check_subset_equal(y_vars, x_vars, raise_error = TRUE)
 }
 \description{
-Check whether the Xs in a `ps` object are a 
+Check whether the Xs in a \code{ps} object are a
 subset of the Xs in a data frame or matrix,
 and vice versa
 }

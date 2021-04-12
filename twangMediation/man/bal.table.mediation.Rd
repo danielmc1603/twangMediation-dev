@@ -7,7 +7,7 @@
 \method{bal.table}{mediation}(x, digits = 3, ...)
 }
 \arguments{
-\item{x}{A `mediation` object}
+\item{x}{A \code{mediation} object}
 
 \item{...}{Additional arguments.}
 }

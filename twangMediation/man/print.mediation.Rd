@@ -2,15 +2,15 @@
 % Please edit documentation in R/print.mediation.R
 \name{print.mediation}
 \alias{print.mediation}
-\title{Default print statement for `mediation` class}
+\title{Default print statement for \code{mediation} class}
 \usage{
 \method{print}{mediation}(object, ...)
 }
 \arguments{
-\item{object}{A `mediation` object}
+\item{object}{A \code{mediation} object}
 
 \item{...}{Additional arguments.}
 }
 \description{
-Default print statement for `mediation` class
+Default print statement for \code{mediation} class
 }

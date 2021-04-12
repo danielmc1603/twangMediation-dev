@@ -14,15 +14,15 @@ The the data set}
 The weights}
 
 \item{multiplier}{An additional vector to multiply
-Default : `NULL`}
+Default : \code{NULL}}
 
 \item{na.rm}{Whether to remove NA values.
-Default: `TRUE`}
+Default: \code{TRUE}}
 }
 \value{
 numeric
-  The weighted mean of the data.
+The weighted mean of the data.
 }
 \description{
-`weighted_mean` calculates a weighted mean, given a vector.
+\code{weighted_mean} calculates a weighted mean, given a vector.
 }
