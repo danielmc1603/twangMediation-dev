@@ -97,9 +97,9 @@ plot.mediation <- function(x,
     model_m <- x$model_m0
     model_names <- c('Model A', 'Model M0')
     
-    plot1 <- do.call(getS3method("plot", "ps"), c(list(model_a), args))
-    plot2 <- do.call(getS3method("plot", "ps"), c(list(model_m), args))
-    
+    plot1 <- do.call(twangMediation:::plot.ps, c(list(model_a), args))
+    plot2 <- do.call(twangMediation:::plot.ps, c(list(model_m), args))
+  
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {
       new_plot <- suppressWarnings(c(plot1, plot2))
