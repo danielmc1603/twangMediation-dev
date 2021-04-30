@@ -22,14 +22,16 @@
 iteration.
 \item \code{"boxplot"} Boxplots of the propensity scores for the treatment and
 control cases
-\item \code{"es"} Plots of the standardized effect size of the pre-treatment
-variables before and after reweighing
+\item \code{"es"} or '"asmd"` Plots of the absolute value of the standardized mean difference (effect size) of the pre-treatment
+variables before and after reweighting
 \item \code{"density"} Distriubtion plots of NIE1 (distribution of mediator for treatment
 sample weighted to match distribution of mediator under control for the population)
 and NIE0 (distribution of mediator for control sample weighted to match
 distribution of mediator under treatment for the population) for each mediator.
 For continuous mediators, distributions are plotted with density curves and
 for categorical (factor) mediators, distributions are plotted with barplots.
+\item \code{"weights"} Histograms of the weights by each stopping rule.
+\item \code{"logweights"} Histograms of the natural logarithm of the weights by each stopping rule.
 }}
 
 \item{subset}{Used to restrict which of the \code{stop.method}s will be used

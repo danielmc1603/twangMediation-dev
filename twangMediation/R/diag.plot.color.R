@@ -34,7 +34,7 @@ if (plots == "optimize" || plots == 1) {
 	
 }
    
-   if (plots == "es" || plots == 3)	{ ## es plot
+   if (plots == "es" || plots == 3 || plots=="asmd")	{ ## es plot
    	
    	esDat <- twangMediation:::makePlotDat(x, whichPlot = 3, yOnly = FALSE)
    	
@@ -194,9 +194,8 @@ if (plots == "optimize" || plots == 1) {
    	}
    	
    	
-   	if(!(plots %in% c(1:6, "boxplot","t","ks","optimize","es", "histogram")))
-   	stop("plots must be an integer from 1 to 6, or be one of 'optimize' \n
-   	'boxplot','es','t', 'ks', or 'histogram'\n")
+   	if(!(plots %in% c(1:6, "boxplot","t","ks","optimize","es", "asmd","histogram")))
+   	stop("plots must be one of 'optimize','boxplot','es','asmd',or 'histogram'\n")
    	
    
    return(pt1)
