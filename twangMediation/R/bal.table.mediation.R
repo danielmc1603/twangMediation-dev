@@ -44,7 +44,7 @@ function(x,digits=3, ...)
       model_a_preds <- predict(x$model_a,type="response")
     }
    if(x$method=="crossval") {     
-      best.iter <- gbm:::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
+      best.iter <- gbm.perf(x$model_a, method="cv",plot.it=FALSE)
       model_a_preds <- predict(x$model_a, n.trees=best.iter, newdata=data, type="response")
     }
     wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
@@ -62,13 +62,16 @@ function(x,digits=3, ...)
       model_m_preds <- predict(model_m0,type="link")
     }
     else {
-      best.iter <- gbm:::gbm.perf(model_m0, method="cv",plot.it=FALSE)
+      best.iter <- gbm.perf(model_m0, method="cv",plot.it=FALSE)
       model_m_preds <- predict(model_m0, n.trees=best.iter, newdata=data, type="link")
     }
     wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))
-    tmp_m0 <- bal.table(dx.wts(wts_m0, data = data, 
+    tmp_m0 <- dx.wts(wts_m0, data = data, 
         vars = m_and_x_names, treat.var = "trt0", x.as.weights = TRUE, 
-        estimand = "ATT"),digits=digits)
+        estimand = "ATT")
+#    tmp_m0$desc <- lapply(tmp_m0$desc, twangMediation:::swapTxCtrl)
+    tmp_m0$desc <- lapply(tmp_m0$desc, swapTxCtrl)
+    tmp_m0 <- bal.table(tmp_m0, digits=digits)
     names(tmp_m0)[2] <- x$method
     balance_m0 <- do.call(rbind, tmp_m0)
     balance_m0["model"] <- "Model M0"
@@ -129,9 +132,12 @@ function(x,digits=3, ...)
   balance_nie_1 <- balance_nie_1[,-which(colnames(balance_nie_1)=="model")]
   balance_nie_0 <- balance_nie_0[,-which(colnames(balance_nie_0)=="model")]
 
-  cat("**********************************************************\nNotes: Treatment and control are switched for model m0.\nModel m0 is used for NDE_0 and NIE_1 effects.\nModel m1 is used for NDE_1 and NIE_0 effects.\n**********************************************************\n")
-
-  return(list(balance_a = balance_a, balance_m0 = balance_m0,balance_m1 = balance_m1, 
-        check_counterfactual_nie_1 = balance_nie_1, check_counterfactual_nie_0 = balance_nie_0))
+  res <- list(balance_a = balance_a, balance_m0 = balance_m0,balance_m1 = balance_m1, 
+        check_counterfactual_nie_1 = balance_nie_1, check_counterfactual_nie_0 = balance_nie_0)
   
-}
+  attr(res, "note") <- "**********************************************************\nNotes: \nA. Model a estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model m0 is used for NDE_0 and NIE_1 effects.\nC. Model m1 is used for NDE_1 and NIE_0 effects.\nSee the bal.table help file for more information. \n**********************************************************\n"
+  attr(res, "class") <- "bal.table.mediation"
+
+  return(res)
+  
+} 
