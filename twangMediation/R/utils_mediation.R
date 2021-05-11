@@ -141,3 +141,26 @@ calculate_effects <- function(w_11, w_00, w_10, w_01, y_outcome,sampw=NULL) {
   return(res)
 
 }
+
+
+#' Auxiliary function to swap treatment and control in one element of a desc 
+#' object from a ps object or dx.wts object
+#'
+#' Call this in the `wgtmed()` function and the `bal.table.mediation()` function.
+#'
+#' @param dd numeric
+#'   An element of a desc object from a ps or dx.wts object
+swapTxCtrl <- function(dd){
+   .tmp <- dd
+   .tmp$ess.ctrl <- dd$ess.treat
+   .tmp$ess.treat <- dd$ess.ctrl
+   .tmp$n.ctrl <- dd$n.treat
+   .tmp$n.treat <- dd$n.ctrl
+   .tmp$bal.tab$results$tx.mn <- dd$bal.tab$results$ct.mn
+   .tmp$bal.tab$results$tx.sd <- dd$bal.tab$results$ct.sd
+   .tmp$bal.tab$results$ct.mn <- dd$bal.tab$results$tx.mn
+   .tmp$bal.tab$results$ct.sd <- dd$bal.tab$results$tx.sd
+   .tmp$bal.tab$results$std.eff.sz <- dd$bal.tab$results$std.eff.sz * (-1) 
+   .tmp$bal.tab$results$stat <- dd$bal.tab$results$stat * (-1) 
+    return(.tmp)
+}
