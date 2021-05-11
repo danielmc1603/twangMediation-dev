@@ -114,7 +114,7 @@
 #' @keywords models, multivariate
 #'
 #' @export
-wgtmed.r1 <- function(formula.med,
+wgtmed <- function(formula.med,
                                data,
                                a_treatment,
                                y_outcome = NULL,
