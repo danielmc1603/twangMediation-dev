@@ -6,14 +6,16 @@
 #'     iteration.
 #'   * `"boxplot"` Boxplots of the propensity scores for the treatment and
 #'     control cases
-#'   * `"es"` Plots of the standardized effect size of the pre-treatment
-#'     variables before and after reweighing
+#'   * `"es"` or '"asmd"` Plots of the absolute value of the standardized mean difference (effect size) of the pre-treatment
+#'     variables before and after reweighting
 #'   * `"density"` Distriubtion plots of NIE1 (distribution of mediator for treatment
 #'     sample weighted to match distribution of mediator under control for the population)
 #'     and NIE0 (distribution of mediator for control sample weighted to match 
 #'     distribution of mediator under treatment for the population) for each mediator.
 #'     For continuous mediators, distributions are plotted with density curves and 
 #'     for categorical (factor) mediators, distributions are plotted with barplots. 
+#'   * `"weights"` Histograms of the weights by each stopping rule. 
+#'   * `"logweights"` Histograms of the natural logarithm of the weights by each stopping rule. 
 #' @param subset Used to restrict which of the `stop.method`s will be used
 #'   in the figure. For example `subset = c(1,3)` would indicate that the
 #'   first and third `stop.method`s (in alphabetical order of those specified
@@ -40,8 +42,8 @@ plot.mediation <- function(x,
   }
   
   # return error if ask for any plots other than available 
-  if (!plots %in% c("optimize","boxplot","es","density")) {
-     stop("The `plots` options must be `optimize`,`boxplot`,`es`,or `density`.")
+  if (!plots %in% c("optimize","boxplot","es","asmd","density","weights","logweights")) {
+     stop("The `plots` options must be `optimize`,`boxplot`,`asmd` (or `es`), `density`, `weights`, or  `logweights`.")
   }
   # return error if ask for plots="optimize" or 1 for method!=ps
   if (x$method!="ps" & (plots=="optimize" || plots==1)) { 
@@ -51,7 +53,7 @@ plot.mediation <- function(x,
   mediators <- x$data[,x$mediator_names, drop = F]
   treatment <- x$data[[x$a_treatment]]
   
-  if (plots != 'density') {
+  if (!plots %in% c('density','weights','logweights')) {
     args <- list(plots = plots, subset = subset, color = color)
     if(x$method=="logistic") {
        x$model_a$ps  <- data.frame(logistic=predict(x$model_a,type="response"))
@@ -97,9 +99,9 @@ plot.mediation <- function(x,
     model_m <- x$model_m0
     model_names <- c('Model A', 'Model M0')
     
-    plot1 <- do.call(getS3method("plot", "ps"), c(list(model_a), args))
-    plot2 <- do.call(getS3method("plot", "ps"), c(list(model_m), args))
-    
+    plot1 <- do.call(twangMediation:::plot.ps, c(list(model_a), args))
+    plot2 <- do.call(twangMediation:::plot.ps, c(list(model_m), args))
+  
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {
       new_plot <- suppressWarnings(c(plot1, plot2))
@@ -113,6 +115,7 @@ plot.mediation <- function(x,
     return(new_plot)
   }
 
+  if(plots=='density') {
   # we separate out the mediators that are factors and those that aren't
   mediator_is_factor <- x$mediator_names %in% names(Filter(is.factor, x$data[,x$mediator_names, drop=F]))
   
@@ -158,8 +161,8 @@ plot.mediation <- function(x,
         w_cfac <- attr(x, 'w_01')
    
         # finally, create indicators for treatment and control
-        cfac <- which(treatment == 1)
-        pop   <- which(treatment == 0)
+        cfac <- which(treatment == 0)
+        pop  <- which(treatment == 1)
         }
         
      if(which_nie==1){
@@ -169,8 +172,8 @@ plot.mediation <- function(x,
      }
   
   if(color) {
-    cols <- c("#478BB8", "#B87447")
-  } else { cols <- c("black","gray80") }
+    cols <- c("#478BB8", "#B87447","#ff8c00")
+  } else { cols <- c("black","gray80","gray100") }
   stripBgCol <- ifelse(color, "#ffe5cc", "transparent")
 
   factor_plot <- NULL
@@ -187,12 +190,9 @@ plot.mediation <- function(x,
         
         a1 <- aggregate(weights[cfac], by = list(m = factor(mediators[cfac, m])), FUN = sum)
         a0 <- aggregate(weights[pop], by = list(m = factor(mediators[pop, m])), FUN = sum)
-        
-        if(which_nie == 1){
-              a1[x$a_treatment] <- 1; a0[x$a_treatment] <- 0 
-           }else{        
-              a1[x$a_treatment] <- 0; a0[x$a_treatment] <- 1 
-           }
+
+        a1[x$a_treatment] <- 1; a0[x$a_treatment] <- 0 
+
         
         combined <- rbind(a1, a0)
         combined['mediator'] <- m
@@ -208,7 +208,7 @@ plot.mediation <- function(x,
     for(mm in mediators_factors) {
       pos <- pos+1   
       factor_plot[[pos]] <- lattice::barchart(x ~ factor(m) | factor(method) + factor(mediator),
-                                     groups = factor(trt, levels = c(0, 1), labels = c('population', 'counterfactual')),
+                                     groups = factor(trt, levels = c(0,1), labels = c('population', 'counterfactual')),
                                      data = factor_data[factor_data$mediator==mm,],                                   
                                      origin = 0, 
                                      par.settings = list(superpose.polygon = list(col = cols),strip.background = list(col=stripBgCol)),
@@ -233,9 +233,13 @@ plot.mediation <- function(x,
         weights[cfac] <- (weights[cfac] / sum(weights[cfac]))
         weights[pop] <- (weights[pop] / sum(weights[pop]))
 
+       ##define vector that is 1 for cfac indices and 0 otherwise so that A=1 is always the counterfactual
+       cfacind <- rep(0,length(weights))
+       cfacind[cfac] <- 1
+
         number_frames[[paste(method, m, sep='')]] <- data.frame('m' = mediators[,m],
                                                                 'mediator' = m,
-                                                                'A' = treatment,
+                                                                'A' = cfacind,
                                                                 'weights' = weights,
                                                                 'method' = method)
       }
@@ -246,7 +250,7 @@ plot.mediation <- function(x,
     for(mm in mediators_numbers) {
       pos <- pos+1
       number_plot[[pos]] <- lattice::densityplot(~m | factor(method) + factor(mediator),
-                                        groups = factor(A, levels = c(0, 1), labels = c('population', 'counterfactual')),
+                                        groups = factor(A, levels = c(0,1), labels = c('population', 'counterfactual')),
                                         data = number_data[number_data$mediator==mm,],
                                         weights = weights,
                                         plot.points = FALSE,
@@ -299,4 +303,58 @@ plot.mediation <- function(x,
   genplot(which_nie=0)
  
   par(ask=cask)
+}
+
+  if (plots=='weights') {
+  w_00 <- attr(x,'w_00')
+  w_11 <- attr(x,'w_11')
+  w_01 <- attr(x,'w_01')
+  w_10 <- attr(x,'w_10')
+
+  cask <- par()$ask
+  for (i in 1:length(x$stopping_methods)) {
+    weight_plot <- vector("list",4)
+    pos <- 0
+    for(w in c('00','11','01','10')) {
+      pos <- pos+1
+      wt <- get(paste0('w_',w)) 
+      weight_plot[[pos]] <- lattice:::histogram(wt[,i],
+                                                xlab='Weight',
+                                                main=paste0('w_Y(',substr(w,1,1),",M(",substr(w,2,2),"))",'\n',x$stopping_methods[i]),
+                                                col='light blue',
+                                                type='density')
+    }
+      gridExtra:::grid.arrange(weight_plot[[1]],weight_plot[[2]],weight_plot[[3]],weight_plot[[4]],ncol=2)
+      cc <- par()$ask
+      par(ask=TRUE)
+  }
+  par(ask=cask)
+  }
+
+  if (plots=='logweights') {
+  w_00 <- log(attr(x,'w_00'))
+  w_11 <- log(attr(x,'w_11'))
+  w_01 <- log(attr(x,'w_01'))
+  w_10 <- log(attr(x,'w_10'))
+
+  cask <- par()$ask
+  for (i in 1:length(x$stopping_methods)) {
+    weight_plot <- vector("list",4)
+    pos <- 0
+    for(w in c('00','11','01','10')) {
+      pos <- pos+1
+      wt <- get(paste0('w_',w)) 
+      weight_plot[[pos]] <- lattice:::histogram(wt[,i],
+                                                xlab='Log of Weight',
+                                                main=paste0('w_Y(',substr(w,1,1),",M(",substr(w,2,2),"))",'\n',x$stopping_methods[i]),
+                                                col='light blue',
+                                                type='density')
+    }
+      gridExtra:::grid.arrange(weight_plot[[1]],weight_plot[[2]],weight_plot[[3]],weight_plot[[4]],ncol=2)
+      cc <- par()$ask
+      par(ask=TRUE)
+  }
+  par(ask=cask)
+  }
+
 }
