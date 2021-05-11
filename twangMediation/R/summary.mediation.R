@@ -10,7 +10,7 @@ function(object,...)
 {
    # Get confidence intervals of effects 
     if(!is.null(object$y_outcome)) {
-      desc_effects  <- desc.effects.mediation(object)
+      desc_effects  <- twangMediation:::desc.effects.mediation(object)
     }
     else {
       desc_effects  <- NULL
@@ -83,7 +83,7 @@ function(object,...)
         cat("Note: Model a is used for all effects: NDE_0, NDE_1, NIE_0, and NIE_1.\n")
       }
       if(names(ps_tables)[[i]]=="model_m0") {
-        cat("Note: Treatment and control are switched for model m0.\nModel m0 is used for NDE_0 and NIE_1 effects.\n")
+        cat("Note: Model m0 is used for NDE_0 and NIE_1 effects.\n")
       }
       if(names(ps_tables)[[i]]=="model_m1") {
         cat("Note: Model m1 is used for NDE_1 and NIE_0 effects.\n")
@@ -96,7 +96,7 @@ function(object,...)
     # to check that weights for the counterfactual 
     # mediator distributions yield distributions of 
     # mediators that match the target
-    mediator_distribution_check <- bal.table(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
+    mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
     for(i in 1:length(mediator_distribution_check)) {
       cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
