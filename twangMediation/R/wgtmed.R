@@ -315,8 +315,7 @@ wgtmed <- function(formula.med,
 
   ## model_m0 uses 1-treatment as the treatment variable. The following code swaps treatment and control
   ## so the values for treatment in bal.table are for the treatment group and same for control
-#  model_m0_res$desc <- lapply(model_m0_res$desc, twangMediation:::swapTxCtrl)
-  model_m0_res$desc <- lapply(model_m0_res$desc, swapTxCtrl)
+  model_m0_res$desc <- lapply(model_m0_res$desc, twangMediation:::swapTxCtrl)
   model_m0_res$treat <- model_m1_res$treat
   model_m0_res$treat.var <- model_m1_res$treat.var
 
