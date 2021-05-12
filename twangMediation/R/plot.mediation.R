@@ -24,7 +24,8 @@
 #'   as there is only one method used. 
 #' @param color If `color = FALSE`, figures will be gray scale. Default: `TRUE`.
 #' @param model_subset integer
-#'   Choose either model A or model M only.
+#'   Choose either model A (1), model M0 (2), or model M1 (3) only. Argument is
+#'   not relevant for plots = `density', `weights', or `logweights.'
 #' @param ... Additional arguments.
 #'
 #' @method plot mediation
@@ -37,8 +38,8 @@ plot.mediation <- function(x,
                            ...) {
   
   # return error if model subset is not 1, 2 or NULL
-  if (!is.null(model_subset) && !(model_subset %in% c(1, 2))) {
-    stop("The `model_subset` must be NULL, 1, or 2.")
+  if (!is.null(model_subset) && !(model_subset %in% c(1, 2, 3))) {
+    stop("The `model_subset` must be NULL, 1, 2, or 3.")
   }
   
   # return error if ask for any plots other than available 
@@ -47,7 +48,11 @@ plot.mediation <- function(x,
   }
   # return error if ask for plots="optimize" or 1 for method!=ps
   if (x$method!="ps" & (plots=="optimize" || plots==1)) { 
-   stop("The optimize plot is only available for method='ps'.")}
+   stop("The `optimize` plot is only available for method='ps'.")}
+ 
+  # return error if subset doesn't reflect available stopping rules
+  if (!is.null(subset) & any(!subset %in% 1:length(x$stopping_methods))) {
+    stop(paste0("The `subset` argument must be NULL or only include integers for each of the available (n=",length(x$stopping_methods),") stopping methods."))}
 
   # we want the mediator and the treatment variables
   mediators <- x$data[,x$mediator_names, drop = F]
@@ -58,10 +63,14 @@ plot.mediation <- function(x,
     if(x$method=="logistic") {
        x$model_a$ps  <- data.frame(logistic=predict(x$model_a,type="response"))
        x$model_m0$ps  <- data.frame(logistic=predict(x$model_m0,type="response"))
+       x$model_m1$ps  <- data.frame(logistic=predict(x$model_m1,type="response"))
+       model_m_preds <- predict(x$model_m0,type="link")
        x$model_a$w  <- data.frame(logistic=ifelse(x$data[,x$a_treatment]==1,1/x$model_a$ps[,1],1/(1-x$model_a$ps[,1])))
-       x$model_m0$w  <- data.frame(logistic=ifelse(x$data[,x$a_treatment]==1,1/exp(predict(x$model_m0,type="link")),1))
+       x$model_m0$w  <- data.frame(logistic=ifelse(x$data[,x$a_treatment]==1,1/exp(model_m_preds),1))
+       x$model_m1$w  <- data.frame(logistic=ifelse(x$data[,x$a_treatment]==1,1,exp(model_m_preds)))
 	 x$model_a$treat <- x$data[,x$a_treatment]
 	 x$model_m0$treat <- x$data[,x$a_treatment]
+	 x$model_m1$treat <- x$data[,x$a_treatment]
 
 	x$model_a$desc  <- vector("list",length=2)
 	names(x$model_a$desc)  <- c("unw","logistic")
@@ -73,16 +82,25 @@ plot.mediation <- function(x,
 	names(x$model_m0$desc)  <- c("unw","logistic")
 	x$model_m0$desc[[1]]$bal.tab$results <- bala$balance_m0[grep("unw",rownames(bala$balance_m0)),1:8]
 	x$model_m0$desc[[2]]$bal.tab$results <- bala$balance_m0[grep("logistic",rownames(bala$balance_m0)),1:8]
+
+	x$model_m1$desc  <- vector("list",length=2)
+	names(x$model_m1$desc)  <- c("unw","logistic")
+	x$model_m1$desc[[1]]$bal.tab$results <- bala$balance_m1[grep("unw",rownames(bala$balance_m1)),1:8]
+	x$model_m1$desc[[2]]$bal.tab$results <- bala$balance_m1[grep("logistic",rownames(bala$balance_m1)),1:8]
     }
     if(x$method=="crossval") {
        best.iter.a 		<- gbm:::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
        best.iter.m 		<- gbm:::gbm.perf(x$model_m0, method="cv",plot.it=FALSE)
        x$model_a$ps  <- data.frame(crossval=predict(x$model_a, n.trees=best.iter.a,newdata=x$data,type="response"))
        x$model_m0$ps  <- data.frame(crossval=predict(x$model_m0,n.trees=best.iter.m,newdata=x$data,type="response"))
+       x$model_m1$ps  <- data.frame(crossval=predict(x$model_m1,n.trees=best.iter.m,newdata=x$data,type="response"))
+       model_m_preds <- predict(x$model_m0, n.trees=best.iter.m, newdata=x$data, type="link")
        x$model_a$w  <- data.frame(crossval=ifelse(x$data[,x$a_treatment]==1,1/x$model_a$ps[,1],1/(1-x$model_a$ps[,1])))
-       x$model_m0$w  <- data.frame(crossval=ifelse(x$data[,x$a_treatment]==1,1/exp(predict(x$model_m0, n.trees=best.iter.m, newdata=x$data, type="link")),1))
+       x$model_m0$w  <- data.frame(crossval=ifelse(x$data[,x$a_treatment]==1,1/exp(model_m_preds),1))
+       x$model_m1$w  <- data.frame(crossval=ifelse(x$data[,x$a_treatment]==1,1,exp(model_m_preds)))
 	 x$model_a$treat <- x$data[,x$a_treatment]
 	 x$model_m0$treat <- x$data[,x$a_treatment]
+	 x$model_m1$treat <- x$data[,x$a_treatment]
 
 	x$model_a$desc  <- vector("list",length=2)
 	names(x$model_a$desc)  <- c("unw","crossval")
@@ -94,25 +112,41 @@ plot.mediation <- function(x,
 	names(x$model_m0$desc)  <- c("unw","crossval")
 	x$model_m0$desc[[1]]$bal.tab$results <- bala$balance_m0[grep("unw",rownames(bala$balance_m0)),1:8]
 	x$model_m0$desc[[2]]$bal.tab$results <- bala$balance_m0[grep("crossval",rownames(bala$balance_m0)),1:8]
+
+	x$model_m1$desc  <- vector("list",length=2)
+	names(x$model_m1$desc)  <- c("unw","crossval")
+	x$model_m1$desc[[1]]$bal.tab$results <- bala$balance_m1[grep("unw",rownames(bala$balance_m1)),1:8]
+	x$model_m1$desc[[2]]$bal.tab$results <- bala$balance_m1[grep("crossval",rownames(bala$balance_m1)),1:8]
     }
     model_a <- x$model_a
-    model_m <- x$model_m0
-    model_names <- c('Model A', 'Model M0')
+    model_m0 <- x$model_m0
+    model_m1 <- x$model_m1
+    model_names <- c('Model A', 'Model M0', 'Model M1')
     
     plot1 <- do.call(twangMediation:::plot.ps, c(list(model_a), args))
-    plot2 <- do.call(twangMediation:::plot.ps, c(list(model_m), args))
-  
+    plot2 <- do.call(twangMediation:::plot.ps, c(list(model_m0), args))
+    plot3 <- do.call(twangMediation:::plot.ps, c(list(model_m1), args))
+
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {
-      new_plot <- suppressWarnings(c(plot1, plot2))
-      new_plot <- update(new_plot, ylab.right = rev(model_names),layout=c(length(new_plot$packet.sizes)/2,2))
+      new_plot <- suppressWarnings(c(plot1, c(plot2, plot3)))
+      new_plot <- update(new_plot, ylab.right = rev(model_names),layout=c(length(plot1$packet.sizes),length(new_plot$packet.sizes)/length(plot1$packet.sizes)))
     } else if (model_subset == 1) {
       new_plot <- update(plot1, ylab.right = model_names[[1]])
-    } else {
+    } else if (model_subset == 2) {
       new_plot <- update(plot2, ylab.right = model_names[[2]])
+    } else {
+      new_plot <- update(plot3, ylab.right = model_names[[3]])
     }
     new_plot$as.table	<- TRUE
     return(new_plot)
+  }
+
+  # indicate which stopping rules to plot for density and weights plots
+  if(is.null(subset)) {
+    whichmethods <- 1:length(x$stopping_methods)
+  } else {
+    whichmethods <- subset
   }
 
   if(plots=='density') {
@@ -179,7 +213,7 @@ plot.mediation <- function(x,
   factor_plot <- NULL
   if (any((mediator_is_factor == T))) {
     factor_frames <- list()
-    for (i in 1:length(x$stopping_methods)) {
+    for (i in whichmethods) {
       for (m in mediators_factors) {
         
         method <- x$stopping_methods[i]
@@ -224,7 +258,7 @@ plot.mediation <- function(x,
   number_plot <- NULL
   if (any((mediator_is_factor == F))) {
     number_frames <- list()
-    for (i in 1:length(x$stopping_methods)) {
+    for (i in whichmethods) {
       for (m in mediators_numbers) {
         
         method <- x$stopping_methods[i]
@@ -312,7 +346,7 @@ plot.mediation <- function(x,
   w_10 <- attr(x,'w_10')
 
   cask <- par()$ask
-  for (i in 1:length(x$stopping_methods)) {
+  for (i in whichmethods) {
     weight_plot <- vector("list",4)
     pos <- 0
     for(w in c('00','11','01','10')) {
@@ -338,7 +372,7 @@ plot.mediation <- function(x,
   w_10 <- log(attr(x,'w_10'))
 
   cask <- par()$ask
-  for (i in 1:length(x$stopping_methods)) {
+  for (i in whichmethods) {
     weight_plot <- vector("list",4)
     pos <- 0
     for(w in c('00','11','01','10')) {
