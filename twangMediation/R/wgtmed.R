@@ -5,6 +5,7 @@
 #'
 #' For users comfortable with [ps], any options prefaced with
 #' `ps_` are passed directly to the `ps()` function.
+#' Model a is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in `formula.med`. If `method` equals `"ps"` model a is fit using the [twang] `ps` function with estimand= `"ATE"`. If `method` equals `"logistic"` then model a is fit using logistic regression. If `method` equals `"crossval"` then [gbm] using cross-validation is used to estimate model a. Because X might include variables not used to estimate the user-provided total effect weights, model a is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the mediation models and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model a will match the model the user used to obtain the provided total effect weights. 
 #'
 #' @param formula.med 
 #'   A object of class [formula] relating the mediatior(s)
@@ -325,21 +326,21 @@ wgtmed <- function(formula.med,
     form_m <- as.formula(paste(a_treatment,"~", paste(c(m_mediators, var.names.med), collapse="+"))) 
     if(method=="crossval") {
       #* Fit total effects model to get p(A|X)  
-      model_a_res <- gbm(formula=form, data = data, weights = sampw, 
+      model_a_res <- gbm:::gbm(formula=form, data = data, weights = sampw, 
           distribution = "bernoulli", n.trees = ps_n.trees, 
           interaction.depth = ps_interaction.depth, n.minobsinnode = ps_n.minobsinnode, 
           shrinkage = ps_shrinkage, bag.fraction = ps_bag.fraction, train.fraction = 1, 
           verbose = ps_verbose, keep.data = FALSE, cv.folds=ps_cv.folds)
-      best.iter <- gbm.perf(model_a_res, method="cv",plot.it=FALSE)
+      best.iter <- gbm:::gbm.perf(model_a_res, method="cv",plot.it=FALSE)
       model_a_preds <- predict(model_a_res, n.trees=best.iter, newdata=data, type="response")
 
     #* Fit mediation model
-      model_m0_res <- gbm(formula=form_m, data = data, weights = sampw, 
+      model_m0_res <- gbm:::gbm(formula=form_m, data = data, weights = sampw, 
           distribution = "bernoulli", n.trees = ps_n.trees, 
           interaction.depth = ps_interaction.depth, n.minobsinnode = ps_n.minobsinnode, 
           shrinkage = ps_shrinkage, bag.fraction = ps_bag.fraction, train.fraction = 1, 
           verbose = ps_verbose, keep.data = FALSE, cv.folds=ps_cv.folds)
-      best.iter <- gbm.perf(model_m0_res, method="cv",plot.it=FALSE)
+      best.iter <- gbm:::gbm.perf(model_m0_res, method="cv",plot.it=FALSE)
       model_m0_preds <- predict(model_m0_res, n.trees=best.iter, newdata=data, type="link")
      }
     if(method=="logistic") {

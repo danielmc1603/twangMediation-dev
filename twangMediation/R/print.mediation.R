@@ -39,7 +39,7 @@ print.mediation <- function(object, ...)
         model_m_preds <- predict(object$model_m0,type="link")
       }      
         else {
-        best.iter <- gbm::gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
+        best.iter <- gbm:::gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
         model_m_preds <- predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,object$a_treatment]==0,1,1/exp(model_m_preds))
@@ -49,6 +49,8 @@ print.mediation <- function(object, ...)
       dx_m0$desc[[1]]["iter"] <- NA
       dx_m0$desc[[2]]["iter"] <- NA
       names(dx_m0$desc)[2] <- object$method
+      dx_m0$desc$unw <- twangMediation:::swapTxCtrl(dx_m0$desc$unw)
+      dx_m0$desc[[object$method]] <- twangMediation:::swapTxCtrl(dx_m0$desc[[object$method]])
       model_m0 <- twang:::summary.ps(dx_m0)
 
       wts_m1 <- ifelse(data[,object$a_treatment]==0,exp(model_m_preds),1)

@@ -35,8 +35,8 @@ function(object,...)
         model_a_preds <- predict(object$model_a,type="response")
       }
       if(object$method=="crossval") {     
-        best.iter <- gbm::gbm.perf(object$model_a, method="cv",plot.it=FALSE)
-        model_a_preds <- gbm::predict(object$model_a, n.trees=best.iter, newdata=data, type="response")
+        best.iter <- gbm:::gbm.perf(object$model_a, method="cv",plot.it=FALSE)
+        model_a_preds <- predict(object$model_a, n.trees=best.iter, newdata=data, type="response")
       }
 
       wts_a <- ifelse(data[,object$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
@@ -54,8 +54,8 @@ function(object,...)
         model_m_preds <- predict(object$model_m0,type="link")
       }      
         else {
-        best.iter <- gbm::gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
-        model_m_preds <- gbm::predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
+        best.iter <- gbm:::gbm.perf(object$model_m0, method="cv",plot.it=FALSE)
+        model_m_preds <- predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,object$a_treatment]==0,1,1/exp(model_m_preds))
       dx_m0 <- dx.wts(wts_m0, data = data, 
@@ -64,6 +64,8 @@ function(object,...)
       dx_m0$desc[[1]]["iter"] <- NA
       dx_m0$desc[[2]]["iter"] <- NA
       names(dx_m0$desc)[2] <- object$method
+      dx_m0$desc$unw <- twangMediation:::swapTxCtrl(dx_m0$desc$unw)
+      dx_m0$desc[[object$method]] <- twangMediation:::swapTxCtrl(dx_m0$desc[[object$method]])
       model_m0 <- twang:::summary.ps(dx_m0)
 
       wts_m1 <- ifelse(data[,object$a_treatment]==0,exp(model_m_preds),1)
@@ -96,7 +98,7 @@ function(object,...)
     # to check that weights for the counterfactual 
     # mediator distributions yield distributions of 
     # mediators that match the target
-    mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
+    mediator_distribution_check <- twangMediation:::bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
     for(i in 1:length(mediator_distribution_check)) {
       cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
@@ -105,3 +107,5 @@ function(object,...)
     }
     invisible(list(results_table = desc_effects, balance_summary_tables = ps_tables, mediator_distribution  = mediator_distribution_check ))
 }
+
+#summary.mediation.R1(fit.logit)

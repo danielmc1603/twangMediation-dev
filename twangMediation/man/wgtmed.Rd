@@ -150,6 +150,7 @@ using propensity score weighting.
 \details{
 For users comfortable with \link{ps}, any options prefaced with
 \code{ps_} are passed directly to the \code{ps()} function.
+Model a is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in \code{formula.med}. If \code{method} equals \code{"ps"} model a is fit using the \link{twang} \code{ps} function with estimand= \code{"ATE"}. If \code{method} equals \code{"logistic"} then model a is fit using logistic regression. If \code{method} equals \code{"crossval"} then \link{gbm} using cross-validation is used to estimate model a. Because X might include variables not used to estimate the user-provided total effect weights, model a is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the mediation models and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model a will match the model the user used to obtain the provided total effect weights.
 }
 \seealso{
 \link{ps}

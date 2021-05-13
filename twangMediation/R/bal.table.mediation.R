@@ -44,7 +44,7 @@ function(x,digits=3, ...)
       model_a_preds <- predict(x$model_a,type="response")
     }
    if(x$method=="crossval") {     
-      best.iter <- gbm.perf(x$model_a, method="cv",plot.it=FALSE)
+      best.iter <- gbm:::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
       model_a_preds <- predict(x$model_a, n.trees=best.iter, newdata=data, type="response")
     }
     wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
@@ -62,7 +62,7 @@ function(x,digits=3, ...)
       model_m_preds <- predict(model_m0,type="link")
     }
     else {
-      best.iter <- gbm.perf(model_m0, method="cv",plot.it=FALSE)
+      best.iter <- gbm:::gbm.perf(model_m0, method="cv",plot.it=FALSE)
       model_m_preds <- predict(model_m0, n.trees=best.iter, newdata=data, type="link")
     }
     wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))
@@ -135,7 +135,7 @@ function(x,digits=3, ...)
   res <- list(balance_a = balance_a, balance_m0 = balance_m0,balance_m1 = balance_m1, 
         check_counterfactual_nie_1 = balance_nie_1, check_counterfactual_nie_0 = balance_nie_0)
   
-  attr(res, "note") <- "**********************************************************\nNotes: \nA. Model a estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model m0 is used for NDE_0 and NIE_1 effects.\nC. Model m1 is used for NDE_1 and NIE_0 effects.\nSee the bal.table help file for more information. \n**********************************************************\n"
+  attr(res, "note") <- "**********************************************************\nNotes: \nA. Model a estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model m0 is used for NDE_0 and NIE_1 effects. \nct.sd is used for the denominator of std.eff.sz. \nC. Model m1 is used for NDE_1 and NIE_0 effects.\ntx.sd is used for the denominator of std.eff.sz. \nSee the bal.table help file for more information. \n**********************************************************\n"
   attr(res, "class") <- "bal.table.mediation"
 
   return(res)
