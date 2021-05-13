@@ -44,7 +44,8 @@ as there is only one method used.}
 \item{color}{If \code{color = FALSE}, figures will be gray scale. Default: \code{TRUE}.}
 
 \item{model_subset}{integer
-Choose either model A or model M only.}
+Choose either model A (1), model M0 (2), or model M1 (3) only. Argument is
+not relevant for plots = \verb{density', }weights', or `logweights.'}
 
 \item{...}{Additional arguments.}
 }
