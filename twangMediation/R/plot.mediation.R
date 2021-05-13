@@ -129,7 +129,8 @@ plot.mediation <- function(x,
 
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {
-      new_plot <- suppressWarnings(c(plot1, c(plot2, plot3)))
+      new_plot <- suppressWarnings(c(plot1, plot2))
+      new_plot <- suppressWarnings(c(new_plot,plot3))
       new_plot <- update(new_plot, ylab.right = rev(model_names),layout=c(length(plot1$packet.sizes),length(new_plot$packet.sizes)/length(plot1$packet.sizes)))
     } else if (model_subset == 1) {
       new_plot <- update(plot1, ylab.right = model_names[[1]])
