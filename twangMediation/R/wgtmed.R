@@ -325,21 +325,21 @@ wgtmed <- function(formula.med,
     form_m <- as.formula(paste(a_treatment,"~", paste(c(m_mediators, var.names.med), collapse="+"))) 
     if(method=="crossval") {
       #* Fit total effects model to get p(A|X)  
-      model_a_res <- gbm(formula=form, data = data, weights = sampw, 
+      model_a_res <- gbm:::gbm(formula=form, data = data, weights = sampw, 
           distribution = "bernoulli", n.trees = ps_n.trees, 
           interaction.depth = ps_interaction.depth, n.minobsinnode = ps_n.minobsinnode, 
           shrinkage = ps_shrinkage, bag.fraction = ps_bag.fraction, train.fraction = 1, 
           verbose = ps_verbose, keep.data = FALSE, cv.folds=ps_cv.folds)
-      best.iter <- gbm.perf(model_a_res, method="cv",plot.it=FALSE)
+      best.iter <- gbm:::gbm.perf(model_a_res, method="cv",plot.it=FALSE)
       model_a_preds <- predict(model_a_res, n.trees=best.iter, newdata=data, type="response")
 
     #* Fit mediation model
-      model_m0_res <- gbm(formula=form_m, data = data, weights = sampw, 
+      model_m0_res <- gbm:::gbm(formula=form_m, data = data, weights = sampw, 
           distribution = "bernoulli", n.trees = ps_n.trees, 
           interaction.depth = ps_interaction.depth, n.minobsinnode = ps_n.minobsinnode, 
           shrinkage = ps_shrinkage, bag.fraction = ps_bag.fraction, train.fraction = 1, 
           verbose = ps_verbose, keep.data = FALSE, cv.folds=ps_cv.folds)
-      best.iter <- gbm.perf(model_m0_res, method="cv",plot.it=FALSE)
+      best.iter <- gbm:::gbm.perf(model_m0_res, method="cv",plot.it=FALSE)
       model_m0_preds <- predict(model_m0_res, n.trees=best.iter, newdata=data, type="link")
      }
     if(method=="logistic") {
