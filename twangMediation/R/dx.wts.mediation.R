@@ -1,6 +1,6 @@
 #' Compute diagnostics assessing covariates balance.
 #'
-#' `dx.wts` takes a `ps` object or a set of propensity scores and 
+#' `dx.wts.mediation` takes a `ps` object or a set of propensity scores and 
 #' computes diagnostics assessing covariates balance.
 #'
 #' Creates a balance table that compares unweighted and weighted means and 
@@ -21,7 +21,7 @@
 #'   Ignored if `x` is a ps object. Default: `TRUE`.
 #' @param sampw Optional sampling weights. If `x` is a `ps` object, then the 
 #'   sampling weights should have been passed to [ps] and 
-#'   not specified here. `dx.wts` will issue a warning if 
+#'   not specified here. `dx.wts.mediation` will issue a warning if 
 #'   `x` is a ps object and `sampw` is also specified.
 #' @param perm.test.iters A non-negative integer giving the number of iterations
 #'   of the permutation test for the KS statistic. If `perm.test.iters=0`,
@@ -35,8 +35,8 @@
 #'
 #' @seealso [ps]
 #'
-#' @export
-dx.wts <- function(x,
+
+dx.wts.mediation <- function(x,
                    data,
                    estimand,
                    vars = NULL,

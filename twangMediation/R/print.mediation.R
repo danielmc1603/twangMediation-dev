@@ -26,7 +26,7 @@ print.mediation <- function(object, ...)
 
       wts_a <- attr(object,"w_11")
       wts_a[is.na(wts_a)] <- attr(object,"w_00")[is.na(wts_a)]
-      dx_a <- dx.wts(wts_a, data = data, 
+      dx_a <- twangMediation:::dx.wts.mediation(wts_a, data = data, 
           vars = object$covariate_names, treat.var = object$a_treatment, x.as.weights = TRUE, 
           estimand = "ATT")      
       dx_a$desc[[1]]["iter"] <- NA
@@ -43,7 +43,7 @@ print.mediation <- function(object, ...)
         model_m_preds <- predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,object$a_treatment]==0,1,1/exp(model_m_preds))
-      dx_m0 <- dx.wts(wts_m0, data = data, 
+      dx_m0 <- twangMediation:::dx.wts.mediation(wts_m0, data = data, 
           vars = c(object$mediator_names,object$covariate_names), treat.var = "trt0", x.as.weights = TRUE, 
           estimand = "ATT")
       dx_m0$desc[[1]]["iter"] <- NA
@@ -54,7 +54,7 @@ print.mediation <- function(object, ...)
       model_m0 <- twang:::summary.ps(dx_m0)
 
       wts_m1 <- ifelse(data[,object$a_treatment]==0,exp(model_m_preds),1)
-      dx_m1 <- dx.wts(wts_m1, data = data, 
+      dx_m1 <- twangMediation:::dx.wts.mediation(wts_m1, data = data, 
         vars =  c(object$mediator_names,object$covariate_names), treat.var = object$a_treatment, x.as.weights = TRUE, 
         estimand = "ATT")
       dx_m1$desc[[1]]["iter"] <- NA
