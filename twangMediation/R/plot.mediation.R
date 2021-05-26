@@ -14,8 +14,8 @@
 #'     distribution of mediator under treatment for the population) for each mediator.
 #'     For continuous mediators, distributions are plotted with density curves and 
 #'     for categorical (factor) mediators, distributions are plotted with barplots. 
-#'   * `"weights"` Histograms of the weights by each stopping rule. 
-#'   * `"logweights"` Histograms of the natural logarithm of the weights by each stopping rule. 
+#'   * `"weights"` Histograms of the standardized weights by each stopping rule. Weights
+#'     are standardized to sum to 1.  
 #' @param subset Used to restrict which of the `stop.method`s will be used
 #'   in the figure. For example `subset = c(1,3)` would indicate that the
 #'   first and third `stop.method`s (in alphabetical order of those specified
@@ -25,7 +25,7 @@
 #' @param color If `color = FALSE`, figures will be gray scale. Default: `TRUE`.
 #' @param model_subset integer
 #'   Choose either model A (1), model M0 (2), or model M1 (3) only. Argument is
-#'   not relevant for plots = `density', `weights', or `logweights.'
+#'   not relevant for plots = `density' or `weights'.
 #' @param ... Additional arguments.
 #'
 #' @method plot mediation
@@ -43,8 +43,8 @@ plot.mediation <- function(x,
   }
   
   # return error if ask for any plots other than available 
-  if (!plots %in% c("optimize","boxplot","es","asmd","density","weights","logweights")) {
-     stop("The `plots` options must be `optimize`,`boxplot`,`asmd` (or `es`), `density`, `weights`, or  `logweights`.")
+  if (!plots %in% c("optimize","boxplot","es","asmd","density","weights")) {
+     stop("The `plots` options must be `optimize`,`boxplot`,`asmd` (or `es`), `density`, or `weights`.")
   }
   # return error if ask for plots="optimize" or 1 for method!=ps
   if (x$method!="ps" & (plots=="optimize" || plots==1)) { 
@@ -58,7 +58,7 @@ plot.mediation <- function(x,
   mediators <- x$data[,x$mediator_names, drop = F]
   treatment <- x$data[[x$a_treatment]]
   
-  if (!plots %in% c('density','weights','logweights')) {
+  if (!plots %in% c('density','weights')) {
     args <- list(plots = plots, subset = subset, color = color)
     if(x$method=="logistic") {
        x$model_a$ps  <- data.frame(logistic=predict(x$model_a,type="response"))
@@ -353,7 +353,7 @@ plot.mediation <- function(x,
     for(w in c('00','11','01','10')) {
       pos <- pos+1
       wt <- get(paste0('w_',w)) 
-      weight_plot[[pos]] <- lattice:::histogram(wt[,i],
+      weight_plot[[pos]] <- lattice:::histogram(wt[,i]/sum(wt[,i],na.rm=TRUE),
                                                 xlab='Weight',
                                                 main=paste0('w_Y(',substr(w,1,1),",M(",substr(w,2,2),"))",'\n',x$stopping_methods[i]),
                                                 col='light blue',
@@ -366,30 +366,6 @@ plot.mediation <- function(x,
   par(ask=cask)
   }
 
-  if (plots=='logweights') {
-  w_00 <- log(attr(x,'w_00'))
-  w_11 <- log(attr(x,'w_11'))
-  w_01 <- log(attr(x,'w_01'))
-  w_10 <- log(attr(x,'w_10'))
 
-  cask <- par()$ask
-  for (i in whichmethods) {
-    weight_plot <- vector("list",4)
-    pos <- 0
-    for(w in c('00','11','01','10')) {
-      pos <- pos+1
-      wt <- get(paste0('w_',w)) 
-      weight_plot[[pos]] <- lattice:::histogram(wt[,i],
-                                                xlab='Log of Weight',
-                                                main=paste0('w_Y(',substr(w,1,1),",M(",substr(w,2,2),"))",'\n',x$stopping_methods[i]),
-                                                col='light blue',
-                                                type='density')
-    }
-      gridExtra:::grid.arrange(weight_plot[[1]],weight_plot[[2]],weight_plot[[3]],weight_plot[[4]],ncol=2)
-      cc <- par()$ask
-      par(ask=TRUE)
-  }
-  par(ask=cask)
-  }
 
 }
