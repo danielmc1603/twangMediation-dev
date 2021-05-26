@@ -74,7 +74,7 @@ plot.mediation <- function(x,
 
 	x$model_a$desc  <- vector("list",length=2)
 	names(x$model_a$desc)  <- c("unw","logistic")
-	bala	<- bal.table(x)
+	bala	<- bal.table.mediation(x)
 	x$model_a$desc[[1]]$bal.tab$results <- bala$balance_a[grep("unw",rownames(bala$balance_a)),1:8]
 	x$model_a$desc[[2]]$bal.tab$results <- bala$balance_a[grep("logistic",rownames(bala$balance_a)),1:8]
 
@@ -104,7 +104,7 @@ plot.mediation <- function(x,
 
 	x$model_a$desc  <- vector("list",length=2)
 	names(x$model_a$desc)  <- c("unw","crossval")
-	bala	<- bal.table(x)
+	bala	<- bal.table.mediation(x)
 	x$model_a$desc[[1]]$bal.tab$results <- bala$balance_a[grep("unw",rownames(bala$balance_a)),1:8]
 	x$model_a$desc[[2]]$bal.tab$results <- bala$balance_a[grep("crossval",rownames(bala$balance_a)),1:8]
 
