@@ -48,7 +48,7 @@
 #'   * `ks.pval` The KS p-value computed using the analytic approximation,
 #'     which does not necessarily work well with a lot of ties.
 #'
-#' @export
+
 bal.table <- function(x,
                       digits = 3,
                       collapse.to = c("pair","covariate","stop.method")[1],
@@ -96,4 +96,3 @@ bal.table <- function(x,
    }
    	
 }
-

@@ -69,7 +69,7 @@ print.mediation <- function(object, ...)
   # to check that weights for the counterfactual 
   # mediator distributions yeild distributions of 
   # mediators that match the target
-  mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
+  mediator_distribution_check <- twangMediation:::bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
 
   print(list(estimates_table = estimates_table, ps_summary_tables = ps_tables, mediator_distribution = mediator_distribution_check))
 }
