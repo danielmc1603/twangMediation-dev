@@ -24,11 +24,17 @@ print.mediation <- function(object, ...)
     if(object$method!="ps") {
       data <- object$data 
 
-      wts_a <- attr(object,"w_11")
-      wts_a[is.na(wts_a)] <- attr(object,"w_00")[is.na(wts_a)]
+      if(object$method=="logistic") {
+        model_a_preds <- predict(object$model_a,type="response")
+      } else {     
+        best.iter <- gbm:::gbm.perf(object$model_a, method="cv",plot.it=FALSE)
+        model_a_preds <- predict(object$model_a, n.trees=best.iter, newdata=data, type="response")
+      }
+
+      wts_a <- ifelse(data[,object$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
       dx_a <- twangMediation:::dx.wts.mediation(wts_a, data = data, 
           vars = object$covariate_names, treat.var = object$a_treatment, x.as.weights = TRUE, 
-          estimand = "ATT")      
+          estimand = "ATE")      
       dx_a$desc[[1]]["iter"] <- NA
       dx_a$desc[[2]]["iter"] <- NA
       names(dx_a$desc)[2] <- object$method
