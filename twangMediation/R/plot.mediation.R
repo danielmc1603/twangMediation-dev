@@ -118,6 +118,12 @@ plot.mediation <- function(x,
 	x$model_m1$desc[[1]]$bal.tab$results <- bala$balance_m1[grep("unw",rownames(bala$balance_m1)),1:8]
 	x$model_m1$desc[[2]]$bal.tab$results <- bala$balance_m1[grep("crossval",rownames(bala$balance_m1)),1:8]
     }
+    if(x$method=="ps") {
+	  ## in model m0 the ps function estimate the probability of 1 - tx but we want 
+	  ## to plot the probability of tx since it gives the same information of overlap but is less confusing
+	  ## for end users.
+	  x$model_m0$ps  <- 1 - x$model_m0$ps
+	  }
     model_a <- x$model_a
     model_m0 <- x$model_m0
     model_m1 <- x$model_m1
