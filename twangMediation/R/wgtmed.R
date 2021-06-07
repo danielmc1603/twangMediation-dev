@@ -5,7 +5,7 @@
 #'
 #' For users comfortable with [ps], any options prefaced with
 #' `ps_` are passed directly to the `ps()` function.
-#' Model a is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in `formula.med`. If `method` equals `"ps"` model a is fit using the [twang] `ps` function with estimand= `"ATE"`. If `method` equals `"logistic"` then model a is fit using logistic regression. If `method` equals `"crossval"` then [gbm] using cross-validation is used to estimate model a. Because X might include variables not used to estimate the user-provided total effect weights, model a is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the mediation models and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model a will match the model the user used to obtain the provided total effect weights. 
+#' Model A is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in `formula.med`. If `method` equals `"ps"` model A is fit using the [twang] `ps` function with estimand= `"ATE"`. If `method` equals `"logistic"` then model A is fit using logistic regression. If `method` equals `"crossval"` then [gbm] using cross-validation is used to estimate model A. Because X might include variables not used to estimate the user-provided total effect weights, model A is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the cross-world weights and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model A will match the model the user used to obtain the provided total effect weights. 
 #'
 #' @param formula.med 
 #'   A object of class [formula] relating the mediatior(s)
@@ -94,9 +94,9 @@
 #'   in the resulting `ps` model objects. Default: `FALSE`. 
 #' @return mediation object
 #'   The `mediation` object includes the following:
-#'   - `model_a_res` The model A `ps()` results.
-#'   - `model_m1_res` The model M1 `ps()` results.
-#'   - `model_m0_res` The model M0 `ps()` results.
+#'   - `model_a` The model A `ps()` results.
+#'   - `model_m1` The model M1 `ps()` results.
+#'   - `model_m0` The model M0 `ps()` results.
 #'   - `data` The data set used to compute models
 #'   - `stopping_methods` The stopping methods passed to `stop.method`.
 #'   - `datestamp` The date when the analysis was run.
@@ -377,7 +377,7 @@ wgtmed <- function(formula.med,
     ps_stop.method <- method
 
   }
-  results <- list(method=method,model_m0 = model_m0_res, model_m1 = model_m1_res, 
+  results <- list(method=method, model_m0 = model_m0_res, model_m1 = model_m1_res, 
       model_a = model_a_res, mediator_names = m_mediators, covariate_names = var.names.med, 
       a_treatment=a_treatment, y_outcome=y_outcome, 
       stopping_methods = ps_stop.method, data = data, datestamp = date())

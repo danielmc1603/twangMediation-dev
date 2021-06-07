@@ -28,7 +28,7 @@ weighted_mean <- function(x, weights, multiplier = NULL, na.rm = TRUE) {
 
 #' Check vector for NA or NAN values.
 #'
-#' `check_missing` rasises and error if the data contains.
+#' `check_missing` raises and error if the data contains.
 #' NA or NAN values.
 #'
 #' @param x numeric

@@ -135,7 +135,7 @@ function(x,digits=3, ...)
   res <- list(balance_a = balance_a, balance_m0 = balance_m0,balance_m1 = balance_m1, 
         check_counterfactual_nie_1 = balance_nie_1, check_counterfactual_nie_0 = balance_nie_0)
   
-  attr(res, "note") <- "**********************************************************\nNotes: \nA. Model a estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model m0 is used for NDE_0 and NIE_1 effects. \nct.sd is used for the denominator of std.eff.sz. \nC. Model m1 is used for NDE_1 and NIE_0 effects.\ntx.sd is used for the denominator of std.eff.sz. \nSee the bal.table help file for more information. \n**********************************************************\n"
+  attr(res, "note") <- "**********************************************************\nNotes: \nA. Model A estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model M0 is used for NDE_0 and NIE_1 effects. \nct.sd is used for the denominator of std.eff.sz. \nC. Model M1 is used for NDE_1 and NIE_0 effects.\ntx.sd is used for the denominator of std.eff.sz. \nSee the bal.table.mediation help file for more information. \n**********************************************************\n"
   attr(res, "class") <- "bal.table.mediation"
 
   return(res)

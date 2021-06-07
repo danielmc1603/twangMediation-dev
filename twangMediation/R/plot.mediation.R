@@ -6,9 +6,9 @@
 #'     iteration.
 #'   * `"boxplot"` Boxplots of the propensity scores for the treatment and
 #'     control cases
-#'   * `"es"` or '"asmd"` Plots of the absolute value of the standardized mean difference (effect size) of the pre-treatment
+#'   * `"es"` or `"asmd"` Plots of the absolute value of the standardized mean difference (effect size) of the pre-treatment
 #'     variables before and after reweighting
-#'   * `"density"` Distriubtion plots of NIE1 (distribution of mediator for treatment
+#'   * `"density"` Distribution plots of NIE1 (distribution of mediator for treatment
 #'     sample weighted to match distribution of mediator under control for the population)
 #'     and NIE0 (distribution of mediator for control sample weighted to match 
 #'     distribution of mediator under treatment for the population) for each mediator.
