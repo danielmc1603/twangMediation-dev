@@ -129,9 +129,9 @@ plot.mediation <- function(x,
     model_m1 <- x$model_m1
     model_names <- c('Model A', 'Model M0', 'Model M1')
     
-    plot1 <- do.call(twangMediation:::plot.ps, c(list(model_a), args))
-    plot2 <- do.call(twangMediation:::plot.ps, c(list(model_m0), args))
-    plot3 <- do.call(twangMediation:::plot.ps, c(list(model_m1), args))
+    plot1 <- do.call(twangMediation:::diag.plot.color, c(list(model_a), args))
+    plot2 <- do.call(twangMediation:::diag.plot.color, c(list(model_m0), args))
+    plot3 <- do.call(twangMediation:::diag.plot.color, c(list(model_m1), args))
 
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {

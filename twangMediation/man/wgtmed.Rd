@@ -123,9 +123,9 @@ then total_effect_ps must be supplied. Default : \code{NULL}.}
 mediation object
 The \code{mediation} object includes the following:
 \itemize{
-\item \code{model_a_res} The model A \code{ps()} results.
-\item \code{model_m1_res} The model M1 \code{ps()} results.
-\item \code{model_m0_res} The model M0 \code{ps()} results.
+\item \code{model_a} The model A \code{ps()} results.
+\item \code{model_m1} The model M1 \code{ps()} results.
+\item \code{model_m0} The model M0 \code{ps()} results.
 \item \code{data} The data set used to compute models
 \item \code{stopping_methods} The stopping methods passed to \code{stop.method}.
 \item \code{datestamp} The date when the analysis was run.
@@ -150,7 +150,7 @@ using propensity score weighting.
 \details{
 For users comfortable with \link{ps}, any options prefaced with
 \code{ps_} are passed directly to the \code{ps()} function.
-Model a is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in \code{formula.med}. If \code{method} equals \code{"ps"} model a is fit using the \link{twang} \code{ps} function with estimand= \code{"ATE"}. If \code{method} equals \code{"logistic"} then model a is fit using logistic regression. If \code{method} equals \code{"crossval"} then \link{gbm} using cross-validation is used to estimate model a. Because X might include variables not used to estimate the user-provided total effect weights, model a is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the mediation models and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model a will match the model the user used to obtain the provided total effect weights.
+Model A is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in \code{formula.med}. If \code{method} equals \code{"ps"} model A is fit using the \link{twang} \code{ps} function with estimand= \code{"ATE"}. If \code{method} equals \code{"logistic"} then model A is fit using logistic regression. If \code{method} equals \code{"crossval"} then \link{gbm} using cross-validation is used to estimate model A. Because X might include variables not used to estimate the user-provided total effect weights, model A is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the cross-world weights and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model A will match the model the user used to obtain the provided total effect weights.
 }
 \seealso{
 \link{ps}

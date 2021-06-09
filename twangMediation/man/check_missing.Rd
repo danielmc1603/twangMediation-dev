@@ -11,6 +11,6 @@ check_missing(x)
 The data set to check for NA or NAN values.}
 }
 \description{
-\code{check_missing} rasises and error if the data contains.
+\code{check_missing} raises and error if the data contains.
 NA or NAN values.
 }

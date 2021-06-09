@@ -2,7 +2,6 @@
 
 S3method(desc.effects,mediation)
 S3method(plot,mediation)
-S3method(plot,ps)
 S3method(print,bal.table.mediation)
 S3method(print,mediation)
 S3method(summary,mediation)

@@ -1,4 +1,4 @@
-diag.plot.color <- function(x,plots, subset, color, time = NULL, ...)
+diag.plot.color <- function(x,plots = "optimize", subset = NULL, color = TRUE, time = NULL, ...)
 {
 	ltBl <- ifelse(color, "lightblue","gray80")
 	rdCol <- ifelse(color, "red","black")
