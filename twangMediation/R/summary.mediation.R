@@ -82,13 +82,13 @@ function(object,...)
     for(i in 1:length(ps_tables)) {
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
       if(names(ps_tables)[[i]]=="model_a") {
-        cat("Note: Model a is used for all effects: NDE_0, NDE_1, NIE_0, and NIE_1.\n")
+        cat("Note: Model A is used for all effects: NDE_0, NDE_1, NIE_0, and NIE_1.\n")
       }
       if(names(ps_tables)[[i]]=="model_m0") {
-        cat("Note: Model m0 is used for NDE_0 and NIE_1 effects.\n")
+        cat("Note: Model M0 is used for NDE_0 and NIE_1 effects.\n")
       }
       if(names(ps_tables)[[i]]=="model_m1") {
-        cat("Note: Model m1 is used for NDE_1 and NIE_0 effects.\n")
+        cat("Note: Model M1 is used for NDE_1 and NIE_0 effects.\n")
       }
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
       print(round(ps_tables[[i]],digits=3))
