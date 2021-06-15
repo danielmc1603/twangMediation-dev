@@ -127,7 +127,7 @@ function(object,...)
       print(mediator_distribution_check[[i]])
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     }
-    invisible(list(results_table = desc_effects, ess_table=ess_table, balance_summary_tables = ps_tables, mediator_distribution  = mediator_distribution_check ))
+    invisible(list(results_table = desc_effects, ess_table = ess_table, balance_summary_tables = ps_tables, mediator_distribution  = mediator_distribution_check ))
 }
 
 #summary.mediation.R1(fit.logit)
