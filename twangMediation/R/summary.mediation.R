@@ -22,6 +22,28 @@ function(object,...)
       print(round(desc_effects[[i]],digits=3))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     }	
+    
+    ## Get the ESS for each of the weighted means used in the effect estimation
+    ## Helper function used because I need ESS for for sets of weights and possibly  multiple stopping rules
+    get_ess <- function(wgt, x){
+       ww <- attr(x, wgt)
+       .ess <- apply(ww, 2, function(w){tmp <- na.omit(w)
+                                        return(sum(tmp)^2/sum(tmp^2))})
+       return(.ess) 
+        }
+    wnames <- c("w_00", "w_11", "w_10", "w_01")
+    wess <- sapply(wnames, get_ess, x=object)
+    wess <- matrix(wess, ncol=4)
+    ntx <- sum(object$data[,object$a_treat])
+    nctrl <- sum(1-object$data[,object$a_treat])
+    ess_table <- rbind(c(nctrl, ntx, ntx, nctrl), wess)
+    colnames(ess_table) <- c("E[Y(0, M(0))]", "E[Y(1, M(1))]", "E[Y(1, M(0))]", "E[Y(0, M(1))]") 
+    rownames(ess_table) <- c("Sample Size", object$stopping_methods)
+    cat("ESS for Total Effect and Cross-World Weights\n")
+    cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+    print(round(ess_table, digits=3))
+    cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+   
     # Get summaries of model objects
     if(object$method=="ps") {
       model_a  <- twang:::summary.ps(object$model_a)
@@ -77,7 +99,6 @@ function(object,...)
       names(dx_m1$desc)[2] <- object$method
       model_m1 <- twang:::summary.ps(dx_m1)
     }
-
     ps_tables  <- list(model_a=model_a,model_m0=model_m0,model_m1=model_m1)
     for(i in 1:length(ps_tables)) {
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
@@ -94,6 +115,7 @@ function(object,...)
       print(round(ps_tables[[i]],digits=3))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     }
+  
     # Get balance tables for NIE_1 and NIE_0
     # to check that weights for the counterfactual 
     # mediator distributions yield distributions of 
