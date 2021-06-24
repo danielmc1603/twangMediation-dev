@@ -34,4 +34,3 @@ License: `use_gpl3_license()`
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
-LazyData: true
