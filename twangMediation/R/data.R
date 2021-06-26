@@ -1,5 +1,5 @@
-# #' Substance use data among women from 
-# #' the National Survey of Drug Use and Health
+# #' Substance use data among female adult respondents to 
+# #' the 2017 & 2018 National Survey of Drug Use and Health
 #'
 #' A dataset containing the substance use condition and sexual orientation 
 #' of 40293 women.
@@ -7,18 +7,33 @@
 #'
 #' @format A data frame with 40293 rows and 24 variables:
 #' \describe{
-#'   \item{cigmon}{Past month daily cigerretes use, yes or no}
-#'   \item{lgb_flag}{whether or not belong to LGB, binary variable}
-#'   \item{cig15}{early smoking initiating at 15 years old, yes or no}
-#'   \item{alc15}{early alcohol use initiating at 15 years old}
-#'   \item{educ}(education level, four categorical levels)
-#'   \item{income}{income level, four categorical levels}
-#'   \item{race}{race, four categories}
-#'   \item{employ}{employment, yes or no}
-#'   \item{alc_cig_depend}{nicotine or alcohol dependence, yes or no}
+#'   \item{cigmon}{indiidual smoked any cigarettes within the past month, yes or no}
+#'   \item{educ}{education level, 1 = less than high school diploma, 
+#'           2 = high school diploma, 3 = some college/associates degree, 
+#'           4 = college degree or higher}
+#'   \item{income}{income level, 1 <= $20,000, 2 = $20,000 - $49,999,
+#'           3 = $50,000 - 70,000, 4 = $75,000+}
+#'   \item{NSDUHwt}{NSDUH sampling weight}
+#'   \item{vetr}{NSDUH strata variable}
+#'   \item{verep}{NSDUH replicate within stratum}
+#'   \item{employ}{employment status, 1 = full-time employment, 
+#'           2 = part-time employment, 3 = student, 4 = unemployed, 5 = other}
+#'   \item{race}{1 = non-Hispanic white, 2 = non-Hispanic Black, 
+#'           3 = student, 4 = multiracial/other race}
+#'   \item{alc15}{iniciated alcohol use prior to 15 years old}
+#'   \item{cig15}{iniciated smoking prior to 15 years old, yes or no}
+#'   \item{lgb_flag}{1 = lesbian, gay or sexual, 0 = heterosexual}
+#'   \item{alc_cig_depend}{individual meets criteria for 
+#'           either past-year alcohol use disorder or nicotine dependence}
+#'   \itme{weight2y}{NSDUH sampling weights(scaled for
+#'    pooling 2017 and 2018 survey years)}
+#'   \item{age}{age, 1 = 18-25, 2 = 26-34, 3 = 35-49, 4 = 50+}
+#'   \
 #'   ...
 #' }
 #' @source \url{https://nsduhweb.rti.org/respweb/homepage.cfm}
-"NSDUH_female"
+#' @example
+#' \dontrun{load(NSDUH_female)}
+
 
 
