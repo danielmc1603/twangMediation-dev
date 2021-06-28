@@ -32,8 +32,10 @@
 #'   ...
 #' }
 #' @source \url{https://nsduhweb.rti.org/respweb/homepage.cfm}
-#' @example
-#' \dontrun{load(NSDUH_female)}
-
+#' @examples
+#' \duntrun{
+#' load(NSDUH_female)
+#' }
+"NSDUH_female"
 
 
