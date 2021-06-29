@@ -9,6 +9,8 @@ bal.table.mediation(x, digits = 3, ...)
 \arguments{
 \item{x}{A \code{mediation} object}
 
+\item{digits}{Number of digits to round to. Dafault: 3}
+
 \item{...}{Additional arguments.}
 }
 \description{

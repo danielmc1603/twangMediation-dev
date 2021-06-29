@@ -16,6 +16,8 @@ calculate_effects(w_11, w_00, w_10, w_01, y_outcome, sampw = NULL)
 \item{w_01}{The Y(0, M(1)) weights}
 
 \item{y_outcome}{The Y variable}
+
+\item{sampw}{Sampling weights, set to NULL by default.}
 }
 \description{
 Calculate the actual effects
