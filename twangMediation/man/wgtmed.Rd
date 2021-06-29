@@ -42,6 +42,9 @@ dichotomous (0, 1).}
 \item{y_outcome}{The (character) name of the outcome variable, y. If this is not provided, then
 no effects will be calculated and a warning will be raised. Default : \code{NULL}.}
 
+\item{total_effect_wts}{A vector of total effect weights, which if left \code{NULL}
+then total_effect_ps must be supplied. Default : \code{NULL}.}
+
 \item{total_effect_ps}{A ps object that contains the total effect weights,}
 
 \item{total_effect_stop_rule}{The stopping rule (\code{ks.mean}, \code{ks.max}, \code{es.mean}, \code{es.max}) for the total effect weights, which
@@ -85,8 +88,8 @@ Default: \code{c("ks.mean", "ks.max")}.}
 
 \item{ps_version}{"gbm", "xgboost", or "legacy", indicating which version of the twang package to use.
 \itemize{
-\item \code{"gbm"} uses gradient boosting from the \link{gbm} package.
-\item \code{"xgboost"} uses gradient boosting from the \link{xgboost} package.
+\item \code{"gbm"} uses gradient boosting from the \code{\link[gbm]{gbm}} package.
+\item \code{"xgboost"} uses gradient boosting from the \code{\link[xgboost]{xgboost}} package.
 \item \code{"legacy"} uses the prior implementation of the \code{ps} function.
 }}
 
@@ -115,9 +118,6 @@ using method='crossval'. Default: 10.}
 
 \item{ps_keep.data}{A logical variable that determines if the dataset should be saved
 in the resulting \code{ps} model objects. Default: \code{FALSE}.}
-
-\item{total_effect_weights}{A vector of total effect weights, which if left \code{NULL}
-then total_effect_ps must be supplied. Default : \code{NULL}.}
 }
 \value{
 mediation object
