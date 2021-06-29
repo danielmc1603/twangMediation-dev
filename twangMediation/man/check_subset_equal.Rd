@@ -8,6 +8,13 @@ and vice versa}
 \usage{
 check_subset_equal(y_vars, x_vars, raise_error = TRUE)
 }
+\arguments{
+\item{y_vars}{variables in the mediation model}
+
+\item{x_vars}{variables in the outcome model}
+
+\item{raise_error}{a dichotomous judgement argument for check_subset_equal function}
+}
 \description{
 Check whether the Xs in a \code{ps} object are a
 subset of the Xs in a data frame or matrix,

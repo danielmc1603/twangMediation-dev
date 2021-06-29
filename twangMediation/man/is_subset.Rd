@@ -8,6 +8,11 @@ equal length.}
 \usage{
 is_subset(d1, d2)
 }
+\arguments{
+\item{d1}{a dataset parameter for is_subset function.}
+
+\item{d2}{a dataset parameter for is_subset function.}
+}
 \description{
 Check whether the variables in d1 are a subset
 of the variables in d2. The data sets must be of
