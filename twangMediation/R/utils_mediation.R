@@ -12,7 +12,13 @@
 #' @param na.rm
 #'   Whether to remove NA values.
 #'   Default: `TRUE`
-#'
+#' @param sampw Sampling weights, set to NULL by default.
+#' @param d1 a dataset parameter for is_subset function.
+#' @param d2 a dataset parameter for is_subset function.
+#' @param x_vars variables in the outcome model
+#' @param y_vars variables in the mediation model
+#' @param raise_error a dichotomous judgement argument for check_subset_equal function
+#' 
 #' @return numeric
 #'   The weighted mean of the data.
 #'

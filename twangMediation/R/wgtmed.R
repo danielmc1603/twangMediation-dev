@@ -18,7 +18,7 @@
 #' @param y_outcome 
 #'   The (character) name of the outcome variable, y. If this is not provided, then
 #'   no effects will be calculated and a warning will be raised. Default : `NULL`.
-#' @param total_effect_weights 
+#' @param total_effect_wts 
 #'   A vector of total effect weights, which if left `NULL`
 #'   then total_effect_ps must be supplied. Default : `NULL`.
 #' @param total_effect_ps 
