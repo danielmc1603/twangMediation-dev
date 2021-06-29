@@ -13,7 +13,7 @@
 #'   \item{income}{income level, 1 <= $20,000, 2 = $20,000 - $49,999,
 #'           3 = $50,000 - 70,000, 4 = $75,000+}
 #'   \item{NSDUHwt}{NSDUH sampling weight}
-#'   \item{vetr}{NSDUH strata variable}
+#'   \item{vestr}{NSDUH strata variable}
 #'   \item{verep}{NSDUH replicate within stratum}
 #'   \item{employ}{employment status, 1 = full-time employment, 
 #'           2 = part-time employment, 3 = student, 4 = unemployed, 5 = other}
@@ -24,7 +24,7 @@
 #'   \item{lgb_flag}{1 = lesbian, gay or sexual, 0 = heterosexual}
 #'   \item{alc_cig_depend}{individual meets criteria for 
 #'           either past-year alcohol use disorder or nicotine dependence}
-#'   \itme{weight2y}{NSDUH sampling weights(scaled for
+#'   \item{weight2y}{NSDUH sampling weights(scaled for
 #'    pooling 2017 and 2018 survey years)}
 #'   \item{age}{age, 1 = 18-25, 2 = 26-34, 3 = 35-49, 4 = 50+}
 #'   \
@@ -32,7 +32,7 @@
 #' }
 #' @source \url{https://nsduhweb.rti.org/respweb/homepage.cfm}
 #' @examples
-#' \duntrun{
+#' \dontrun{
 #' load(NSDUH_female)
 #' }
 "NSDUH_female"
