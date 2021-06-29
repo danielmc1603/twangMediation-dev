@@ -18,7 +18,7 @@
 #' @param y_outcome 
 #'   The (character) name of the outcome variable, y. If this is not provided, then
 #'   no effects will be calculated and a warning will be raised. Default : `NULL`.
-#' @param total_effect_weights 
+#' @param total_effect_wts 
 #'   A vector of total effect weights, which if left `NULL`
 #'   then total_effect_ps must be supplied. Default : `NULL`.
 #' @param total_effect_ps 
@@ -64,8 +64,8 @@
 #'   Default: `c("ks.mean", "ks.max")`.
 #' @param ps_version 
 #'  "gbm", "xgboost", or "legacy", indicating which version of the twang package to use.
-#'   * `"gbm"` uses gradient boosting from the [gbm] package.
-#'   * `"xgboost"` uses gradient boosting from the [xgboost] package.
+#'   * `"gbm"` uses gradient boosting from the \code{\link[gbm]{gbm}} package.
+#'   * `"xgboost"` uses gradient boosting from the \code{\link[xgboost]{xgboost}} package.
 #'   * `"legacy"` uses the prior implementation of the `ps` function.
 #' @param ps_ks.exact `NULL` or a logical indicating whether the
 #'   Kolmogorov-Smirnov p-value should be based on an approximation of exact

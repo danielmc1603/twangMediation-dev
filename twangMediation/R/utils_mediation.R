@@ -12,7 +12,7 @@
 #' @param na.rm
 #'   Whether to remove NA values.
 #'   Default: `TRUE`
-#'
+#' 
 #' @return numeric
 #'   The weighted mean of the data.
 #'
@@ -45,6 +45,8 @@ check_missing <- function(x) {
 #' Check whether the variables in d1 are a subset
 #' of the variables in d2. The data sets must be of
 #' equal length.
+#' @param d1 a dataset parameter for is_subset function.
+#' @param d2 a dataset parameter for is_subset function.
 is_subset <- function(d1, d2) {
   stopifnot(dim(d1)[1] == dim(d2)[1])
   dim(setdiff(d1, d2))[2] == 0
@@ -53,6 +55,9 @@ is_subset <- function(d1, d2) {
 #' Check whether the Xs in a `ps` object are a 
 #' subset of the Xs in a data frame or matrix,
 #' and vice versa
+#' @param x_vars variables in the outcome model
+#' @param y_vars variables in the mediation model
+#' @param raise_error a dichotomous judgement argument for check_subset_equal function
 check_subset_equal <- function(y_vars, x_vars, raise_error = TRUE) {
 
   if (class(y_vars) == 'ps') {
@@ -102,6 +107,7 @@ check_equal_wts_stopping <- function(weights,
 #' @param w_10 The Y(1, M(0)) weights
 #' @param w_01 The Y(0, M(1)) weights
 #' @param y_outcome The Y variable
+#' @param sampw Sampling weights, set to NULL by default.
 calculate_effects <- function(w_11, w_00, w_10, w_01, y_outcome,sampw=NULL) {
   
   if (is.null(sampw)) {
