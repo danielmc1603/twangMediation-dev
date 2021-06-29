@@ -1,8 +1,7 @@
-# #' Substance use data among female adult respondents to 
-# #' the 2017 & 2018 National Survey of Drug Use and Health
+# #' Substance use data among women
 #'
 #' A dataset containing the substance use condition and sexual orientation 
-#' of 40293 women.
+#' of 40293 women respondents to the 2017 & 2018 National Survey of Drug Use and Health.
 #' .
 #'
 #' @format A data frame with 40293 rows and 24 variables:
