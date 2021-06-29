@@ -1,6 +1,7 @@
 #' Compute the balance table for mediation object.
 #'
 #' @param x A `mediation` object 
+#' @param digits Number of digits to round to. Dafault: 3
 #' @param ... Additional arguments.
 
 #' @export
