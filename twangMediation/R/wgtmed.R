@@ -164,7 +164,7 @@ wgtmed <- function(formula.med,
     			if(total_effect_ps$estimand != "ATE") stop("Total effect must be ATE. Estimand in total_effect_ps != 'ATE'")
     			if(length(total_effect_stop_rule) > 1) warning("Multiple stopping rules provided for total_effect_ps. Only the first is used")
     			if(length(total_effect_stop_rule) == 0) stop("A stopping rule must be specified for the total effects. total_effect_stop_rule must be specified.") 
-    			total_effect_wts <- twang:::get.weights(total_effect_ps, total_effect_stop_rule[1])
+    			total_effect_wts <- twang::get.weights(total_effect_ps, total_effect_stop_rule[1])
     			var.names.tx <- total_effect_ps$gbm.obj$var.names
     }
 
@@ -255,7 +255,7 @@ wgtmed <- function(formula.med,
           n.keep = ps_n.keep, n.grid = ps_n.grid))
     }
     #* Get p(A|X) using same covariates and stopping rules as for mediation model 
-    model_a_res <- do.call(twang:::ps, c(list(data = data, estimand = "ATE"), 
+    model_a_res <- do.call(twang::ps, c(list(data = data, estimand = "ATE"), 
           ps_args))
 
     #* Calculate w_10 weights
@@ -263,7 +263,7 @@ wgtmed <- function(formula.med,
     #* So we run ps with "tx" = 1- tx and ATT and the estimand
     ps_args$formula <- as.formula(paste("a_treatment0~", paste(c(m_mediators, var.names.med), collapse="+"))) 
     data[,"a_treatment0"] <- 1 - data[,a_treatment]
-    model_m0_res <- do.call(twang:::ps, c(list(data = data, estimand = "ATT"), 
+    model_m0_res <- do.call(twang::ps, c(list(data = data, estimand = "ATT"), 
       ps_args))
     
     #~ Remove a_treatment0 variable in data
@@ -282,7 +282,7 @@ wgtmed <- function(formula.med,
     #* Note p(A = 1 | M, X)/p(A = 0 | M, X) are the "ATT" weights for the crtl group when estimate = ATT
     #* So we run ps with ATT and the estimand
     ps_args$formula <- as.formula(paste(a_treatment,"~", paste(c(m_mediators, var.names.med), collapse="+"))) 
-    model_m1_res <- do.call(twang:::ps, c(list(data = data, estimand = "ATT"), 
+    model_m1_res <- do.call(twang::ps, c(list(data = data, estimand = "ATT"), 
       ps_args))
 
     #~  1/p(A=1 | X)
@@ -326,21 +326,21 @@ wgtmed <- function(formula.med,
     form_m <- as.formula(paste(a_treatment,"~", paste(c(m_mediators, var.names.med), collapse="+"))) 
     if(method=="crossval") {
       #* Fit total effects model to get p(A|X)  
-      model_a_res <- gbm:::gbm(formula=form, data = data, weights = sampw, 
+      model_a_res <- gbm::gbm(formula=form, data = data, weights = sampw, 
           distribution = "bernoulli", n.trees = ps_n.trees, 
           interaction.depth = ps_interaction.depth, n.minobsinnode = ps_n.minobsinnode, 
           shrinkage = ps_shrinkage, bag.fraction = ps_bag.fraction, train.fraction = 1, 
           verbose = ps_verbose, keep.data = FALSE, cv.folds=ps_cv.folds)
-      best.iter <- gbm:::gbm.perf(model_a_res, method="cv",plot.it=FALSE)
+      best.iter <- gbm::gbm.perf(model_a_res, method="cv",plot.it=FALSE)
       model_a_preds <- predict(model_a_res, n.trees=best.iter, newdata=data, type="response")
 
     #* Fit mediation model
-      model_m0_res <- gbm:::gbm(formula=form_m, data = data, weights = sampw, 
+      model_m0_res <- gbm::gbm(formula=form_m, data = data, weights = sampw, 
           distribution = "bernoulli", n.trees = ps_n.trees, 
           interaction.depth = ps_interaction.depth, n.minobsinnode = ps_n.minobsinnode, 
           shrinkage = ps_shrinkage, bag.fraction = ps_bag.fraction, train.fraction = 1, 
           verbose = ps_verbose, keep.data = FALSE, cv.folds=ps_cv.folds)
-      best.iter <- gbm:::gbm.perf(model_m0_res, method="cv",plot.it=FALSE)
+      best.iter <- gbm::gbm.perf(model_m0_res, method="cv",plot.it=FALSE)
       model_m0_preds <- predict(model_m0_res, n.trees=best.iter, newdata=data, type="link")
      }
     if(method=="logistic") {

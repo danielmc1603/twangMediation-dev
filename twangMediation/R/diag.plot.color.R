@@ -18,7 +18,7 @@ whichVar <- pVal <- weighted <- varb <- NULL
 
 if (plots == "optimize" || plots == 1) {
 	
-	optDat <- twangMediation:::makePlotDat(x, whichPlot = 1)
+	optDat <- makePlotDat(x, whichPlot = 1)
 
 	if(is.null(subset))
 	subset <- 1:length(levels(as.factor(optDat$stopRule)))
@@ -30,13 +30,13 @@ if (plots == "optimize" || plots == 1) {
 		xlb <- paste("Iteration (Time ", time, ")", sep = "")
 	}
 
-	pt1 <- lattice:::xyplot(balance ~ iteration | stopRule, data = optDat, ylab = "Balance measure", xlab = xlb, scales = list(alternating = 1), as.table = TRUE, subset = as.factor(optDat$stopRule) %in% levels(as.factor(optDat$stopRule))[subset], col = ptSymCol, par.settings = list(strip.background = list(col=stripBgCol)), ...)
+	pt1 <- lattice::xyplot(balance ~ iteration | stopRule, data = optDat, ylab = "Balance measure", xlab = xlb, scales = list(alternating = 1), as.table = TRUE, subset = as.factor(optDat$stopRule) %in% levels(as.factor(optDat$stopRule))[subset], col = ptSymCol, par.settings = list(strip.background = list(col=stripBgCol)), ...)
 	
 }
    
    if (plots == "es" || plots == 3 || plots=="asmd")	{ ## es plot
    	
-   	esDat <- twangMediation:::makePlotDat(x, whichPlot = 3, yOnly = FALSE)
+   	esDat <- makePlotDat(x, whichPlot = 3, yOnly = FALSE)
    	
    	if(is.null(subset))
    	subset <- 1:length(levels(as.factor(esDat$whichComp)))
@@ -59,13 +59,13 @@ if (plots == "optimize" || plots == 1) {
    	if(any(subsetHold)){   	
    		esDatTmp <- esDat
    		esDatTmp$effectSize[!subsetHold] <- NA	
-   		pt1.1 <- lattice:::xyplot(effectSize ~ weighted | whichComp, groups = whichVar, data = esDatTmp, scales = list(alternating = 1),
+   		pt1.1 <- lattice::xyplot(effectSize ~ weighted | whichComp, groups = whichVar, data = esDatTmp, scales = list(alternating = 1),
    		ylim = c(-.05, yMax), type = "l", col = ltBl, as.table = TRUE,
    		subset = subsetHold, par.settings = list(strip.background = list(col=stripBgCol)),
    		ylab = "Absolute standard difference", xlab = xlb, ...,
    		panel = function(...){
-   			lattice:::panel.abline(h=switch(2-is.null(dots$hline) , c(0.1,0.5,0.8) , dots$hline), col="gray80")
-   			lattice:::panel.xyplot(...)
+   			lattice::panel.abline(h=switch(2-is.null(dots$hline) , c(0.1,0.5,0.8) , dots$hline), col="gray80")
+   			lattice::panel.xyplot(...)
    		
    		})
    		ptHold <- pt1.1
@@ -78,7 +78,7 @@ if (plots == "optimize" || plots == 1) {
    	if(any(subsetHold)){
    	   	esDatTmp <- esDat
    		esDatTmp$effectSize[!subsetHold] <- NA		
-   		pt1.2 <- lattice:::xyplot(effectSize ~ weighted | whichComp, groups = whichVar, subset = subsetHold, 
+   		pt1.2 <- lattice::xyplot(effectSize ~ weighted | whichComp, groups = whichVar, subset = subsetHold, 
    		data = esDatTmp, ylab = "Absolute standard difference", xlab = xlb, as.table = TRUE, 
    		ylim = c(-.05, yMax), type = "l", col = rdCol, par.settings = list(strip.background = list(col=stripBgCol)),
    		lwd = 2, ...)
@@ -87,7 +87,7 @@ if (plots == "optimize" || plots == 1) {
    			nullPlot <- FALSE
    		}
    		else {
-   			ptHold <- ptHold + latticeExtra:::as.layer(pt1.2)
+   			ptHold <- ptHold + latticeExtra::as.layer(pt1.2)
    			}
    	}
    	
@@ -97,7 +97,7 @@ if (plots == "optimize" || plots == 1) {
    	else if(all(esDat$pVal >= 0.05, na.rm=TRUE)) pchHold <- 1
    	else pchHold <- c(19,1)
    	
-   	pt2 <- lattice:::xyplot(effectSize ~ weighted | whichComp, groups = pVal >= .05, data = esDat,
+   	pt2 <- lattice::xyplot(effectSize ~ weighted | whichComp, groups = pVal >= .05, data = esDat,
    		ylab = "Absolute standard difference", xlab = xlb, 
    		ylim = c(-.05, yMax), type = "p", col = rdCol, pch = pchHold,
    		subset = subsetHold, par.settings = list(strip.background = list(col=stripBgCol)), ...)
@@ -119,24 +119,24 @@ if (plots == "optimize" || plots == 1) {
 	}   	
    	
    	
-   	esDat <- twangMediation:::makePlotDat(x, whichPlot = 4)
+   	esDat <- makePlotDat(x, whichPlot = 4)
    	if(is.null(subset)) subset <- 1:length(levels(as.factor(esDat$whichComp)))
    	
    	
    	
    	n.var2 <- max(esDat$tRank * (!is.na(esDat$tPVal)), na.rm=TRUE)
-   	pt1 <- lattice:::xyplot(tPVal~tRank|whichComp, groups = weighted, data=esDat, xlab = xlb, ylab = "T test p-values", pch = c(19,1), col = "black", scales = list(alternating = 1),
+   	pt1 <- lattice::xyplot(tPVal~tRank|whichComp, groups = weighted, data=esDat, xlab = xlb, ylab = "T test p-values", pch = c(19,1), col = "black", scales = list(alternating = 1),
    	subset = (as.factor(esDat$whichComp) %in% levels(as.factor(esDat$whichComp))[subset]) & (esDat$tRank <= n.var2), ylim = c(-.1, 1.1), par.settings = list(strip.background = list(col=stripBgCol)),..., 
    	   	panel = function(...){
-   	   		panel.xyplot(x=c(1,n.var2), y=c(0,1), col=ltBl, type="l")
-	   		panel.xyplot(...)
+   	   		lattice::panel.xyplot(x=c(1,n.var2), y=c(0,1), col=ltBl, type="l")
+   	   	  lattice::panel.xyplot(...)
    		}
 )
    	
    	}
    
    if (plots =="ks" || plots ==5) {  ## ks plot
-   	esDat <- twangMediation:::makePlotDat(x, whichPlot = 5)
+   	esDat <- makePlotDat(x, whichPlot = 5)
    	
    	if(is.null(subset)) subset <- 1:length(levels(as.factor(esDat$whichComp)))
    	
@@ -149,11 +149,11 @@ if (plots == "optimize" || plots == 1) {
 		xlb <- paste("Rank of p-value for pretreatment variables \n (hollow is weighted, solid is unweighted) \n Time ", time, sep = "")
 	}   	   	
    	
-   	pt1 <- lattice:::xyplot(ksPVal~ksRank|whichComp, groups=weighted, scales = list(alternating = 1), data = esDat,ylim = c(-.1, 1.1), ..., xlab = xlb, ylab = "KS p-values", pch = c(19,1), col="black", par.settings = list(strip.background = list(col=stripBgCol)),
+   	pt1 <- lattice::xyplot(ksPVal~ksRank|whichComp, groups=weighted, scales = list(alternating = 1), data = esDat,ylim = c(-.1, 1.1), ..., xlab = xlb, ylab = "KS p-values", pch = c(19,1), col="black", par.settings = list(strip.background = list(col=stripBgCol)),
    	subset = (as.factor(esDat$whichComp) %in% levels(as.factor(esDat$whichComp))[subset]) & (esDat$ksRank <= n.var2),
    	panel = function(...){
-   		panel.xyplot(x=c(1,n.var2), y=c(0,1), col= ltBl, type="l")
-   		panel.xyplot(...)
+   	  lattice::panel.xyplot(x=c(1,n.var2), y=c(0,1), col= ltBl, type="l")
+   	  lattice::panel.xyplot(...)
    	})
    	}
    	
@@ -161,7 +161,7 @@ if (plots == "optimize" || plots == 1) {
 #   	pt1 <- histogram.dxwts(...)
    	
    	if (plots == "boxplot" || plots == 2){
-			pt1 <- twang:::boxplot.ps(x, color = color, subset = subset, time = time, ...)         
+			pt1 <- boxplot.ps(x, color = color, subset = subset, time = time, ...)         
    		}
    	
    	if (plots == "histogram" || plots == 6){
@@ -186,8 +186,8 @@ if (plots == "optimize" || plots == 1) {
 	subset <- 1:length(unique(longWeights$varb))
 	
 	if(color == FALSE & is.null(dots$col)) 	
-	pt1 <- histogram(~Weights|varb, data=longWeights, par.settings = list(strip.background = list(col=stripBgCol)), subset = varb %in% unique(controlWeights)[subset], col = NULL, ...)
-	else pt1 <- histogram(~Weights|varb, data=longWeights, par.settings = list(strip.background = list(col=stripBgCol)), subset = varb %in% unique(longWeights$varb)[subset], ...) 
+	pt1 <- lattice::histogram(~Weights|varb, data=longWeights, par.settings = list(strip.background = list(col=stripBgCol)), subset = varb %in% unique(controlWeights)[subset], col = NULL, ...)
+	else pt1 <- lattice::histogram(~Weights|varb, data=longWeights, par.settings = list(strip.background = list(col=stripBgCol)), subset = varb %in% unique(longWeights$varb)[subset], ...) 
 
    		
    		
