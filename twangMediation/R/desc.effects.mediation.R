@@ -7,11 +7,11 @@
 #' @param y_outcome The outcome; if `NULL`,
 #'   then Y must have been provided to the
 #'   original mediation function.
-#'
+#' @param ... Additional arguments..
 #' @method desc.effects mediation
 #' @export
 desc.effects.mediation <- 
-function(x, y_outcome = NULL) 
+function(x, y_outcome = NULL,...) 
 {
   
   # this is just a helper function to calcualte CI and SE for TE and NDE

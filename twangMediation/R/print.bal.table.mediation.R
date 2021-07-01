@@ -1,20 +1,20 @@
 #' Default print statement for `mediation` class
 #'
-#' @param object A `bal.table.mediation` object
+#' @param x A `bal.table.mediation` object.
 #' @param ... Additional arguments.
 #'
 #' @method print bal.table.mediation
 #' @export
-print.bal.table.mediation <- function(object,...){
+print.bal.table.mediation <- function(x,...){
 
-if(class(object) != "bal.table.mediation"){stop("object must be of class bal.table.mediation")}
+if(class(x) != "bal.table.mediation"){stop("x must be of class bal.table.mediation")}
   
 # Print the note
-cat(attr(object,"note"))
+cat(attr(x,"note"))
 
-nn <- names(object)
+nn <- names(x)
 for(i in nn){
 cat(paste0("\n$",i," \n"))
-print(object[[i]])
+print(x[[i]])
 }
 }

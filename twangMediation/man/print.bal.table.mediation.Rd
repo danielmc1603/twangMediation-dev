@@ -4,10 +4,10 @@
 \alias{print.bal.table.mediation}
 \title{Default print statement for \code{mediation} class}
 \usage{
-\method{print}{bal.table.mediation}(object, ...)
+\method{print}{bal.table.mediation}(x, ...)
 }
 \arguments{
-\item{object}{A \code{bal.table.mediation} object}
+\item{x}{A \code{bal.table.mediation} object.}
 
 \item{...}{Additional arguments.}
 }
