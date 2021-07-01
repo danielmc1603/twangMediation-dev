@@ -27,7 +27,7 @@ print.mediation <- function(x, ...)
       if(x$method=="logistic") {
         model_a_preds <- predict(x$model_a,type="response")
       } else {     
-        best.iter <- gbm:::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
+        best.iter <- gbm::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
         model_a_preds <- predict(x$model_a, n.trees=best.iter, newdata=data, type="response")
       }
 
@@ -45,7 +45,7 @@ print.mediation <- function(x, ...)
         model_m_preds <- predict(x$model_m0,type="link")
       }      
         else {
-        best.iter <- gbm:::gbm.perf(x$model_m0, method="cv",plot.it=FALSE)
+        best.iter <- gbm::gbm.perf(x$model_m0, method="cv",plot.it=FALSE)
         model_m_preds <- predict(x$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))

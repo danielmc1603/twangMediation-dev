@@ -89,8 +89,8 @@ plot.mediation <- function(x,
 	x$model_m1$desc[[2]]$bal.tab$results <- bala$balance_m1[grep("logistic",rownames(bala$balance_m1)),1:8]
     }
     if(x$method=="crossval") {
-       best.iter.a 		<- gbm:::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
-       best.iter.m 		<- gbm:::gbm.perf(x$model_m0, method="cv",plot.it=FALSE)
+       best.iter.a 		<- gbm::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
+       best.iter.m 		<- gbm::gbm.perf(x$model_m0, method="cv",plot.it=FALSE)
        x$model_a$ps  <- data.frame(crossval=predict(x$model_a, n.trees=best.iter.a,newdata=x$data,type="response"))
        x$model_m0$ps  <- data.frame(crossval=predict(x$model_m0,n.trees=best.iter.m,newdata=x$data,type="response"))
        x$model_m1$ps  <- data.frame(crossval=predict(x$model_m1,n.trees=best.iter.m,newdata=x$data,type="response"))
@@ -359,13 +359,13 @@ plot.mediation <- function(x,
     for(w in c('00','11','01','10')) {
       pos <- pos+1
       wt <- get(paste0('w_',w)) 
-      weight_plot[[pos]] <- lattice:::histogram(wt[,i]/sum(wt[,i],na.rm=TRUE),
+      weight_plot[[pos]] <- lattice::histogram(wt[,i]/sum(wt[,i],na.rm=TRUE),
                                                 xlab='Weight',
                                                 main=paste0('w_Y(',substr(w,1,1),",M(",substr(w,2,2),"))",'\n',x$stopping_methods[i]),
                                                 col='light blue',
                                                 type='density')
     }
-      gridExtra:::grid.arrange(weight_plot[[1]],weight_plot[[2]],weight_plot[[3]],weight_plot[[4]],ncol=2)
+      gridExtra::grid.arrange(weight_plot[[1]],weight_plot[[2]],weight_plot[[3]],weight_plot[[4]],ncol=2)
       cc <- par()$ask
       par(ask=TRUE)
   }

@@ -45,7 +45,7 @@ function(x,digits=3, ...)
       model_a_preds <- predict(x$model_a,type="response")
     }
    if(x$method=="crossval") {     
-      best.iter <- gbm:::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
+      best.iter <- gbm::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
       model_a_preds <- predict(x$model_a, n.trees=best.iter, newdata=data, type="response")
     }
     wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
@@ -63,7 +63,7 @@ function(x,digits=3, ...)
       model_m_preds <- predict(model_m0,type="link")
     }
     else {
-      best.iter <- gbm:::gbm.perf(model_m0, method="cv",plot.it=FALSE)
+      best.iter <- gbm::gbm.perf(model_m0, method="cv",plot.it=FALSE)
       model_m_preds <- predict(model_m0, n.trees=best.iter, newdata=data, type="link")
     }
     wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))

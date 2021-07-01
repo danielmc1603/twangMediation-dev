@@ -4,7 +4,7 @@
 \alias{desc.effects.mediation}
 \title{Describe the effects from a mediation object}
 \usage{
-\method{desc.effects}{mediation}(x, y_outcome = NULL)
+\method{desc.effects}{mediation}(x, y_outcome = NULL, ...)
 }
 \arguments{
 \item{x}{A mediation object}
@@ -12,6 +12,8 @@
 \item{y_outcome}{The outcome; if \code{NULL},
 then Y must have been provided to the
 original mediation function.}
+
+\item{...}{Additional arguments..}
 }
 \description{
 Describe the effects, and calculate standard
