@@ -31,7 +31,10 @@ Imports:
     gbm (>= 1.5-3),
     gridExtra,
     graphics,
-    stats
+    stats,
+    lattice,
+    latticeExtra,
+    survey
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1

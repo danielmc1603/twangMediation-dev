@@ -12,3 +12,6 @@ export(wgtmed)
 importFrom("graphics", "par")
 importFrom("stats", "aggregate", "as.formula", "glm", "na.omit",
            "na.pass", "predict", "qnorm", "update")
+import("lattice")
+import("latticeExtra")
+import("survey")
