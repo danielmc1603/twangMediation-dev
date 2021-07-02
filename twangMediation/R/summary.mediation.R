@@ -10,7 +10,7 @@ function(object,...)
 {
    # Get confidence intervals of effects 
     if(!is.null(object$y_outcome)) {
-      desc_effects  <- twangMediation:::desc.effects.mediation(object)
+      desc_effects  <- desc.effects.mediation(object)
     }
     else {
       desc_effects  <- NULL
@@ -63,7 +63,7 @@ function(object,...)
 
       wts_a <- ifelse(data[,object$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
 
-      dx_a <- twangMediation:::dx.wts.mediation(wts_a, data = data, 
+      dx_a <- dx.wts.mediation(wts_a, data = data, 
           vars = object$covariate_names, treat.var = object$a_treatment, x.as.weights = TRUE, 
           estimand = "ATE")       
       dx_a$desc[[1]]["iter"] <- NA
@@ -80,18 +80,18 @@ function(object,...)
         model_m_preds <- predict(object$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,object$a_treatment]==0,1,1/exp(model_m_preds))
-      dx_m0 <- twangMediation:::dx.wts.mediation(wts_m0, data = data, 
+      dx_m0 <- dx.wts.mediation(wts_m0, data = data, 
           vars = c(object$mediator_names,object$covariate_names), treat.var = "trt0", x.as.weights = TRUE, 
           estimand = "ATT")
       dx_m0$desc[[1]]["iter"] <- NA
       dx_m0$desc[[2]]["iter"] <- NA
       names(dx_m0$desc)[2] <- object$method
-      dx_m0$desc$unw <- twangMediation:::swapTxCtrl(dx_m0$desc$unw)
-      dx_m0$desc[[object$method]] <- twangMediation:::swapTxCtrl(dx_m0$desc[[object$method]])
+      dx_m0$desc$unw <- swapTxCtrl(dx_m0$desc$unw)
+      dx_m0$desc[[object$method]] <- swapTxCtrl(dx_m0$desc[[object$method]])
       model_m0 <- summary.ps(dx_m0)
 
       wts_m1 <- ifelse(data[,object$a_treatment]==0,exp(model_m_preds),1)
-      dx_m1 <- twangMediation:::dx.wts.mediation(wts_m1, data = data, 
+      dx_m1 <- dx.wts.mediation(wts_m1, data = data, 
         vars =  c(object$mediator_names,object$covariate_names), treat.var = object$a_treatment, x.as.weights = TRUE, 
         estimand = "ATT")
       dx_m1$desc[[1]]["iter"] <- NA
@@ -120,7 +120,7 @@ function(object,...)
     # to check that weights for the counterfactual 
     # mediator distributions yield distributions of 
     # mediators that match the target
-    mediator_distribution_check <- twangMediation:::bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
+    mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
     for(i in 1:length(mediator_distribution_check)) {
       cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))

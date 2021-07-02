@@ -70,7 +70,7 @@ function(x, y_outcome = NULL,...)
     effects_name = paste(stop_method, "effects", sep = "_")
     
     # Let's get the effects for this stopping method
-    effects <- twangMediation:::calculate_effects(w_11[,i], w_00[,i], w_10[,i], w_01[,i], y_outcome)
+    effects <- calculate_effects(w_11[,i], w_00[,i], w_10[,i], w_01[,i], y_outcome)
     
     # We want to calculate the confidence intervals and standard errors,
     # so we collect the weights that we need to calculate these things;

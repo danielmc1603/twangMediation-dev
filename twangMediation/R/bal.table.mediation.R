@@ -50,7 +50,7 @@ function(x,digits=3, ...)
     }
     wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
 
-    tmp_a <- bal.table.ps(twangMediation:::dx.wts.mediation(wts_a, data = data, 
+    tmp_a <- bal.table.ps(dx.wts.mediation(wts_a, data = data, 
         vars = x$covariate_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATE"),digits=digits)
     names(tmp_a)[2] <- x$method
@@ -67,10 +67,10 @@ function(x,digits=3, ...)
       model_m_preds <- predict(model_m0, n.trees=best.iter, newdata=data, type="link")
     }
     wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))
-    tmp_m0 <- twangMediation:::dx.wts.mediation(wts_m0, data = data, 
+    tmp_m0 <- dx.wts.mediation(wts_m0, data = data, 
         vars = m_and_x_names, treat.var = "trt0", x.as.weights = TRUE, 
         estimand = "ATT")
-#    tmp_m0$desc <- lapply(tmp_m0$desc, twangMediation:::swapTxCtrl)
+#    tmp_m0$desc <- lapply(tmp_m0$desc, swapTxCtrl)
     tmp_m0$desc <- lapply(tmp_m0$desc, swapTxCtrl)
     tmp_m0 <- bal.table.ps(tmp_m0, digits=digits)
     names(tmp_m0)[2] <- x$method
@@ -79,7 +79,7 @@ function(x,digits=3, ...)
  
     # get the balance table for Model M1 
     wts_m1 <- ifelse(data[,x$a_treatment]==0,exp(model_m_preds),1)
-    tmp_m1 <- bal.table.ps(twangMediation:::dx.wts.mediation(wts_m1, data = data, 
+    tmp_m1 <- bal.table.ps(dx.wts.mediation(wts_m1, data = data, 
         vars = m_and_x_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATT"),digits=digits)
     names(tmp_m1)[2] <- x$method
@@ -95,7 +95,7 @@ function(x,digits=3, ...)
        nie_1_wts[, i] <- ifelse(!is.na(w_00[, i]), w_00[, i], w_10[, i])
    }
   names(nie_1_wts) <- stopping_methods
-  balance_nie_1 <- bal.table.ps(twangMediation:::dx.wts.mediation(nie_1_wts, data = data, 
+  balance_nie_1 <- bal.table.ps(dx.wts.mediation(nie_1_wts, data = data, 
         vars = x$mediator_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATE"),digits=digits)
   balance_nie_1 <- do.call(rbind, balance_nie_1)
@@ -109,7 +109,7 @@ function(x,digits=3, ...)
   }
   names(nie_0_wts) <- stopping_methods
 
-  balance_nie_0 <- bal.table.ps(twangMediation:::dx.wts.mediation(nie_0_wts, data = data, 
+  balance_nie_0 <- bal.table.ps(dx.wts.mediation(nie_0_wts, data = data, 
       vars = x$mediator_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
       estimand = "ATE"),digits=digits)
   balance_nie_0 <- do.call(rbind, balance_nie_0)

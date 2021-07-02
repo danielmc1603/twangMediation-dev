@@ -32,7 +32,7 @@ print.mediation <- function(x, ...)
       }
 
       wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
-      dx_a <- twangMediation:::dx.wts.mediation(wts_a, data = data, 
+      dx_a <- dx.wts.mediation(wts_a, data = data, 
           vars = x$covariate_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
           estimand = "ATE")      
       dx_a$desc[[1]]["iter"] <- NA
@@ -49,18 +49,18 @@ print.mediation <- function(x, ...)
         model_m_preds <- predict(x$model_m0, n.trees=best.iter, newdata=data, type="link")
       }
       wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))
-      dx_m0 <- twangMediation:::dx.wts.mediation(wts_m0, data = data, 
+      dx_m0 <- dx.wts.mediation(wts_m0, data = data, 
           vars = c(x$mediator_names,x$covariate_names), treat.var = "trt0", x.as.weights = TRUE, 
           estimand = "ATT")
       dx_m0$desc[[1]]["iter"] <- NA
       dx_m0$desc[[2]]["iter"] <- NA
       names(dx_m0$desc)[2] <- x$method
-      dx_m0$desc$unw <- twangMediation:::swapTxCtrl(dx_m0$desc$unw)
-      dx_m0$desc[[x$method]] <- twangMediation:::swapTxCtrl(dx_m0$desc[[x$method]])
+      dx_m0$desc$unw <- swapTxCtrl(dx_m0$desc$unw)
+      dx_m0$desc[[x$method]] <- swapTxCtrl(dx_m0$desc[[x$method]])
       model_m0 <- summary.ps(dx_m0)
 
       wts_m1 <- ifelse(data[,x$a_treatment]==0,exp(model_m_preds),1)
-      dx_m1 <- twangMediation:::dx.wts.mediation(wts_m1, data = data, 
+      dx_m1 <- dx.wts.mediation(wts_m1, data = data, 
         vars =  c(x$mediator_names,x$covariate_names), treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATT")
       dx_m1$desc[[1]]["iter"] <- NA
@@ -75,7 +75,7 @@ print.mediation <- function(x, ...)
   # to check that weights for the counterfactual 
   # mediator distributions yeild distributions of 
   # mediators that match the target
-  mediator_distribution_check <- twangMediation:::bal.table.mediation(x)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
+  mediator_distribution_check <- bal.table.mediation(x)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
 
   print(list(estimates_table = estimates_table, ps_summary_tables = ps_tables, mediator_distribution = mediator_distribution_check))
 }
