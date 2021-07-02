@@ -26,15 +26,15 @@ function(x,digits=3, ...)
   if(x$method=="ps") {
 
     # get the balance table for Model A
-    balance_a <- do.call(rbind, bal.table.ps(model_a, digits = digits))
+    balance_a <- do.call(rbind, twang:::bal.table.ps(model_a, digits = digits))
     balance_a['model'] <- 'Model A'
 
     # get the balance table for Model M0
-    balance_m0 <- do.call(rbind, bal.table.ps(model_m0, digits = digits))
+    balance_m0 <- do.call(rbind, twang:::bal.table.ps(model_m0, digits = digits))
     balance_m0["model"] <- "Model M0"
   
     # get the balance table for Model M1
-    balance_m1 <- do.call(rbind, bal.table.ps(model_m1, digits = digits))
+    balance_m1 <- do.call(rbind, twang:::bal.table.ps(model_m1, digits = digits))
     balance_m1["model"] <- "Model M1"
   }
   ##results if method = "logistic" or "crossval"
@@ -50,7 +50,7 @@ function(x,digits=3, ...)
     }
     wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
 
-    tmp_a <- bal.table.ps(dx.wts.mediation(wts_a, data = data, 
+    tmp_a <- twang:::bal.table.ps(dx.wts.mediation(wts_a, data = data, 
         vars = x$covariate_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATE"),digits=digits)
     names(tmp_a)[2] <- x$method
@@ -72,14 +72,14 @@ function(x,digits=3, ...)
         estimand = "ATT")
 #    tmp_m0$desc <- lapply(tmp_m0$desc, swapTxCtrl)
     tmp_m0$desc <- lapply(tmp_m0$desc, swapTxCtrl)
-    tmp_m0 <- bal.table.ps(tmp_m0, digits=digits)
+    tmp_m0 <- twang:::bal.table.ps(tmp_m0, digits=digits)
     names(tmp_m0)[2] <- x$method
     balance_m0 <- do.call(rbind, tmp_m0)
     balance_m0["model"] <- "Model M0"
  
     # get the balance table for Model M1 
     wts_m1 <- ifelse(data[,x$a_treatment]==0,exp(model_m_preds),1)
-    tmp_m1 <- bal.table.ps(dx.wts.mediation(wts_m1, data = data, 
+    tmp_m1 <- twang:::bal.table.ps(dx.wts.mediation(wts_m1, data = data, 
         vars = m_and_x_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATT"),digits=digits)
     names(tmp_m1)[2] <- x$method
@@ -95,7 +95,7 @@ function(x,digits=3, ...)
        nie_1_wts[, i] <- ifelse(!is.na(w_00[, i]), w_00[, i], w_10[, i])
    }
   names(nie_1_wts) <- stopping_methods
-  balance_nie_1 <- bal.table.ps(dx.wts.mediation(nie_1_wts, data = data, 
+  balance_nie_1 <- twang:::bal.table.ps(dx.wts.mediation(nie_1_wts, data = data, 
         vars = x$mediator_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
         estimand = "ATE"),digits=digits)
   balance_nie_1 <- do.call(rbind, balance_nie_1)
@@ -109,7 +109,7 @@ function(x,digits=3, ...)
   }
   names(nie_0_wts) <- stopping_methods
 
-  balance_nie_0 <- bal.table.ps(dx.wts.mediation(nie_0_wts, data = data, 
+  balance_nie_0 <- twang:::bal.table.ps(dx.wts.mediation(nie_0_wts, data = data, 
       vars = x$mediator_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
       estimand = "ATE"),digits=digits)
   balance_nie_0 <- do.call(rbind, balance_nie_0)
