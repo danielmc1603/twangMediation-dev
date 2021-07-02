@@ -9,3 +9,6 @@ export(bal.table.mediation)
 export(desc.effects)
 export(weighted_mean)
 export(wgtmed)
+importFrom("graphics", "par")
+importFrom("stats", "aggregate", "as.formula", "glm", "na.omit",
+           "na.pass", "predict", "qnorm", "update")

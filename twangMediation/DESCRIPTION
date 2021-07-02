@@ -29,7 +29,9 @@ Depends:
 Imports:
     twang, 
     gbm (>= 1.5-3),
-    gridExtra
+    gridExtra,
+    graphics,
+    stats
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
