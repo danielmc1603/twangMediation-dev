@@ -74,7 +74,7 @@ plot.mediation <- function(x,
 
 	x$model_a$desc  <- vector("list",length=2)
 	names(x$model_a$desc)  <- c("unw","logistic")
-	bala	<- twangMediation:::bal.table.mediation(x)
+	bala	<- bal.table.mediation(x)
 	x$model_a$desc[[1]]$bal.tab$results <- bala$balance_a[grep("unw",rownames(bala$balance_a)),1:8]
 	x$model_a$desc[[2]]$bal.tab$results <- bala$balance_a[grep("logistic",rownames(bala$balance_a)),1:8]
 
@@ -104,7 +104,7 @@ plot.mediation <- function(x,
 
 	x$model_a$desc  <- vector("list",length=2)
 	names(x$model_a$desc)  <- c("unw","crossval")
-	bala	<- twangMediation:::bal.table.mediation(x)
+	bala	<- bal.table.mediation(x)
 	x$model_a$desc[[1]]$bal.tab$results <- bala$balance_a[grep("unw",rownames(bala$balance_a)),1:8]
 	x$model_a$desc[[2]]$bal.tab$results <- bala$balance_a[grep("crossval",rownames(bala$balance_a)),1:8]
 
@@ -129,9 +129,9 @@ plot.mediation <- function(x,
     model_m1 <- x$model_m1
     model_names <- c('Model A', 'Model M0', 'Model M1')
     
-    plot1 <- do.call(twangMediation:::diag.plot.color, c(list(model_a), args))
-    plot2 <- do.call(twangMediation:::diag.plot.color, c(list(model_m0), args))
-    plot3 <- do.call(twangMediation:::diag.plot.color, c(list(model_m1), args))
+    plot1 <- do.call(diag.plot.color, c(list(model_a), args))
+    plot2 <- do.call(diag.plot.color, c(list(model_m0), args))
+    plot3 <- do.call(diag.plot.color, c(list(model_m1), args))
 
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {
