@@ -1,3 +1,4 @@
+globalVariables("A")
 #' Plot the `mediation` object.
 #'
 #' @param x weighted_mediation object
