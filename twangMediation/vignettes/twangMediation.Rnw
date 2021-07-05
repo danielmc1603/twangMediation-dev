@@ -1,4 +1,5 @@
 \documentclass{article}
+%\VignetteIndexEntry{A tutorial for conducting causal mediation analysis with the twangMediation package}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FORMATTING
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +46,6 @@
 }
 
 \newcommand{\mathgbf}[1]{{\mbox{\boldmath$#1$\unboldmath}}}
-
 \usepackage{Sweave}
 \begin{document}
 
