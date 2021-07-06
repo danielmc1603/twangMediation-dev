@@ -53,7 +53,7 @@
 if(!dir.exists("tmpout"))dir.create("tmpout", recursive = TRUE)
 @
 
-\SweaveOpts{concordance=TRUE, prefix.string=tmpout/t, split=TRUE, ae=FALSE, height=5, width=6}
+\SweaveOpts{concordance=TRUE, prefix.string=t, split=TRUE, ae=FALSE, height=5, width=6}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% TITLE PAGE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -387,7 +387,7 @@ plot(cig_med)
 @
 
 \begin{center}
-  \includegraphics[width=3.75in]{tmpout/t-fig1plot}
+  \includegraphics[width=3.75in]{t-fig1plot}
 \end{center}
 
 We are primarily interested in the $NIE_1$ and $NDE_0$ decomposition, (i.e., Equation \ref{decomp1}), so we focus our interpretations on the plots labeled Model A and Model M0.  As shown in the convergence plot above, we achieve good convergence for both Model A and Model M0, as the balance measures asymptotically approach 0 as the number of iterations increases.
@@ -409,7 +409,7 @@ plot(cig_med, plot = "boxplot")
 @
 
 \begin{center}
-  \includegraphics[width=3.75in]{tmpout/t-fig2plot}
+  \includegraphics[width=3.75in]{t-fig2plot}
 \end{center}
 
 As shown in the boxplot above, we see that we have adequate overlap in the propensity score values between the two exposure groups for Model A, Model M0, and Model M1.
@@ -431,7 +431,7 @@ plot(cig_med, plot = "asmd")
 @
 
 \begin{center}
-  \includegraphics[width=4in]{tmpout/t-fig3plot}
+  \includegraphics[width=4in]{t-fig3plot}
 \end{center}
 
 As shown in the plot above, we see that we have sizable ASMD values in the unweighted data. However, weighting has notably decreased these covariate imbalances across exposure groups, as all ASMD values are well under 0.1 after weighting.
@@ -461,7 +461,7 @@ plot(cig_med, plot = "density")
 @
 
 \begin{center}
-  \includegraphics[width=5in]{tmpout/t-fig4plot}
+  \includegraphics[width=5in]{t-fig4plot}
 \end{center}
 
 As shown in the density above, we see that weighted distributions for the population and the counterfactual distributions are well-matched in the context of $NIE_1$. In users' R console, pressing the return key would replace the plot with the density in the context of $NIE_0$.
@@ -482,7 +482,7 @@ plot(cig_med, plot = "weights")
 @
 
 \begin{center}
-  \includegraphics[width=5in]{tmpout/t-fig5plot}
+  \includegraphics[width=5in]{t-fig5plot}
 \end{center}
 
 The plot allows an assessment of the weights (e.g., identifying very large weights). If the user wishes to obtain the raw (not standardized) weights for further plotting, they can be obtained as follows:
