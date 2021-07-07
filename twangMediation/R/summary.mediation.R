@@ -46,9 +46,9 @@ function(object,...)
    
     # Get summaries of model objects
     if(object$method=="ps") {
-      model_a  <- twang:::summary.ps(object$model_a)
-      model_m0 <- twang:::summary.ps(object$model_m0)
-      model_m1 <- twang:::summary.ps(object$model_m1)
+      model_a  <- summary(object$model_a)
+      model_m0 <- summary(object$model_m0)
+      model_m1 <- summary(object$model_m1)
     } 
     if(object$method!="ps") {
       data <- object$data 
@@ -69,7 +69,7 @@ function(object,...)
       dx_a$desc[[1]]["iter"] <- NA
       dx_a$desc[[2]]["iter"] <- NA
       names(dx_a$desc)[2] <- object$method
-      model_a <- twang:::summary.ps(dx_a)
+      model_a <- summary(dx_a)
  
       data$trt0 <- 1-data[,object$a_treatment]
       if(object$method=="logistic") {
@@ -88,7 +88,7 @@ function(object,...)
       names(dx_m0$desc)[2] <- object$method
       dx_m0$desc$unw <- swapTxCtrl(dx_m0$desc$unw)
       dx_m0$desc[[object$method]] <- swapTxCtrl(dx_m0$desc[[object$method]])
-      model_m0 <- twang:::summary.ps(dx_m0)
+      model_m0 <- summary(dx_m0)
 
       wts_m1 <- ifelse(data[,object$a_treatment]==0,exp(model_m_preds),1)
       dx_m1 <- dx.wts.mediation(wts_m1, data = data, 
@@ -97,7 +97,7 @@ function(object,...)
       dx_m1$desc[[1]]["iter"] <- NA
       dx_m1$desc[[2]]["iter"] <- NA
       names(dx_m1$desc)[2] <- object$method
-      model_m1 <- twang:::summary.ps(dx_m1)
+      model_m1 <- summary(dx_m1)
     }
     ps_tables  <- list(model_a=model_a,model_m0=model_m0,model_m1=model_m1)
     for(i in 1:length(ps_tables)) {
