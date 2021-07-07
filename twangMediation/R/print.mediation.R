@@ -17,9 +17,9 @@ print.mediation <- function(x, ...)
 
   # Get summaries of ps xs
     if(x$method=="ps") {
-      model_a  <- twang:::summary.ps(x$model_a)
-      model_m0 <- twang:::summary.ps(x$model_m0)
-      model_m1 <- twang:::summary.ps(x$model_m1)
+      model_a  <- summary(x$model_a)
+      model_m0 <- summary(x$model_m0)
+      model_m1 <- summary(x$model_m1)
     } 
     if(x$method!="ps") {
       data <- x$data 
@@ -38,7 +38,7 @@ print.mediation <- function(x, ...)
       dx_a$desc[[1]]["iter"] <- NA
       dx_a$desc[[2]]["iter"] <- NA
       names(dx_a$desc)[2] <- x$method
-      model_a <- twang:::summary.ps(dx_a)
+      model_a <- summary(dx_a)
 
       data$trt0 <- 1-data[,x$a_treatment]
       if(x$method=="logistic") {
@@ -57,7 +57,7 @@ print.mediation <- function(x, ...)
       names(dx_m0$desc)[2] <- x$method
       dx_m0$desc$unw <- swapTxCtrl(dx_m0$desc$unw)
       dx_m0$desc[[x$method]] <- swapTxCtrl(dx_m0$desc[[x$method]])
-      model_m0 <- twang:::summary.ps(dx_m0)
+      model_m0 <- summary(dx_m0)
 
       wts_m1 <- ifelse(data[,x$a_treatment]==0,exp(model_m_preds),1)
       dx_m1 <- dx.wts.mediation(wts_m1, data = data, 
@@ -66,7 +66,7 @@ print.mediation <- function(x, ...)
       dx_m1$desc[[1]]["iter"] <- NA
       dx_m1$desc[[2]]["iter"] <- NA
       names(dx_m1$desc)[2] <- x$method
-      model_m1 <- twang:::summary.ps(dx_m1)
+      model_m1 <- summary(dx_m1)
     }
 
     ps_tables  <- list(model_a=model_a,model_m0=model_m0,model_m1=model_m1)
