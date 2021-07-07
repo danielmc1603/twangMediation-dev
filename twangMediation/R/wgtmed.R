@@ -112,7 +112,7 @@
 #'     * `expected_treatment0_mediator1` E(Y(0, M(1)))
 #'
 #' @seealso [ps]
-#' @keywords models, multivariate
+#' @keywords models multivariate
 #'
 #' @export
 wgtmed <- function(formula.med,
