@@ -1,5 +1,5 @@
 Package: twangMediation
-Title: twang Causal Medition Modeling via Weighting
+Title: twang Causal Mediation Modeling via Weighting
 Version: 1.0
 Authors@R: 
     c(person(given = "Dan",
@@ -21,7 +21,11 @@ Authors@R:
     person(given = "Megan",
            family = "Schuler",
            role = c("aut"),
-           email = "mschuler@rand.org"))
+           email = "mschuler@rand.org"),
+    person(given = "Haoyu",
+           family = "Zhou",
+           role = c("aut"),
+           email = "haoyu.zhou@temple.edu"))
 Maintainer: Dan McCaffrey <dmccaffrey@ets.org>
 Description: What the package does (one paragraph).
 Depends:
@@ -36,7 +40,7 @@ Imports:
     latticeExtra,
     survey
 Suggests: knitr
-vignetteBuilder: knitr
+VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.1
