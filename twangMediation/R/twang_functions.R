@@ -3,6 +3,7 @@
 ## functions we have recreated them in twangMediation
 ## The functions are:
 ##    bal.table.ps
+##    check.err
 ##    desc.wts
 
 ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%##
@@ -13,6 +14,44 @@ bal.table.ps <- function(x, digits = digits){
 	lapply(x$desc, function(x){return(round(x$bal.tab$results, digits))})
 }
 
+##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%##
+## check.err
+##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%##
+
+check.err<-function(cov.table, stage, alerts.stack, estimand, ess.ctrl, ess.treat)
+{
+  
+  if(estimand == "ATT")
+  {
+    ind  <- (cov.table$tx.sd < .0001) | (cov.table$std.ef.sz > 500)
+    prob <- cov.table$std.eff.sz[ind]
+    if(length(prob)>0)
+    {
+      sink(alerts.stack, append=TRUE)
+      cat("\n problematic standard deviations in stage ",stage,"\n\n")
+      print(cov.table[which(ind),c("tx.sd","std.eff.sz")])
+      cat("\n\n\n")
+      sink()
+    }
+  }
+  
+  
+  if(estimand == "ATE")
+  {
+    sd.p = ((ess.treat * cov.table$tx.sd) + (ess.ctrl * cov.table$ct.sd))/(ess.treat + ess.ctrl)
+    ind  <- (sd.p < .0001) | (cov.table$std.ef.sz > 500)
+    prob <- cov.table$std.eff.sz[ind]
+    if(length(prob)>0)
+    {
+      sink(alerts.stack, append=TRUE)
+      cat("\n problematic standard deviations in stage ",stage,"\n\n")
+      print(cov.table[which(ind),c("sd.p","std.eff.sz")])
+      cat("\n\n\n")
+      sink()
+    }
+  }
+  
+}
 
 ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%##
 ## desc.wts
@@ -38,7 +77,7 @@ desc.wts <-function(data,w, sampw = sampw,
 
 #multinom <- FALSE
 
-   bal.tab   <- bal.stat(data=data,w.all=w, sampw = sampW,
+   bal.tab   <- twang::bal.stat(data=data,w.all=w, sampw = sampW,
                          vars=vars1,
                          treat.var=treat.var1,
                          na.action=na.action,
@@ -75,7 +114,7 @@ desc.wts <-function(data,w, sampw = sampw,
          i <- sample(1:nrow(data),ess.t+ess.c,replace=TRUE,prob=w.1)
          temp <- data[i,c(vars,treat.var)]
          temp[,treat.var] <- as.numeric((1:nrow(temp))<=ess.t)
-         bal.temp   <- bal.stat(data=temp,
+         bal.temp   <- twang::bal.stat(data=temp,
                                 w.all=rep(1,length(i)),
                                 sampw = rep(1,length(i)),
                                 vars=vars1,

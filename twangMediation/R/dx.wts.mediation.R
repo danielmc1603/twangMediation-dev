@@ -133,7 +133,7 @@ dx.wts.mediation <- function(x,
          tp        <- names(x$desc)[i.tp]
       } 
       else {
-         desc.temp <- twang:::desc.wts(data,
+         desc.temp <- desc.wts(data,
                                w=w[,i.tp],
                                sampw = rep(1,nrow(w)),
                                vars=vars,
