@@ -177,6 +177,9 @@ plot.mediation <- function(x,
 
   genplot <- function(which_nie){
 
+     oldpar <- par(no.readonly = TRUE)   
+     on.exit(par(oldpar))            
+     
      if(which_nie == 1){
         # Plot to check that the weighted counterfactual density of mediator from the treatment sample 
         # matches the estimated population density of the mediator under control or M(0)  
