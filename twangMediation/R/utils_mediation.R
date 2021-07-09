@@ -41,63 +41,63 @@ check_missing <- function(x) {
   if (any(sapply(x, is.na)))  {stop(paste('There are NA values in', name, sep = ' '))}
 }
 
-#' Check whether the variables in d1 are a subset
-#' of the variables in d2. The data sets must be of
-#' equal length.
-#' @param d1 a dataset parameter for is_subset function.
-#' @param d2 a dataset parameter for is_subset function.
-is_subset <- function(d1, d2) {
-  stopifnot(dim(d1)[1] == dim(d2)[1])
-  dim(setdiff(d1, d2))[2] == 0
-}
+# Check whether the variables in d1 are a subset
+# of the variables in d2. The data sets must be of
+# equal length.
+# @param d1 a dataset parameter for is_subset function.
+# @param d2 a dataset parameter for is_subset function.
+# is_subset <- function(d1, d2) {
+#   stopifnot(dim(d1)[1] == dim(d2)[1])
+#   dim(setdiff(d1, d2))[2] == 0
+# }
 
-#' Check whether the Xs in a `ps` object are a 
-#' subset of the Xs in a data frame or matrix,
-#' and vice versa
-#' @param x_vars variables in the outcome model
-#' @param y_vars variables in the mediation model
-#' @param raise_error a dichotomous judgement argument for check_subset_equal function
-check_subset_equal <- function(y_vars, x_vars, raise_error = TRUE) {
+# Check whether the Xs in a `ps` object are a 
+# subset of the Xs in a data frame or matrix,
+# and vice versa
+# @param x_vars variables in the outcome model
+# @param y_vars variables in the mediation model
+# @param raise_error a dichotomous judgement argument for check_subset_equal function
+# check_subset_equal <- function(y_vars, x_vars, raise_error = TRUE) {
+# 
+#   if (class(y_vars) == 'ps') {
+#     y_names <- y_vars$gbm.obj$var.names
+#     y_vars <- y_vars$data[y_names]
+#   }
+# 
+#   a_subset_m <- is_subset(y_vars, x_vars)
+#   m_subset_a <- is_subset(x_vars, y_vars)
+#   a_equal_m <- (a_subset_m == m_subset_a) && (a_subset_m == TRUE) && (m_subset_a == TRUE)
+# 
+#   if (raise_error && !m_subset_a) {
+#     stop('There are covariates in A that do not appear in M.')
+#   }
+#   return(a_equal_m)
+# }
 
-  if (class(y_vars) == 'ps') {
-    y_names <- y_vars$gbm.obj$var.names
-    y_vars <- y_vars$data[y_names]
-  }
-
-  a_subset_m <- is_subset(y_vars, x_vars)
-  m_subset_a <- is_subset(x_vars, y_vars)
-  a_equal_m <- (a_subset_m == m_subset_a) && (a_subset_m == TRUE) && (m_subset_a == TRUE)
-
-  if (raise_error && !m_subset_a) {
-    stop('There are covariates in A that do not appear in M.')
-  }
-  return(a_equal_m)
-}
-
-#' A little helper function that raises an error if the
-#' user provides weights, and they are not equal to the
-#' number of stopping methods
-#'
-#' Call this in the `weighted_mediation()` function.
-#'
-#' @param weights numeric
-#'   The weights
-#' @param stopping_methods
-#'   The stopping method or methods.
-#' @param weights_name
-#'   The name of the weights we are checking.
-#'   Default : 'total_effects_wts'
-check_equal_wts_stopping <- function(weights,
-                                     stopping_methods,
-                                     weights_name = 'total_effects_wts') {
-  n_cols_weights <- ncol(weights)
-  n_stopping_methods <- length(c(stopping_methods))
-  if (!(n_cols_weights == n_stopping_methods)) {
-    stop(paste("The number of columns in the", weights_name,
-               "must equal the number of stopping methods",
-               n_cols_weights, "!=", n_stopping_methods, sep = " "))
-  }
-}
+# A little helper function that raises an error if the
+# user provides weights, and they are not equal to the
+# number of stopping methods
+#
+# Call this in the `weighted_mediation()` function.
+#
+# @param weights numeric
+#   The weights
+# @param stopping_methods
+#   The stopping method or methods.
+# @param weights_name
+#   The name of the weights we are checking.
+#   Default : 'total_effects_wts'
+#check_equal_wts_stopping <- function(weights,
+#                                     stopping_methods,
+#                                     weights_name = 'total_effects_wts') {
+#  n_cols_weights <- ncol(weights)
+#  n_stopping_methods <- length(c(stopping_methods))
+#  if (!(n_cols_weights == n_stopping_methods)) {
+#    stop(paste("The number of columns in the", weights_name,
+#               "must equal the number of stopping methods",
+#               n_cols_weights, "!=", n_stopping_methods, sep = " "))
+#  }
+#}
 
 #' Calculate the actual effects
 #' 
