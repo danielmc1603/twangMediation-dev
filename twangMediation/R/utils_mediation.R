@@ -16,7 +16,6 @@
 #' @return numeric
 #'   The weighted mean of the data.
 #'
-#' @export
 weighted_mean <- function(x, weights, multiplier = NULL, na.rm = TRUE) {
   
   # if multiplier is NULL, then just multiply by 1
