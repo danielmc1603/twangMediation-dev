@@ -20,3 +20,6 @@ exposure groups both before and after weighting}
 \description{
 Compute the balance table for mediation object.
 }
+\seealso{
+\code{\link{print.bal.table.mediation}}, \code{\link{wgtmed}}
+}

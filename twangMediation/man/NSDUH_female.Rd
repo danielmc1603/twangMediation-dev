@@ -53,4 +53,7 @@ of 40293 women respondents to the 2017 & 2018 National Survey of Drug Use and He
 data(NSDUH_female)
 }
 }
+\seealso{
+\code{\link{wgtmed}}
+}
 \keyword{datasets}

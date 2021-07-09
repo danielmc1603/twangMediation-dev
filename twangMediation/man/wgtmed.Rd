@@ -157,7 +157,7 @@ Model A is used to estimate Pr(A=1 | X) where X is the vector of background cova
 data(NSDUH_female)
 TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
 data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
-# Obtain mediaiton estimates of interest
+# Obtain mediaition estimates of interest
 cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
    a_treatment="lgb_flag",
    y_outcome="cigmon",
@@ -171,11 +171,12 @@ cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
    ps_shrinkage=0.01,
    ps_stop.method="ks.mean",
    ps_verbose=FALSE)
-
 }
 }
 \seealso{
 \link{ps}
+
+\code{\link[twang]{ps}}
 }
 \keyword{models}
 \keyword{multivariate}

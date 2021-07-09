@@ -33,6 +33,7 @@
 #' @return item{NSDUH_female} {A sample data for demonstration}
 #' 
 #' @source \url{https://nsduhweb.rti.org/respweb/homepage.cfm}
+#' @seealso \code{\link{wgtmed}}
 #' @examples
 #' \dontrun{
 #' data(NSDUH_female)

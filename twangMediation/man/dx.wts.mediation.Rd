@@ -71,5 +71,5 @@ dx.wts.mediation(TEps,estimand = "ATT")
 
 }
 \seealso{
-\link{ps}
+\code{\link[twang]{ps}}
 }

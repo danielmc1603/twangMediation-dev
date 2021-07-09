@@ -40,7 +40,7 @@
 #' dx.wts.mediation(TEps,estimand = "ATT")
 #' }
 #'
-#' @seealso [ps]
+#' @seealso \code{\link[twang]{ps}}
 dx.wts.mediation <- function(x,
                    data,
                    estimand,

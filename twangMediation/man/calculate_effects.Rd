@@ -25,3 +25,6 @@ calculate_effects(w_11, w_00, w_10, w_01, y_outcome, sampw = NULL)
 \description{
 Calculate the actual effects
 }
+\seealso{
+\code{\link{wgtmed}}
+}

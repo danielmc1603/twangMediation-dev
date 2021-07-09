@@ -118,7 +118,7 @@
 #' data(NSDUH_female)
 #' TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
 #' data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
-#' # Obtain mediaiton estimates of interest
+#' # Obtain mediaition estimates of interest
 #' cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
 #'    a_treatment="lgb_flag",
 #'    y_outcome="cigmon",
@@ -132,8 +132,8 @@
 #'    ps_shrinkage=0.01,
 #'    ps_stop.method="ks.mean",
 #'    ps_verbose=FALSE)
-#' 
 #' }
+#' @seealso \code{\link[twang]{ps}}
 #' @export
 wgtmed <- function(formula.med,
                                data,

@@ -15,7 +15,6 @@
 #' 
 #' @return numeric
 #'   The weighted mean of the data.
-#'
 weighted_mean <- function(x, weights, multiplier = NULL, na.rm = TRUE) {
   
   # if multiplier is NULL, then just multiply by 1
@@ -109,6 +108,7 @@ check_missing <- function(x) {
 #' @param y_outcome The Y variable
 #' @param sampw Sampling weights, set to NULL by default.
 #' @return \item{res}{The actual effects}
+#' @seealso \code{\link{wgtmed}}
 calculate_effects <- function(w_11, w_00, w_10, w_01, y_outcome,sampw=NULL) {
   
   if (is.null(sampw)) {
@@ -158,6 +158,7 @@ calculate_effects <- function(w_11, w_00, w_10, w_01, y_outcome,sampw=NULL) {
 #' @param dd numeric
 #'   An element of a desc object from a ps or dx.wts object
 #' @return A desc object with swapped treatment and control
+#' @seealso \code{\link[twang]{ps}}, \code{\link{dx.wts.mediation}}
 swapTxCtrl <- function(dd){
    .tmp <- dd
    .tmp$ess.ctrl <- dd$ess.treat
