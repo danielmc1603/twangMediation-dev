@@ -30,10 +30,12 @@
 #'   \
 #'   ...
 #' }
+#' @return item{NSDUH_female} {A sample data for demonstration}
+#' 
 #' @source \url{https://nsduhweb.rti.org/respweb/homepage.cfm}
 #' @examples
 #' \dontrun{
-#' load(NSDUH_female)
+#' data(NSDUH_female)
 #' }
 "NSDUH_female"
 

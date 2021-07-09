@@ -32,6 +32,7 @@ weighted_mean <- function(x, weights, multiplier = NULL, na.rm = TRUE) {
 #'
 #' @param x numeric
 #'   The data set to check for NA or NAN values.
+#' @return Indicator of the existence of NA or NAN values
 check_missing <- function(x) {
   
   # grab the name of the variable
@@ -107,6 +108,7 @@ check_missing <- function(x) {
 #' @param w_01 The Y(0, M(1)) weights
 #' @param y_outcome The Y variable
 #' @param sampw Sampling weights, set to NULL by default.
+#' @return \item{res}{The actual effects}
 calculate_effects <- function(w_11, w_00, w_10, w_01, y_outcome,sampw=NULL) {
   
   if (is.null(sampw)) {
@@ -155,6 +157,7 @@ calculate_effects <- function(w_11, w_00, w_10, w_01, y_outcome,sampw=NULL) {
 #'
 #' @param dd numeric
 #'   An element of a desc object from a ps or dx.wts object
+#' @return A desc object with swapped treatment and control
 swapTxCtrl <- function(dd){
    .tmp <- dd
    .tmp$ess.ctrl <- dd$ess.treat

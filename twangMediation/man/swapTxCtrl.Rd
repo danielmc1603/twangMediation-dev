@@ -11,6 +11,9 @@ swapTxCtrl(dd)
 \item{dd}{numeric
 An element of a desc object from a ps or dx.wts object}
 }
+\value{
+A desc object with swapped treatment and control
+}
 \description{
 Call this in the \code{wgtmed()} function and the \code{bal.table.mediation()} function.
 }

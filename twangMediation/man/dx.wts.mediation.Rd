@@ -61,6 +61,15 @@ Creates a balance table that compares unweighted and weighted means and
 standard deviations, computes effect sizes, and KS statistics to assess the
 ability of the propensity scores to balance the treatment and control groups.
 }
+\examples{
+\dontrun{
+data(NSDUH_female)
+TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
+data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
+dx.wts.mediation(TEps,estimand = "ATT")
+}
+
+}
 \seealso{
 \link{ps}
 }

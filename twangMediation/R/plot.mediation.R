@@ -1,4 +1,4 @@
-globalVariables("A")
+globalVariables("A") # This gets rid of a warning related to variable "A"
 #' Plot the `mediation` object.
 #'
 #' @param x weighted_mediation object
@@ -28,7 +28,30 @@ globalVariables("A")
 #'   Choose either model A (1), model M0 (2), or model M1 (3) only. Argument is
 #'   not relevant for plots = `density' or `weights'.
 #' @param ... Additional arguments.
-#'
+#' @examples
+#' \dontrun{
+#' data(NSDUH_female)
+#' # Calculate total effect weighs
+#' TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
+#' data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
+#' # Obtain mediaiton estimates of interest
+#' cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
+#'    a_treatment="lgb_flag",
+#'    y_outcome="cigmon",
+#'    data=NSDUH_female,
+#'    method="ps",
+#'    total_effect_ps=TEps,
+#'    total_effect_stop_rule="ks.mean",
+#'    ps_version="gbm",
+#'    ps_n.trees=6000,
+#'    ps_interaction.depth=3,
+#'    ps_shrinkage=0.01,
+#'    ps_stop.method="ks.mean",
+#'    ps_verbose=FALSE)
+#' # Plot cig_med
+#' plot(cig_med)
+#' }
+#' @return The plot of a mediation object, can be different types.
 #' @method plot mediation
 #' @export
 plot.mediation <- function(x,

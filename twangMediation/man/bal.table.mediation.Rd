@@ -13,6 +13,10 @@ bal.table.mediation(x, digits = 3, ...)
 
 \item{...}{Additional arguments.}
 }
+\value{
+\item{res}{tables detailing covariate balance across
+exposure groups both before and after weighting}
+}
 \description{
 Compute the balance table for mediation object.
 }

@@ -40,6 +40,9 @@ pooling 2017 and 2018 survey years)}
 \usage{
 NSDUH_female
 }
+\value{
+item{NSDUH_female} {A sample data for demonstration}
+}
 \description{
 A dataset containing the substance use condition and sexual orientation
 of 40293 women respondents to the 2017 & 2018 National Survey of Drug Use and Health.
@@ -47,7 +50,7 @@ of 40293 women respondents to the 2017 & 2018 National Survey of Drug Use and He
 }
 \examples{
 \dontrun{
-load(NSDUH_female)
+data(NSDUH_female)
 }
 }
 \keyword{datasets}

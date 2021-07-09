@@ -152,6 +152,28 @@ For users comfortable with \link{ps}, any options prefaced with
 \code{ps_} are passed directly to the \code{ps()} function.
 Model A is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in \code{formula.med}. If \code{method} equals \code{"ps"} model A is fit using the \link{twang} \code{ps} function with estimand= \code{"ATE"}. If \code{method} equals \code{"logistic"} then model A is fit using logistic regression. If \code{method} equals \code{"crossval"} then \link{gbm} using cross-validation is used to estimate model A. Because X might include variables not used to estimate the user-provided total effect weights, model A is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the cross-world weights and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model A will match the model the user used to obtain the provided total effect weights.
 }
+\examples{
+\dontrun{
+data(NSDUH_female)
+TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
+data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
+# Obtain mediaiton estimates of interest
+cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
+   a_treatment="lgb_flag",
+   y_outcome="cigmon",
+   data=NSDUH_female,
+   method="ps",
+   total_effect_ps=TEps,
+   total_effect_stop_rule="ks.mean",
+   ps_version="gbm",
+   ps_n.trees=6000,
+   ps_interaction.depth=3,
+   ps_shrinkage=0.01,
+   ps_stop.method="ks.mean",
+   ps_verbose=FALSE)
+
+}
+}
 \seealso{
 \link{ps}
 }

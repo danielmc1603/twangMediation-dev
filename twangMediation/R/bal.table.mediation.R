@@ -3,7 +3,31 @@
 #' @param x A `mediation` object 
 #' @param digits Number of digits to round to. Dafault: 3
 #' @param ... Additional arguments.
-
+#' @examles
+#' \dontrun{
+#' data(NSDUH_female)
+#' # Calculate total effect weighs
+#' TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
+#' data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
+#' # Obtain mediaiton estimates of interest
+#' cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
+#'    a_treatment="lgb_flag",
+#'    y_outcome="cigmon",
+#'    data=NSDUH_female,
+#'    method="ps",
+#'    total_effect_ps=TEps,
+#'    total_effect_stop_rule="ks.mean",
+#'    ps_version="gbm",
+#'    ps_n.trees=6000,
+#'    ps_interaction.depth=3,
+#'    ps_shrinkage=0.01,
+#'    ps_stop.method="ks.mean",
+#'    ps_verbose=FALSE)
+#' # Compute the balance table
+#' bal.table.mediation(cig_med)
+#' }
+#' @return \item{res}{tables detailing covariate balance across
+#'  exposure groups both before and after weighting}
 #' @export
 bal.table.mediation <- 
 function(x,digits=3, ...) 
