@@ -27,7 +27,7 @@ Authors@R:
            role = c("aut"),
            email = "haoyu.zhou@temple.edu"))
 Maintainer: Dan McCaffrey <dmccaffrey@ets.org>
-Description: The twangMediation package estimates natural direct and indirect effects for mediation analysis. It uses weighting where the weights are functions of estimates of the probability of exposure or treatment assignment. Estimation of probabilities can use generalized boosting or logistic regression using the wgtmed function. Additional functions provide diagnostics of the model fit and weights. The vignette provides details and examples.
+Description: Provides functions for estimating natural direct and indirect effects for mediation analysis. It uses weighting where the weights are functions of estimates of the probability of exposure or treatment assignment. Estimation of probabilities can use generalized boosting or logistic regression using the wgtmed function. Additional functions provide diagnostics of the model fit and weights. The vignette provides details and examples.
 Depends:
     R (>= 2.10)
 Imports:
