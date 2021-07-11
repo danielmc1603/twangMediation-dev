@@ -94,6 +94,10 @@ plot.mediation <- function(x,
 	names(x$model_m1$desc)  <- c("unw","logistic")
 	x$model_m1$desc[[1]]$bal.tab$results <- bala$balance_m1[grep("unw",rownames(bala$balance_m1)),1:8]
 	x$model_m1$desc[[2]]$bal.tab$results <- bala$balance_m1[grep("logistic",rownames(bala$balance_m1)),1:8]
+
+        attr(x$model_a, "class") <- "ps"
+        attr(x$model_m0, "class") <- "ps"
+        attr(x$model_m1, "class") <- "ps"
     }
     if(x$method=="crossval") {
        best.iter.a 		<- gbm::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
@@ -124,6 +128,10 @@ plot.mediation <- function(x,
 	names(x$model_m1$desc)  <- c("unw","crossval")
 	x$model_m1$desc[[1]]$bal.tab$results <- bala$balance_m1[grep("unw",rownames(bala$balance_m1)),1:8]
 	x$model_m1$desc[[2]]$bal.tab$results <- bala$balance_m1[grep("crossval",rownames(bala$balance_m1)),1:8]
+
+        attr(x$model_a, "class") <- "ps"
+        attr(x$model_m0, "class") <- "ps"
+        attr(x$model_m1, "class") <- "ps"
     }
     if(x$method=="ps") {
 	  ## in model m0 the ps function estimate the probability of 1 - tx but we want 
@@ -136,9 +144,9 @@ plot.mediation <- function(x,
     model_m1 <- x$model_m1
     model_names <- c('Model A', 'Model M0', 'Model M1')
     
-    plot1 <- do.call(diag.plot.color, c(list(model_a), args))
-    plot2 <- do.call(diag.plot.color, c(list(model_m0), args))
-    plot3 <- do.call(diag.plot.color, c(list(model_m1), args))
+    plot1 <- do.call(twangMediation:::diag.plot.color, c(list(model_a), args))
+    plot2 <- do.call(twangMediation:::diag.plot.color, c(list(model_m0), args))
+    plot3 <- do.call(twangMediation:::diag.plot.color, c(list(model_m1), args))
 
     plot1 <- update(plot1, ylab.right = model_names)
     if (is.null(model_subset)) {
@@ -164,6 +172,10 @@ plot.mediation <- function(x,
   }
 
   if(plots=='density') {
+ 
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(suppressWarnings(par(oldpar)), add=TRUE)
+
   # we separate out the mediators that are factors and those that aren't
   mediator_is_factor <- x$mediator_names %in% names(Filter(is.factor, x$data[,x$mediator_names, drop=F]))
   
@@ -183,9 +195,6 @@ plot.mediation <- function(x,
 
   genplot <- function(which_nie){
 
-     oldpar <- par(no.readonly = TRUE)   
-     on.exit(par(oldpar))            
-     
      if(which_nie == 1){
         # Plot to check that the weighted counterfactual density of mediator from the treatment sample 
         # matches the estimated population density of the mediator under control or M(0)  
@@ -361,6 +370,10 @@ plot.mediation <- function(x,
   w_11 <- attr(x,'w_11')
   w_01 <- attr(x,'w_01')
   w_10 <- attr(x,'w_10')
+
+
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(suppressWarnings(par(oldpar)), add=TRUE)
 
   cask <- par()$ask
   for (i in whichmethods) {
