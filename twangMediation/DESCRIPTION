@@ -26,6 +26,12 @@ Authors@R:
            family = "Zhou",
            role = c("aut"),
            email = "haoyu.zhou@temple.edu"))
+Author: Dan McCaffrey [aut, cre],
+  Katherine Castellano [aut],
+  Donna Coffman [aut],
+  Brian Vegetabile [aut],
+  Megan Schuler [aut],
+  Haoyu Zhou [aut]
 Maintainer: Dan McCaffrey <dmccaffrey@ets.org>
 Description: Provides functions for estimating natural direct and indirect effects for mediation analysis. It uses weighting where the weights are functions of estimates of the probability of exposure or treatment assignment (Hong, G. (2010). Ratio of mediator probability weighting for estimating natural direct and indirect effects. ASA Proceedings of the Joint Statistical Meetings, pp. 2401-2415, American Statistical Association (Alexandria, VA); Huber, M. (2014). Identifying Causal Mechanisms (Primarily) Based on Inverse Probability Weighting. Journal of Applied Econometrics, 29 (6), 920-943). Estimation of probabilities can use generalized boosting or logistic regression using the wgtmed function. Additional functions provide diagnostics of the model fit and weights. The vignette provides details and examples.
 Depends:
