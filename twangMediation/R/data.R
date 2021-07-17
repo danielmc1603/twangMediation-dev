@@ -41,3 +41,43 @@
 "NSDUH_female"
 
 
+# #' Simulate data for twangMediation
+#'
+#' A simulate dataset for demonstrating the functions in the twangMediation package
+#' .
+#'
+#' @format A data frame with 2000 rows and 20 variables:
+#' \describe{
+#'   \item{w0}{Constant equal to 1}
+#'   \item{1}{Simulatad dichotomous covariate}
+#'   \item{2}{Simulated continuous covariate}
+#'   \item{3}{Simulatad dichotomous covariate}
+#'   \item{4}{Simulated continuous covariate}
+#'   \item{5}{Simulatad dichotomous covariate}
+#'   \item{6}{Simulatad dichotomous covariate}
+#'   \item{7}{Simulated continuous covariate}
+#'   \item{8}{Simulatad dichotomous covariate}
+#'   \item{9}{Simulatad dichotomous covariate}
+#'   \item{10}{Simulated continuous covariate}
+#'   \item{11}{Simulated continuous covariate}
+#'   \item{12}{Simulated continuous covariate}
+#'   \item{13}{Simulatad dichotomous covariate}
+#'   \item{14}{Simulatad dichotomous covariate}
+#'   \item{15}{Simulated continuous covariate}
+#'   \item{A}{Simulated dichotomous exposure indicator}
+#'   \item{Y}{Simulated continuous outcome}
+#'   \item{M}{Simulated mediator that has 11 unique values}
+#'   \{te.wgt}{Estimated inverse probability weight, estimated using GBM via the twang ps function}
+#'   \
+#'   ...
+#' }
+#' @return item{tMdat} {A sample of simulated data for demonstration}
+#' 
+#' @seealso \code{\link{wgtmed}}
+#' @examples
+#' \dontrun{
+#' data(tMdat)
+#' }
+"tMdat"
+
+
