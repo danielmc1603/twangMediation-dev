@@ -1,0 +1,7 @@
+\documentclass{article}
+\usepackage{pdfpages}
+%\VignetteIndexEntry{A tutorial for conducting causal mediation analysis with the twangMediation package}
+
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{twangMediation.pdf}
+\end{document}

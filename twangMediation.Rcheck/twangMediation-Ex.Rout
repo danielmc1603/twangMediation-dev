@@ -1,0 +1,815 @@
+
+R version 4.1.0 (2021-05-18) -- "Camp Pontanezen"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "twangMediation"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> options(pager = "console")
+> base::assign(".ExTimings", "twangMediation-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('twangMediation')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("NSDUH_female")
+> ### * NSDUH_female
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: NSDUH_female
+> ### Title: A dataset containing the substance use condition and sexual
+> ###   orientation of 40293 women respondents to the 2017 & 2018 National
+> ###   Survey of Drug Use and Health.
+> ### Aliases: NSDUH_female
+> ### Keywords: datasets
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D data(NSDUH_female)
+> ## End(Not run)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("NSDUH_female", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("bal.table.mediation")
+> ### * bal.table.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: bal.table.mediation
+> ### Title: Compute the balance table for mediation object.
+> ### Aliases: bal.table.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "logistic"
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> bal.table.mediation(fit.es.max)
+**********************************************************
+Notes: 
+A. Model A estimates the probability of exposure given 
+the covariates specified in wgtmed. The results are used 
+by wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. 
+They are not used to estimate the total effect. 
+B. Model M0 is used for NDE_0 and NIE_1 effects. 
+ct.sd is used for the denominator of std.eff.sz. 
+C. Model M1 is used for NDE_1 and NIE_0 effects.
+tx.sd is used for the denominator of std.eff.sz. 
+See the bal.table.mediation help file for more information. 
+**********************************************************
+
+$balance_a 
+             tx.mn tx.sd  ct.mn ct.sd std.eff.sz   stat     p    ks
+unw.w1      -0.256 0.949  0.089 1.119     -0.332 -3.652 0.000 0.187
+unw.w2      -0.193 0.848  0.282 1.076     -0.484 -5.353 0.000 0.275
+unw.w3       0.040 1.199 -0.057 0.763      0.094  1.107 0.269 0.176
+logistic.w1 -0.154 0.951 -0.162 1.130      0.007  0.074 0.941 0.079
+logistic.w2 -0.054 0.847 -0.077 1.115      0.024  0.235 0.814 0.120
+logistic.w3 -0.024 1.212 -0.046 0.735      0.022  0.253 0.800 0.175
+
+$balance_m0 
+             tx.mn tx.sd  ct.mn ct.sd std.eff.sz   stat     p    ks
+unw.M        0.975 1.282  1.560 1.650     -0.354 -4.318 0.000 0.164
+unw.w1      -0.256 0.949  0.089 1.119     -0.309 -3.652 0.000 0.187
+unw.w2      -0.193 0.848  0.282 1.076     -0.441 -5.353 0.000 0.275
+unw.w3       0.040 1.199 -0.057 0.763      0.128  1.107 0.269 0.176
+logistic.M   2.024 2.278  1.560 1.650      0.281  1.236 0.217 0.118
+logistic.w1 -0.074 0.944  0.089 1.119     -0.146 -1.412 0.159 0.143
+logistic.w2  0.118 0.843  0.282 1.076     -0.152 -1.461 0.145 0.139
+logistic.w3 -0.166 1.239 -0.057 0.763     -0.142 -0.775 0.438 0.161
+
+$balance_m1 
+             tx.mn tx.sd  ct.mn ct.sd std.eff.sz   stat     p    ks
+unw.M        0.975 1.282  1.560 1.650     -0.456 -4.318 0.000 0.164
+unw.w1      -0.256 0.949  0.089 1.119     -0.364 -3.652 0.000 0.187
+unw.w2      -0.193 0.848  0.282 1.076     -0.560 -5.353 0.000 0.275
+unw.w3       0.040 1.199 -0.057 0.763      0.081  1.107 0.269 0.176
+logistic.M   0.975 1.282  1.017 1.213     -0.033 -0.315 0.753 0.038
+logistic.w1 -0.256 0.949 -0.237 0.987     -0.021 -0.187 0.852 0.068
+logistic.w2 -0.193 0.848 -0.440 1.135      0.291  1.757 0.079 0.210
+logistic.w3  0.040 1.199 -0.081 0.745      0.101  1.201 0.230 0.212
+
+$check_counterfactual_nie_1 
+         cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p
+unw           0.975      1.282     1.560     1.650     -0.395 -4.318 0.000
+logistic      2.447      2.617     1.647     1.702      0.541  1.551 0.122
+            ks
+unw      0.164
+logistic 0.159
+
+$check_counterfactual_nie_0 
+         cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p
+unw           1.560       1.65     0.975     1.282      0.395  4.318 0.000
+logistic      0.946       1.15     0.950     1.240     -0.002 -0.027 0.978
+            ks
+unw      0.164
+logistic 0.015
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("bal.table.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("desc.effects")
+> ### * desc.effects
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: desc.effects
+> ### Title: Describe the effects
+> ### Aliases: desc.effects
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> desc.effects(fit.es.max)
+$es.max_effects
+           effect   std.err     ci.min     ci.max
+TE    -0.62794625 0.1919791 -1.0042184 -0.2516741
+NDE_0 -0.12464768 0.2487980 -0.6122828  0.3629875
+NIE_1 -0.50329857 0.1393757 -0.7764700 -0.2301272
+NDE_1  0.02569534 0.1779620 -0.3231038  0.3744945
+NIE_0 -0.65364159 0.1500452 -0.9477247 -0.3595584
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("desc.effects", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("desc.effects.mediation")
+> ### * desc.effects.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: desc.effects.mediation
+> ### Title: Describe the effects from a mediation object
+> ### Aliases: desc.effects.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> desc.effects(fit.es.max)
+$es.max_effects
+           effect   std.err     ci.min     ci.max
+TE    -0.62794625 0.1919791 -1.0042184 -0.2516741
+NDE_0 -0.12464768 0.2487980 -0.6122828  0.3629875
+NIE_1 -0.50329857 0.1393757 -0.7764700 -0.2301272
+NDE_1  0.02569534 0.1779620 -0.3231038  0.3744945
+NIE_0 -0.65364159 0.1500452 -0.9477247 -0.3595584
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("desc.effects.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("dx.wts.mediation")
+> ### * dx.wts.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: dx.wts.mediation
+> ### Title: Compute diagnostics assessing covariates balance.
+> ### Aliases: dx.wts.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> ## dx.wts.mediation is used internally by bal.table.mediation,
+> ##   print.mediation, and summary.mediation
+> 
+> summary(fit.es.max)
+------------------------------------------------------------------------------------------
+95% Confidence Intervals for Effect Estimates: es.max_effects 
+------------------------------------------------------------------------------------------
+      effect std.err ci.min ci.max
+TE    -0.628   0.192 -1.004 -0.252
+NDE_0 -0.125   0.249 -0.612  0.363
+NIE_1 -0.503   0.139 -0.776 -0.230
+NDE_1  0.026   0.178 -0.323  0.374
+NIE_0 -0.654   0.150 -0.948 -0.360
+------------------------------------------------------------------------------------------
+ESS for Total Effect and Cross-World Weights for estimating four population means used
+to estimate the total effect and the natural direct and indirect effects
+------------------------------------------------------------------------------------------
+            E[Y(0, M(0))] E[Y(1, M(1))] E[Y(1, M(0))] E[Y(0, M(1))]
+Sample Size       216.000       284.000        284.00       216.000
+es.max            172.099       223.621        168.93       122.286
+------------------------------------------------------------------------------------------
+Balance Summary Tables: model_a 
+Note: Model A is used for all effects: NDE_0, NDE_1, NIE_0, and NIE_1.
+------------------------------------------------------------------------------------------
+       n.treat n.ctrl ess.treat ess.ctrl max.es mean.es max.ks max.ks.p mean.ks
+unw        284    216   284.000  216.000  0.484   0.304  0.275       NA   0.213
+es.max     284    216   253.402  172.226  0.162   0.108  0.105       NA   0.088
+       iter
+unw      NA
+es.max  632
+------------------------------------------------------------------------------------------
+Balance Summary Tables: model_m0 
+Note: Model M0 is used for NDE_0 and NIE_1 effects.
+------------------------------------------------------------------------------------------
+       n.treat n.ctrl ess.treat ess.ctrl max.es mean.es max.ks max.ks.p mean.ks
+unw        284    216   284.000      216  0.441   0.308  0.275       NA   0.201
+es.max     284    216   103.191      216  0.165   0.103  0.127       NA   0.078
+       iter
+unw      NA
+es.max 1310
+------------------------------------------------------------------------------------------
+Balance Summary Tables: model_m1 
+Note: Model M1 is used for NDE_1 and NIE_0 effects.
+------------------------------------------------------------------------------------------
+       n.treat n.ctrl ess.treat ess.ctrl max.es mean.es max.ks max.ks.p mean.ks
+unw        284    216       284  216.000  0.560   0.365  0.275       NA   0.201
+es.max     284    216       284   79.643  0.097   0.087  0.115       NA   0.084
+       iter
+unw      NA
+es.max 1397
+------------------------------------------------------------------------------------------
+Mediator Distribution Check: check_counterfactual_nie_1 
+------------------------------------------------------------------------------------------
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p    ks
+unw         0.975      1.282     1.560     1.650     -0.395 -4.318 0.000 0.164
+es.max      1.545      1.677     1.647     1.702     -0.069 -0.462 0.645 0.051
+------------------------------------------------------------------------------------------
+Mediator Distribution Check: check_counterfactual_nie_0 
+------------------------------------------------------------------------------------------
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz  stat     p    ks
+unw         1.560      1.650     0.975     1.282      0.395 4.318 0.000 0.164
+es.max      1.041      1.268     0.950     1.240      0.062 0.737 0.461 0.044
+------------------------------------------------------------------------------------------
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("dx.wts.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("plot.mediation")
+> ### * plot.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: plot.mediation
+> ### Title: Plot the 'mediation' object.
+> ### Aliases: plot.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> plot(fit.es.max, plots="optimize")
+> plot(fit.es.max, plots="boxplot")
+> plot(fit.es.max, plots="asmd")
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("plot.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("print.bal.table.mediation")
+> ### * print.bal.table.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: print.bal.table.mediation
+> ### Title: Default print statement for 'mediation' class
+> ### Aliases: print.bal.table.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> bal.table.mediation(fit.es.max)
+**********************************************************
+Notes: 
+A. Model A estimates the probability of exposure given 
+the covariates specified in wgtmed. The results are used 
+by wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. 
+They are not used to estimate the total effect. 
+B. Model M0 is used for NDE_0 and NIE_1 effects. 
+ct.sd is used for the denominator of std.eff.sz. 
+C. Model M1 is used for NDE_1 and NIE_0 effects.
+tx.sd is used for the denominator of std.eff.sz. 
+See the bal.table.mediation help file for more information. 
+**********************************************************
+
+$balance_a 
+           tx.mn tx.sd  ct.mn ct.sd std.eff.sz   stat     p    ks
+unw.w1    -0.256 0.949  0.089 1.119     -0.332 -3.652 0.000 0.187
+unw.w2    -0.193 0.848  0.282 1.076     -0.484 -5.353 0.000 0.275
+unw.w3     0.040 1.199 -0.057 0.763      0.094  1.107 0.269 0.176
+es.max.w1 -0.212 0.961 -0.052 1.059     -0.154 -1.677 0.094 0.105
+es.max.w2 -0.083 0.902  0.075 1.008     -0.162 -1.735 0.083 0.085
+es.max.w3  0.010 1.074  0.018 0.831     -0.008 -0.083 0.934 0.074
+
+$balance_m0 
+           tx.mn tx.sd  ct.mn ct.sd std.eff.sz   stat     p    ks
+unw.M      0.975 1.282  1.560 1.650     -0.354 -4.318 0.000 0.164
+unw.w1    -0.256 0.949  0.089 1.119     -0.309 -3.652 0.000 0.187
+unw.w2    -0.193 0.848  0.282 1.076     -0.441 -5.353 0.000 0.275
+unw.w3     0.040 1.199 -0.057 0.763      0.128  1.107 0.269 0.176
+es.max.M   1.403 1.521  1.560 1.650     -0.095 -0.772 0.440 0.050
+es.max.w1 -0.096 0.930  0.089 1.119     -0.165 -1.564 0.118 0.127
+es.max.w2  0.175 0.953  0.282 1.076     -0.099 -0.874 0.383 0.079
+es.max.w3 -0.019 0.787 -0.057 0.763      0.050  0.455 0.649 0.057
+
+$balance_m1 
+           tx.mn tx.sd  ct.mn ct.sd std.eff.sz   stat     p    ks
+unw.M      0.975 1.282  1.560 1.650     -0.456 -4.318 0.000 0.164
+unw.w1    -0.256 0.949  0.089 1.119     -0.364 -3.652 0.000 0.187
+unw.w2    -0.193 0.848  0.282 1.076     -0.560 -5.353 0.000 0.275
+unw.w3     0.040 1.199 -0.057 0.763      0.081  1.107 0.269 0.176
+es.max.M   0.975 1.282  1.097 1.315     -0.095 -0.858 0.391 0.056
+es.max.w1 -0.256 0.949 -0.164 0.875     -0.097 -0.900 0.369 0.084
+es.max.w2 -0.193 0.848 -0.111 0.871     -0.097 -0.922 0.357 0.082
+es.max.w3  0.040 1.199  0.108 0.888     -0.056 -0.482 0.630 0.115
+
+$check_counterfactual_nie_1 
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p    ks
+unw         0.975      1.282     1.560     1.650     -0.395 -4.318 0.000 0.164
+es.max      1.545      1.677     1.647     1.702     -0.069 -0.462 0.645 0.051
+
+$check_counterfactual_nie_0 
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz  stat     p    ks
+unw         1.560      1.650     0.975     1.282      0.395 4.318 0.000 0.164
+es.max      1.041      1.268     0.950     1.240      0.062 0.737 0.461 0.044
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("print.bal.table.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("print.mediation")
+> ### * print.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: print.mediation
+> ### Title: Default print statement for 'mediation' class
+> ### Aliases: print.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> print(fit.es.max)
+$estimates_table
+$estimates_table$es.max_effects
+                 estimate
+TE            -0.62794625
+NDE_0         -0.12464768
+NIE_1         -0.50329857
+NDE_1          0.02569534
+NIE_0         -0.65364159
+E[Y(0), M(0)] -0.43925819
+E[Y(1), M(1)] -1.06720444
+E[Y(1), M(0)] -0.56390587
+E[Y(0), M(1)] -1.09289978
+
+
+$ps_summary_tables
+$ps_summary_tables$model_a
+       n.treat n.ctrl ess.treat ess.ctrl    max.es   mean.es    max.ks max.ks.p
+unw        284    216  284.0000 216.0000 0.4842464 0.3036667 0.2753652       NA
+es.max     284    216  253.4016 172.2264 0.1615029 0.1077914 0.1046417       NA
+          mean.ks iter
+unw    0.21289776   NA
+es.max 0.08797784  632
+
+$ps_summary_tables$model_m0
+       n.treat n.ctrl ess.treat ess.ctrl    max.es   mean.es    max.ks max.ks.p
+unw        284    216  284.0000      216 0.4414952 0.3081039 0.2753652       NA
+es.max     284    216  103.1913      216 0.1654276 0.1025313 0.1271494       NA
+          mean.ks iter
+unw    0.20059011   NA
+es.max 0.07821732 1310
+
+$ps_summary_tables$model_m1
+       n.treat n.ctrl ess.treat  ess.ctrl     max.es    mean.es    max.ks
+unw        284    216       284 216.00000 0.56004910 0.36540975 0.2753652
+es.max     284    216       284  79.64278 0.09740253 0.08661296 0.1153882
+       max.ks.p    mean.ks iter
+unw          NA 0.20059011   NA
+es.max       NA 0.08449619 1397
+
+
+$mediator_distribution
+$mediator_distribution$check_counterfactual_nie_1
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p    ks
+unw         0.975      1.282     1.560     1.650     -0.395 -4.318 0.000 0.164
+es.max      1.545      1.677     1.647     1.702     -0.069 -0.462 0.645 0.051
+
+$mediator_distribution$check_counterfactual_nie_0
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz  stat     p    ks
+unw         1.560      1.650     0.975     1.282      0.395 4.318 0.000 0.164
+es.max      1.041      1.268     0.950     1.240      0.062 0.737 0.461 0.044
+
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("print.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("summary.mediation")
+> ### * summary.mediation
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: summary.mediation
+> ### Title: Displays a useful description of a 'mediation' object.
+> ### Aliases: summary.mediation
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> ## The tMdat data contains the following variables
+> ## See ?tMdat for details
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> summary(fit.es.max)
+------------------------------------------------------------------------------------------
+95% Confidence Intervals for Effect Estimates: es.max_effects 
+------------------------------------------------------------------------------------------
+      effect std.err ci.min ci.max
+TE    -0.628   0.192 -1.004 -0.252
+NDE_0 -0.125   0.249 -0.612  0.363
+NIE_1 -0.503   0.139 -0.776 -0.230
+NDE_1  0.026   0.178 -0.323  0.374
+NIE_0 -0.654   0.150 -0.948 -0.360
+------------------------------------------------------------------------------------------
+ESS for Total Effect and Cross-World Weights for estimating four population means used
+to estimate the total effect and the natural direct and indirect effects
+------------------------------------------------------------------------------------------
+            E[Y(0, M(0))] E[Y(1, M(1))] E[Y(1, M(0))] E[Y(0, M(1))]
+Sample Size       216.000       284.000        284.00       216.000
+es.max            172.099       223.621        168.93       122.286
+------------------------------------------------------------------------------------------
+Balance Summary Tables: model_a 
+Note: Model A is used for all effects: NDE_0, NDE_1, NIE_0, and NIE_1.
+------------------------------------------------------------------------------------------
+       n.treat n.ctrl ess.treat ess.ctrl max.es mean.es max.ks max.ks.p mean.ks
+unw        284    216   284.000  216.000  0.484   0.304  0.275       NA   0.213
+es.max     284    216   253.402  172.226  0.162   0.108  0.105       NA   0.088
+       iter
+unw      NA
+es.max  632
+------------------------------------------------------------------------------------------
+Balance Summary Tables: model_m0 
+Note: Model M0 is used for NDE_0 and NIE_1 effects.
+------------------------------------------------------------------------------------------
+       n.treat n.ctrl ess.treat ess.ctrl max.es mean.es max.ks max.ks.p mean.ks
+unw        284    216   284.000      216  0.441   0.308  0.275       NA   0.201
+es.max     284    216   103.191      216  0.165   0.103  0.127       NA   0.078
+       iter
+unw      NA
+es.max 1310
+------------------------------------------------------------------------------------------
+Balance Summary Tables: model_m1 
+Note: Model M1 is used for NDE_1 and NIE_0 effects.
+------------------------------------------------------------------------------------------
+       n.treat n.ctrl ess.treat ess.ctrl max.es mean.es max.ks max.ks.p mean.ks
+unw        284    216       284  216.000  0.560   0.365  0.275       NA   0.201
+es.max     284    216       284   79.643  0.097   0.087  0.115       NA   0.084
+       iter
+unw      NA
+es.max 1397
+------------------------------------------------------------------------------------------
+Mediator Distribution Check: check_counterfactual_nie_1 
+------------------------------------------------------------------------------------------
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p    ks
+unw         0.975      1.282     1.560     1.650     -0.395 -4.318 0.000 0.164
+es.max      1.545      1.677     1.647     1.702     -0.069 -0.462 0.645 0.051
+------------------------------------------------------------------------------------------
+Mediator Distribution Check: check_counterfactual_nie_0 
+------------------------------------------------------------------------------------------
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz  stat     p    ks
+unw         1.560      1.650     0.975     1.282      0.395 4.318 0.000 0.164
+es.max      1.041      1.268     0.950     1.240      0.062 0.737 0.461 0.044
+------------------------------------------------------------------------------------------
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("summary.mediation", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("tMdat")
+> ### * tMdat
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: tMdat
+> ### Title: Simulated data for twangMediation
+> ### Aliases: tMdat
+> ### Keywords: datasets
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D data(tMdat)
+> ## End(Not run)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("tMdat", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("wgtmed")
+> ### * wgtmed
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: wgtmed
+> ### Title: Weighted mediation analysis.
+> ### Aliases: wgtmed
+> ### Keywords: models multivariate
+> 
+> ### ** Examples
+> 
+> data("tMdat")
+> 
+> ## tMdat is small simulated data set included in twangMediation for 
+> ## demonstrating the functions. See ?tMdat for details
+> 
+> head(tMdat)
+          w1           w2         w3 A M          Y   te.wgt
+1  0.6233085  0.718938511  0.5552811 1 0 -1.8344171 1.470304
+2 -0.9134357 -0.008867281 -0.9700279 1 0 -1.0535863 1.206305
+3 -1.0914396  0.793977097  0.6767810 0 2  1.1281309 1.287269
+4 -0.7203752 -2.004333775 -0.1561108 1 1 -0.4460777 1.336600
+5  1.3848255  0.180968486 -0.3786146 0 2  0.2158907 1.407820
+6 -0.1967889  0.193384080 -0.4340304 1 0 -1.2865618 1.333302
+> 
+> ## The tMdat data contains the following variables:
+> ##   w1, w2, w3 -- Simulatad covariates
+> ##   A   -- Simulated dichotomous exposure indicator
+> ##   M   -- Simulated discrete mediator (11 values)
+> ##   Y   -- Simulated continuous outcome
+> ##   te.wgt -- Estimated inverse probability weight, estimated using 
+> ##             GBM via the twang ps function
+> 
+> fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
++                       data = tMdat,
++                       a_treatment = "A",
++                       y_outcome = "Y",
++                       total_effect_wts = tMdat$te.wgt,
++                       method = "ps",
++                       ps_n.trees=1500,
++                       ps_shrinkage=0.01,
++                       ps_stop.method=c("es.max")
++                       )
+Warning in wgtmed(M ~ w1 + w2 + w3, data = tMdat, a_treatment = "A", y_outcome = "Y",  :
+  Reminder to check that all confounders used for treatment (to obtain supplied
+total effect weights) were included in confounders for the mediation model
+> 
+> fit.es.max
+$estimates_table
+$estimates_table$es.max_effects
+                 estimate
+TE            -0.62794625
+NDE_0         -0.12464768
+NIE_1         -0.50329857
+NDE_1          0.02569534
+NIE_0         -0.65364159
+E[Y(0), M(0)] -0.43925819
+E[Y(1), M(1)] -1.06720444
+E[Y(1), M(0)] -0.56390587
+E[Y(0), M(1)] -1.09289978
+
+
+$ps_summary_tables
+$ps_summary_tables$model_a
+       n.treat n.ctrl ess.treat ess.ctrl    max.es   mean.es    max.ks max.ks.p
+unw        284    216  284.0000 216.0000 0.4842464 0.3036667 0.2753652       NA
+es.max     284    216  253.4016 172.2264 0.1615029 0.1077914 0.1046417       NA
+          mean.ks iter
+unw    0.21289776   NA
+es.max 0.08797784  632
+
+$ps_summary_tables$model_m0
+       n.treat n.ctrl ess.treat ess.ctrl    max.es   mean.es    max.ks max.ks.p
+unw        284    216  284.0000      216 0.4414952 0.3081039 0.2753652       NA
+es.max     284    216  103.1913      216 0.1654276 0.1025313 0.1271494       NA
+          mean.ks iter
+unw    0.20059011   NA
+es.max 0.07821732 1310
+
+$ps_summary_tables$model_m1
+       n.treat n.ctrl ess.treat  ess.ctrl     max.es    mean.es    max.ks
+unw        284    216       284 216.00000 0.56004910 0.36540975 0.2753652
+es.max     284    216       284  79.64278 0.09740253 0.08661296 0.1153882
+       max.ks.p    mean.ks iter
+unw          NA 0.20059011   NA
+es.max       NA 0.08449619 1397
+
+
+$mediator_distribution
+$mediator_distribution$check_counterfactual_nie_1
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz   stat     p    ks
+unw         0.975      1.282     1.560     1.650     -0.395 -4.318 0.000 0.164
+es.max      1.545      1.677     1.647     1.702     -0.069 -0.462 0.645 0.051
+
+$mediator_distribution$check_counterfactual_nie_0
+       cntfact.mn cntfact.sd target.mn target.sd std.eff.sz  stat     p    ks
+unw         1.560      1.650     0.975     1.282      0.395 4.318 0.000 0.164
+es.max      1.041      1.268     0.950     1.240      0.062 0.737 0.461 0.044
+
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("wgtmed", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  25.16 0.77 27.97 NA NA 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')
