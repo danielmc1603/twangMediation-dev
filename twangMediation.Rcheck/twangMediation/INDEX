@@ -1,0 +1,27 @@
+NSDUH_female            A dataset containing the substance use
+                        condition and sexual orientation of 40293 women
+                        respondents to the 2017 & 2018 National Survey
+                        of Drug Use and Health.
+bal.table.mediation     Compute the balance table for mediation object.
+calculate_effects       Calculate the actual effects
+check_missing           Check vector for NA or NAN values.
+desc.effects            Describe the effects
+desc.effects.mediation
+                        Describe the effects from a mediation object
+dx.wts.mediation        Compute diagnostics assessing covariates
+                        balance.
+plot.mediation          Plot the 'mediation' object.
+print.bal.table.mediation
+                        Default print statement for 'mediation' class
+print.mediation         Default print statement for 'mediation' class
+summary.mediation       Displays a useful description of a 'mediation'
+                        object.
+swapTxCtrl              Auxiliary function to swap treatment and
+                        control in one element of a desc object from a
+                        ps object or dx.wts object
+tMdat                   Simulated data for twangMediation
+twangMediation-package
+                        twangMediation: Twang Causal Mediation Modeling
+                        via Weighting
+weighted_mean           Calculate a weighted mean.
+wgtmed                  Weighted mediation analysis.
