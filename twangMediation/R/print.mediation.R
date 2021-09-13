@@ -57,6 +57,7 @@ print.mediation <- function(x, ...)
       dx_a$desc[[1]]["iter"] <- NA
       dx_a$desc[[2]]["iter"] <- NA
       names(dx_a$desc)[2] <- x$method
+      attr(dx_a, "class") <- "ps" 
       model_a <- summary(dx_a)
 
       data$trt0 <- 1-data[,x$a_treatment]
@@ -74,6 +75,7 @@ print.mediation <- function(x, ...)
       dx_m0$desc[[1]]["iter"] <- NA
       dx_m0$desc[[2]]["iter"] <- NA
       names(dx_m0$desc)[2] <- x$method
+      attr(dx_m0, "class") <- "ps" 
       dx_m0$desc$unw <- swapTxCtrl(dx_m0$desc$unw)
       dx_m0$desc[[x$method]] <- swapTxCtrl(dx_m0$desc[[x$method]])
       model_m0 <- summary(dx_m0)
@@ -85,6 +87,7 @@ print.mediation <- function(x, ...)
       dx_m1$desc[[1]]["iter"] <- NA
       dx_m1$desc[[2]]["iter"] <- NA
       names(dx_m1$desc)[2] <- x$method
+      attr(dx_m1, "class") <- "ps" 
       model_m1 <- summary(dx_m1)
     }
 
