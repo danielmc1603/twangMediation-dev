@@ -75,19 +75,19 @@ function(object,...)
     for(i in 1:(length(ps_tables)-2)) {
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
       if(names(ps_tables)[[i]]=="TE") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" weighted by w11 weights, \"ctrl\" weighted by w00 weights \n")
+        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NIE1") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" weighted by w11 weights, \"ctrl\" weighted by w10 weights \n")
+        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE0") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" weighted by w10 weights, \"ctrl\" weighted by w00 weights \n")
+        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NIE0") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" weighted by w01 weights, \"ctrl\" weighted by w00 weights \n")
+        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE1") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" weighted by w11 weights, \"ctrl\" weighted by w01 weights \n")
+        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
       }
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
       print(round(ps_tables[[i]],digits=3))
@@ -99,13 +99,11 @@ function(object,...)
     # mediator distributions yield distributions of 
     # mediators that match the target
     mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
-    for(i in 1:length(mediator_distribution_check)) {
-      cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
-      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
-      print(mediator_distribution_check[[i]])
-      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
-    }
+#    for(i in 1:length(mediator_distribution_check)) {
+#      cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
+#      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+#      print(mediator_distribution_check[[i]])
+#      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+#    }
     invisible(list(results_table = desc_effects, ess_table = ess_table, balance_summary_tables = ps_tables, mediator_distribution  = mediator_distribution_check ))
 }
-
-#summary.mediation.R1(fit.logit)

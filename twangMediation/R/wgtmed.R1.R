@@ -502,12 +502,9 @@ wgtmed.R1 <- function(formula.med,
         vars = m_mediators, treat.var = a_treatment, x.as.weights = TRUE, 
         estimand = "ATE")
  
- 
   results[["dx.wts"]] <- list(TE=dx.wts_TE, NIE1=dx.wts_NIE1, NDE0=dx.wts_NDE0, 
                               NIE0=dx.wts_NIE0, NDE1=dx.wts_NDE1, 
-                              NIE1_m=dx.wts_NIE1_m, NIE1_m=dx.wts_NIE0_m) 
+                              NIE1_m=dx.wts_NIE1_m, NIE0_m=dx.wts_NIE0_m) 
 
-#  results$dx.wts <- lapply(results$ds.wts, function
- 
   return(results)
 }

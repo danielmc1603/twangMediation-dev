@@ -86,13 +86,13 @@ function(x,digits=3, details=FALSE, ...)
 
   # Compare the weighted distribution of M(1)=m weighted to have the distribution of M(0)=m on the entire pop'n 
   # Note: Using ATE here (instead of ATT)
-  balance_nie_1 <- bal.table(x$dx.wts$NIE1_m, digits=digits)
+  balance_nie_1 <- twang::bal.table(x$dx.wts$NIE1_m, digits=digits)
   balance_nie_1 <- do.call(rbind, balance_nie_1)
   balance_nie_1["model"] = "NIE_1"
   names(balance_nie_1) <- gsub("tx","cntfact",gsub("ct","target",names(balance_nie_1)))
       
   # Compare the weighted distribution of M(0)=m weighted to have the distribution of M(1)=m on the entire pop'n 
-  balance_nie_0 <- bal.table(x$dx.wts$NIE0_m, digits=digits)
+  balance_nie_0 <- twang::bal.table(x$dx.wts$NIE0_m, digits=digits)
   balance_nie_0 <- do.call(rbind, balance_nie_0)
   balance_nie_0["model"] = "NIE_0"
   names(balance_nie_0) <- gsub("tx","target",gsub("ct","cntfact",names(balance_nie_0)))
