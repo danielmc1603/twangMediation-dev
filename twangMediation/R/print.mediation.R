@@ -33,71 +33,18 @@ print.mediation <- function(x, ...)
   } else {
     estimates_table <- NULL
   }
-
-  # Get summaries of ps xs
-    if(x$method=="ps") {
-      model_a  <- summary(x$model_a)
-      model_m0 <- summary(x$model_m0)
-      model_m1 <- summary(x$model_m1)
-    } 
-    if(x$method!="ps") {
-      data <- x$data 
-
-      if(x$method=="logistic") {
-        model_a_preds <- predict(x$model_a,type="response")
-      } else {     
-        best.iter <- gbm::gbm.perf(x$model_a, method="cv",plot.it=FALSE)
-        model_a_preds <- predict(x$model_a, n.trees=best.iter, newdata=data, type="response")
-      }
-
-      wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
-      dx_a <- dx.wts.mediation(wts_a, data = data, 
-          vars = x$covariate_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
-          estimand = "ATE")      
-      dx_a$desc[[1]]["iter"] <- NA
-      dx_a$desc[[2]]["iter"] <- NA
-      names(dx_a$desc)[2] <- x$method
-      attr(dx_a, "class") <- "ps" 
-      model_a <- summary(dx_a)
-
-      data$trt0 <- 1-data[,x$a_treatment]
-      if(x$method=="logistic") {
-        model_m_preds <- predict(x$model_m0,type="link")
-      }      
-        else {
-        best.iter <- gbm::gbm.perf(x$model_m0, method="cv",plot.it=FALSE)
-        model_m_preds <- predict(x$model_m0, n.trees=best.iter, newdata=data, type="link")
-      }
-      wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))
-      dx_m0 <- dx.wts.mediation(wts_m0, data = data, 
-          vars = c(x$mediator_names,x$covariate_names), treat.var = "trt0", x.as.weights = TRUE, 
-          estimand = "ATT")
-      dx_m0$desc[[1]]["iter"] <- NA
-      dx_m0$desc[[2]]["iter"] <- NA
-      names(dx_m0$desc)[2] <- x$method
-      attr(dx_m0, "class") <- "ps" 
-      dx_m0$desc$unw <- swapTxCtrl(dx_m0$desc$unw)
-      dx_m0$desc[[x$method]] <- swapTxCtrl(dx_m0$desc[[x$method]])
-      model_m0 <- summary(dx_m0)
-
-      wts_m1 <- ifelse(data[,x$a_treatment]==0,exp(model_m_preds),1)
-      dx_m1 <- dx.wts.mediation(wts_m1, data = data, 
-        vars =  c(x$mediator_names,x$covariate_names), treat.var = x$a_treatment, x.as.weights = TRUE, 
-        estimand = "ATT")
-      dx_m1$desc[[1]]["iter"] <- NA
-      dx_m1$desc[[2]]["iter"] <- NA
-      names(dx_m1$desc)[2] <- x$method
-      attr(dx_m1, "class") <- "ps" 
-      model_m1 <- summary(dx_m1)
-    }
-
-    ps_tables  <- list(model_a=model_a,model_m0=model_m0,model_m1=model_m1)
-
+  
+  ps_tables  <- lapply(x$dx.wts, function(x){tmp <- x$summary.tab
+  tmp$iter <- NULL
+  rownames(tmp) <- tmp$type
+  tmp$type <- NULL
+  return(tmp)})
+  
   # Get balance tables for NIE_1 and NIE_0
   # to check that weights for the counterfactual 
   # mediator distributions yeild distributions of 
   # mediators that match the target
   mediator_distribution_check <- bal.table.mediation(x)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
-
-  print(list(estimates_table = estimates_table, ps_summary_tables = ps_tables, mediator_distribution = mediator_distribution_check))
+  
+  print(list(estimates_table = estimates_table, covariate_balance_tables = ps_tables[1:5], mediator_distribution = mediator_distribution_check))
 }
