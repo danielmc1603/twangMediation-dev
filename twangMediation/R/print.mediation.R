@@ -48,6 +48,7 @@ print.mediation <- function(x, ...)
   for (i in 1:5){
     if(names(ps_tables)[[i]]=="TE") {
       cat("Note: Balance for Covariates for Total Effects -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w00 weights \n")
+    }else{ps_tables[[i]]<- ps_tables[[i]][2,] # delete the "unw" rows
     }
     if(names(ps_tables)[[i]]=="NIE1") {
       cat("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment weighted by w10 weights \n")

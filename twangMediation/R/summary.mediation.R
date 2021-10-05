@@ -80,7 +80,8 @@ summary.mediation	<-
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
       if(names(ps_tables)[[i]]=="TE") {
         cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
-      }
+      }else{ps_tables[[i]]<- ps_tables[[i]][2,]# delete the "unw" rows
+      } 
       if(names(ps_tables)[[i]]=="NIE1") {
         cat("Note: Balance for Covariates NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
       }
