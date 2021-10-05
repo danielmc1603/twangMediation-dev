@@ -28,10 +28,10 @@
 #' @seealso \code{\link{wgtmed}}
 #' @method summary mediation
 #' @export
-summary.mediation.R1	<- 
-function(object,...) 
-{
-   # Get confidence intervals of effects 
+summary.mediation	<- 
+  function(object,...) 
+  {
+    # Get confidence intervals of effects 
     if(!is.null(object$y_outcome)) {
       desc_effects  <- desc.effects.mediation(object)
     }
@@ -49,11 +49,11 @@ function(object,...)
     ## Get the ESS for each of the weighted means used in the effect estimation
     ## Helper function used because I need ESS for for sets of weights and possibly  multiple stopping rules
     get_ess <- function(wgt, x){
-       ww <- attr(x, wgt)
-       .ess <- apply(ww, 2, function(w){tmp <- na.omit(w)
-                                        return(sum(tmp)^2/sum(tmp^2))})
-       return(.ess) 
-        }
+      ww <- attr(x, wgt)
+      .ess <- apply(ww, 2, function(w){tmp <- na.omit(w)
+      return(sum(tmp)^2/sum(tmp^2))})
+      return(.ess) 
+    }
     wnames <- c("w_00", "w_11", "w_10", "w_01")
     wess <- sapply(wnames, get_ess, x=object)
     wess <- matrix(wess, ncol=4)
@@ -66,44 +66,49 @@ function(object,...)
     cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     print(round(ess_table, digits=3))
     cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
-   
+    
     ps_tables  <- lapply(object$dx.wts, function(x){tmp <- x$summary.tab
-                                                    tmp$iter <- NULL
-                                                    rownames(tmp) <- tmp$type
-                                                    tmp$type <- NULL
-                                                    return(tmp)})
+    tmp$iter <- NULL
+    rownames(tmp) <- tmp$type
+    tmp$type <- NULL
+    return(tmp)})
+    
+    # add a row name to the 2nd row in the balance table for total effect
+    rownames(ps_tables[[1]])[2] <- rownames(ps_tables[[2]])[2]
+    
     for(i in 1:(length(ps_tables)-2)) {
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
       if(names(ps_tables)[[i]]=="TE") {
         cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
-      }
+      }else{ps_tables[[i]]<- ps_tables[[i]][2,]# delete the "unw" rows
+      } 
       if(names(ps_tables)[[i]]=="NIE1") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
+        cat("Note: Balance for Covariates NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE0") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        cat("Note: Balance for Covariates NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NIE0") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        cat("Note: Balance for Covariates NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE1") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
+        cat("Note: Balance for Covariates NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
       }
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
       print(round(ps_tables[[i]],digits=3))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     }
-  
+    
     # Get balance tables for NIE_1 and NIE_0
     # to check that weights for the counterfactual 
     # mediator distributions yield distributions of 
     # mediators that match the target
     mediator_distribution_check <- bal.table.mediation(object)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
-#    for(i in 1:length(mediator_distribution_check)) {
-#      cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
-#      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
-#      print(mediator_distribution_check[[i]])
-#      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
-#    }
+    #    for(i in 1:length(mediator_distribution_check)) {
+    #      cat(paste("Mediator Distribution Check:",names(mediator_distribution_check)[[i]],"\n"))
+    #      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+    #      print(mediator_distribution_check[[i]])
+    #      cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+    #    }
     invisible(list(results_table = desc_effects, ess_table = ess_table, balance_summary_tables = ps_tables, mediator_distribution  = mediator_distribution_check ))
-}
+  }
