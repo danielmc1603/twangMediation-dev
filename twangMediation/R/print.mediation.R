@@ -33,6 +33,7 @@ print.mediation <- function(x, ...)
   } else {
     estimates_table <- NULL
   }
+  print(list(estimates_table = estimates_table))
   
   ps_tables  <- lapply(x$dx.wts, function(x){tmp <- x$summary.tab
   tmp$iter <- NULL
@@ -40,11 +41,37 @@ print.mediation <- function(x, ...)
   tmp$type <- NULL
   return(tmp)})
   
+  # add the row name for the 2nd row in total effect ps_tables
+  rownames(ps_tables[[1]])[2] <- rownames(ps_tables[[2]])[2]
+
+  ###### Add weight-related notes####
+  for (i in 1:5){
+    if(names(ps_tables)[[i]]=="TE") {
+      cat("Note: Balance for Covariates for Total Effects -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w00 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NIE1") {
+      cat("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment weighted by w10 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NDE0") {
+      cat("Note: Balance for Covariates for NDE0 -- \n \"tx\" treatment group weighted by w10 weights, \n \"ct\" control group weighted by w00 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NIE0") {
+      cat("Note: Balance for Covariates for NIE0 -- \n \"tx\" treatment group weighted by w01 weights, \n \"ct\" control group weighted by w00 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NDE1") {
+      cat("Note: Balance for Covariates for NDE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control weighted by w01 weights \n")
+    }
+    cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+    print(round(ps_tables[[i]],digits=3))
+    cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
+  }
+  ##### End of code for weight-related notes##  
+  
   # Get balance tables for NIE_1 and NIE_0
   # to check that weights for the counterfactual 
   # mediator distributions yeild distributions of 
   # mediators that match the target
   mediator_distribution_check <- bal.table.mediation(x)[c("check_counterfactual_nie_1","check_counterfactual_nie_0")]
   
-  print(list(estimates_table = estimates_table, covariate_balance_tables = ps_tables[1:5], mediator_distribution = mediator_distribution_check))
+  print(list(mediator_distribution = mediator_distribution_check))
 }

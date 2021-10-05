@@ -72,22 +72,26 @@ summary.mediation	<-
     rownames(tmp) <- tmp$type
     tmp$type <- NULL
     return(tmp)})
+    
+    # add a row name to the 2nd row in the balance table for total effect
+    rownames(ps_tables[[1]])[2] <- rownames(ps_tables[[2]])[2]
+    
     for(i in 1:(length(ps_tables)-2)) {
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
       if(names(ps_tables)[[i]]=="TE") {
         cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NIE1") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
+        cat("Note: Balance for Covariates NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE0") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        cat("Note: Balance for Covariates NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NIE0") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        cat("Note: Balance for Covariates NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE1") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
+        cat("Note: Balance for Covariates NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
       }
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
       print(round(ps_tables[[i]],digits=3))
