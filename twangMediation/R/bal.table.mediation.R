@@ -4,14 +4,14 @@
 #' @param digits Number of digits to round to. Dafault: 3
 #' @param details logical. If `TRUE` covariate balance for the models
 #'   used to create the inputs into the weights used in effect estimation
-#'   is checked
+#'   is checked. If `FALSE` the additional balance is not checked。
 #' @param ... Additional arguments.
 #' @return \item{res}{tables detailing covariate balance across
 #'   exposure groups both before and after weighting}
 #' @examples
 #' data("tMdat")
 #' 
-#' ## tMdat is small simulated data set included in twangMediation for 
+#' ## tMdat is small simulated data set included in twangMedRiation for 
 #' ## demonstrating the functions. See ?tMdat for details
 #' 
 #' fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
@@ -44,13 +44,13 @@ bal.table.mediation <-
     m_and_x_names <- c(x$mediator_names,x$covariate_names)
     
     ## TE table
-    balance_TE <- bal.table(x$dx.wts$TE, digits=digits)
+    balance_TE <- twang::bal.table(x$dx.wts$TE, digits=digits)
     balance_TE <- lapply(balance_TE, function(dd){dd$ks.pval <- NULL
     return(dd)})
     names(balance_TE)[2] <- x$method
     
     ## NIE1 table
-    balance_NIE1 <- bal.table(x$dx.wts$NIE1, digits=digits)
+    balance_NIE1 <- twang::bal.table(x$dx.wts$NIE1, digits=digits)
     balance_NIE1 <- lapply(balance_NIE1, function(dd){dd$ks.pval <- NULL
     return(dd)})
     balance_NIE1$unw <- NULL
@@ -58,7 +58,7 @@ bal.table.mediation <-
       names(balance_NIE1) <- method}
     
     ## NDE0 table
-    balance_NDE0 <- bal.table(x$dx.wts$NDE0, digits=digits)
+    balance_NDE0 <- twang::bal.table(x$dx.wts$NDE0, digits=digits)
     balance_NDE0 <- lapply(balance_NDE0, function(dd){dd$ks.pval <- NULL
     return(dd)})
     balance_NDE0$unw <- NULL
@@ -66,7 +66,7 @@ bal.table.mediation <-
       names(balance_NDE0) <- method}
     
     ## NIE0 table
-    balance_NIE0 <- bal.table(x$dx.wts$NIE0, digits=digits)
+    balance_NIE0 <- twang::bal.table(x$dx.wts$NIE0, digits=digits)
     balance_NIE0 <- lapply(balance_NIE0, function(dd){dd$ks.pval <- NULL
     return(dd)})
     balance_NIE0$unw <- NULL
@@ -74,7 +74,7 @@ bal.table.mediation <-
       names(balance_NIE0) <- method}
     
     ## NDE1 table
-    balance_NDE1 <- bal.table(x$dx.wts$NDE1, digits=digits)
+    balance_NDE1 <- twang::bal.table(x$dx.wts$NDE1, digits=digits)
     balance_NDE1 <- lapply(balance_NDE1, function(dd){dd$ks.pval <- NULL
     return(dd)})
     balance_NDE1$unw <- NULL

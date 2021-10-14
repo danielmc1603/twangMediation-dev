@@ -141,6 +141,10 @@ The \code{mediation} object includes the following:
 \item \code{expected_treatment1_mediator0} E(Y(1, M(0)))
 \item \code{expected_treatment0_mediator1} E(Y(0, M(1)))
 }
+\item \code{dx.wts} A list with information for checking covariate balance of for each
+estimated effect. Elements are TE, NIE1, NDE0, NIE0, NDE1, with results of
+\code{twang} \code{dx.wts} for the covariates when weighted  by weights used in the
+estimating the effect.
 }
 }
 \description{

@@ -4,12 +4,16 @@
 \alias{bal.table.mediation}
 \title{Compute the balance table for mediation object.}
 \usage{
-bal.table.mediation(x, digits = 3, ...)
+bal.table.mediation(x, digits = 3, details = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{mediation} object}
 
 \item{digits}{Number of digits to round to. Dafault: 3}
+
+\item{details}{logical. If \code{TRUE} covariate balance for the models
+used to create the inputs into the weights used in effect estimation
+is checked. If \code{FALSE} the additional balance is not checked。}
 
 \item{...}{Additional arguments.}
 }
@@ -23,7 +27,7 @@ Compute the balance table for mediation object.
 \examples{
 data("tMdat")
 
-## tMdat is small simulated data set included in twangMediation for 
+## tMdat is small simulated data set included in twangMedRiation for 
 ## demonstrating the functions. See ?tMdat for details
 
 fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
