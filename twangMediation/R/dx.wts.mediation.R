@@ -126,10 +126,10 @@ dx.wts.mediation <- function(x,
       treat.var <- x$treat.var
       estimand <- x$estimand
    }
-   if(!all(w[,1]==1)) {
+   #if(!all(w[,1]==1)) {
       w   <- cbind(unw=rep(1,nrow(w)),w)
       p.s <- cbind(unw=rep(0.5,nrow(p.s)),p.s)
-   }
+   #}
    if(!is.null(sampw)) w <- w*sampw
    if(is.null(vars)) vars <- names(data)[names(data) != treat.var]
 
