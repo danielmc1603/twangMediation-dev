@@ -1,3 +1,4 @@
+globalVariables("type2") # This gets rid of a warning related to variable "type2"
 #' Compute the balance table for mediation object.
 #'
 #' @param x A `mediation` object 
