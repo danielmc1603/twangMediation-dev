@@ -4,35 +4,10 @@
 \alias{plot.mediation}
 \title{Plot the \code{mediation} object.}
 \usage{
-\method{plot}{mediation}(
-  x,
-  plots = "optimize",
-  subset = NULL,
-  color = TRUE,
-  model_subset = NULL,
-  ...
-)
+\method{plot}{mediation}(x, subset = NULL, color = TRUE, ...)
 }
 \arguments{
 \item{x}{weighted_mediation object}
-
-\item{plots}{An indicator of which type of plot is desired. The options are
-\itemize{
-\item \code{"optimize"} A plot of the balance criteria as a function of the GBM
-iteration.
-\item \code{"boxplot"} Boxplots of the propensity scores for the treatment and
-control cases
-\item \code{"es"} or \code{"asmd"} Plots of the absolute value of the standardized mean difference (effect size) of the pre-treatment
-variables before and after reweighting
-\item \code{"density"} Distribution plots of NIE1 (distribution of mediator for treatment
-sample weighted to match distribution of mediator under control for the population)
-and NIE0 (distribution of mediator for control sample weighted to match
-distribution of mediator under treatment for the population) for each mediator.
-For continuous mediators, distributions are plotted with density curves and
-for categorical (factor) mediators, distributions are plotted with barplots.
-\item \code{"weights"} Histograms of the standardized weights by each stopping rule. Weights
-are standardized to sum to 1.
-}}
 
 \item{subset}{Used to restrict which of the \code{stop.method}s will be used
 in the figure. For example \code{subset = c(1,3)} would indicate that the
@@ -43,14 +18,15 @@ as there is only one method used.}
 
 \item{color}{If \code{color = FALSE}, figures will be gray scale. Default: \code{TRUE}.}
 
-\item{model_subset}{integer
-Choose either model A (1), model M0 (2), or model M1 (3) only. Argument is
-not relevant for plots = \verb{density' or }weights'.}
-
 \item{...}{Additional arguments.}
 }
 \value{
-The plot of a mediation object, can be different types.
+Distribution plots of NIE1 (distribution of mediator for treatment
+sample weighted to match distribution of mediator under control for the population)
+and NIE0 (distribution of mediator for control sample weighted to match
+distribution of mediator under treatment for the population) for each mediator.
+For continuous mediators, distributions are plotted with density curves and
+for categorical (factor) mediators, distributions are plotted with barplots. .
 }
 \description{
 Plot the \code{mediation} object.
@@ -72,9 +48,7 @@ fit.es.max <- wgtmed(M ~ w1 + w2 + w3,
                       ps_stop.method=c("es.max")
                       )
 
-plot(fit.es.max, plots="optimize")
-plot(fit.es.max, plots="boxplot")
-plot(fit.es.max, plots="asmd")
+plot(fit.es.max)
 }
 \seealso{
 \code{\link{wgtmed}} for function input

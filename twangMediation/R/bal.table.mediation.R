@@ -5,6 +5,9 @@
 #' @param details logical. If `TRUE` covariate balance for the models
 #'   used to create the inputs into the weights used in effect estimation
 #'   is checked. If `FALSE` the additional balance is not checked。
+#' @param plot logical. If `TRUE`, plots of the balance for all covariates
+#'   are outputted for each type of effect (NIE0, NIE1, NDE0, NDE1, TE)
+#'   for each stopping method. If `FALSE`, no plots are returned. 。
 #' @param ... Additional arguments.
 #' @return \item{res}{tables detailing covariate balance across
 #'   exposure groups both before and after weighting}
@@ -26,7 +29,7 @@
 #' @seealso \code{\link{print.bal.table.mediation}}, \code{\link{wgtmed}}
 #' @export
 bal.table.mediation <- 
-  function(x,digits=3, details=FALSE, ...) 
+  function(x,digits=3, details=FALSE,plot=FALSE, ...) 
   {
     
     # we extract what we need from the mediation object
@@ -196,7 +199,52 @@ bal.table.mediation <-
       balance_res[["details"]] <- details
       
     } ## Ends if details
-    
+
+     # Return covariate balance plots if plot=TRUE
+     if(plot) {
+       Allbal <- data.frame()
+       for(i in 1:5) {
+	  for(j in 1:length(balance_res[[i]])) {
+            Allbal <- rbind(Allbal,cbind.data.frame(Effect=names(balance_res)[i],type=names(balance_res[[i]])[j],covariate=rownames(balance_res[[i]][[j]]),balance_res[[i]][[j]]))
+          }
+       }
+
+       cov_plots <- vector("list",length(stopping_methods))
+       for(k in 1:length(stopping_methods)) {
+         allbal <- Allbal[Allbal$type %in% c("unw","ps",stopping_methods[k]),]
+         allbal$covariate <- factor(allbal$covariate,levels=rownames(balance_res$TE[[1]]))
+         allbal$Effect <- factor(allbal$Effect,levels=c("NDE0","NDE1","TE","NIE0","NIE1"))
+         allbal$type2 <- ifelse(allbal$type=="unw","unweighted","weighted")  
+
+         cov_plots[[k]] <- lattice::dotplot(covariate~std.eff.sz|Effect,data=allbal,
+                             groups=type2,
+                             panel = function(...) {
+                               panel.xyplot(...)
+                               panel.abline(v = 0)
+                             },
+                             par.settings=list(superpose.symbol=list(
+                               pch=c(21,19),
+                               col=c("red","black"),
+                               cex=c(.85,.7))),
+                             auto.key=list(columns=2),
+                             main=paste0("Balance for Covariates for Each Effect\n",stopping_methods[k]),
+                             xlab="Standardized Effect Size",
+                             cex.main=0.55,
+                             layout=c(3,2)
+                            )
+       }
+ 
+       if(length(cov_plots)==1) {
+         plot(cov_plots[[1]]) 
+       } else { 
+         for(i in 1:length(cov_plots)) {
+           plot(cov_plots[[i]])
+           cc <- par()$ask
+           par(ask=TRUE)
+         }
+      }
+     } #end if plot
+     
     
     return(balance_res)
     
