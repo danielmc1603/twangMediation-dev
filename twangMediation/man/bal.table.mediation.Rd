@@ -13,11 +13,11 @@ bal.table.mediation(x, digits = 3, details = FALSE, plot = FALSE, ...)
 
 \item{details}{logical. If \code{TRUE} covariate balance for the models
 used to create the inputs into the weights used in effect estimation
-is checked. If \code{FALSE} the additional balance is not checked。}
+is checked. If \code{FALSE} the additional balance is not checked.}
 
 \item{plot}{logical. If \code{TRUE}, plots of the balance for all covariates
 are outputted for each type of effect (NIE0, NIE1, NDE0, NDE1, TE)
-for each stopping method. If \code{FALSE}, no plots are returned. 。}
+for each stopping method. If \code{FALSE}, no plots are returned.}
 
 \item{...}{Additional arguments.}
 }

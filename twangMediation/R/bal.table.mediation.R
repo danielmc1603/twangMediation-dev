@@ -5,10 +5,10 @@ globalVariables("type2") # This gets rid of a warning related to variable "type2
 #' @param digits Number of digits to round to. Dafault: 3
 #' @param details logical. If `TRUE` covariate balance for the models
 #'   used to create the inputs into the weights used in effect estimation
-#'   is checked. If `FALSE` the additional balance is not checked。
+#'   is checked. If `FALSE` the additional balance is not checked.
 #' @param plot logical. If `TRUE`, plots of the balance for all covariates
 #'   are outputted for each type of effect (NIE0, NIE1, NDE0, NDE1, TE)
-#'   for each stopping method. If `FALSE`, no plots are returned. 。
+#'   for each stopping method. If `FALSE`, no plots are returned.
 #' @param ... Additional arguments.
 #' @return \item{res}{tables detailing covariate balance across
 #'   exposure groups both before and after weighting}
