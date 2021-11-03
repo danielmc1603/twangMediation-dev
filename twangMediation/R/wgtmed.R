@@ -178,6 +178,9 @@ wgtmed <- function(formula.med,
                 }
         }
         
+        # Check class of total_effect_ps is a ps object
+        if(!is.null(total_effect_ps) & class(total_effect_ps)!="ps") stop("total_effect_ps must be a ps object")
+        
         # Check the specification of total effect weights 
         # Set total_effect_covars to NULL and set to value later if possible
         total_effect_covars <- NULL
