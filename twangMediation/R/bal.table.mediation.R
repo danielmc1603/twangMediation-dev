@@ -203,6 +203,7 @@ bal.table.mediation <-
 
      # Return covariate balance plots if plot=TRUE
      if(plot) {
+
        Allbal <- data.frame()
        for(i in 1:5) {
 	  for(j in 1:length(balance_res[[i]])) {
@@ -224,9 +225,10 @@ bal.table.mediation <-
                                panel.abline(v = 0)
                              },
                              par.settings=list(superpose.symbol=list(
-                               pch=c(21,19),
+                               pch=c(25,24),
                                col=c("red","black"),
-                               cex=c(.85,.7))),
+                               fill=c("red","transparent"),
+                               cex=c(.7,.7))),
                              auto.key=list(columns=2),
                              main=paste0("Balance for Covariates for Each Effect\n",stopping_methods[k]),
                              xlab="Standardized Effect Size",
@@ -238,12 +240,17 @@ bal.table.mediation <-
        if(length(cov_plots)==1) {
          plot(cov_plots[[1]]) 
        } else { 
+         oldpar <- par(no.readonly = TRUE)   
+         on.exit(suppressWarnings(par(oldpar)), add=TRUE)
+         cc <- par()$ask
          for(i in 1:length(cov_plots)) {
            plot(cov_plots[[i]])
-           cc <- par()$ask
            par(ask=TRUE)
          }
+         par(ask=cc)
       }
+
+
      } #end if plot
      
     
