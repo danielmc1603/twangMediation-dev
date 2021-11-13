@@ -228,11 +228,12 @@ bal.table.mediation <-
                                pch=c(25,24),
                                col=c("red","black"),
                                fill=c("red","transparent"),
-                               cex=c(.7,.7))),
+                               cex=c(.6,.6))),
                              auto.key=list(columns=2),
                              main=paste0("Balance for Covariates for Each Effect\n",stopping_methods[k]),
                              xlab="Standardized Effect Size",
-                             cex.main=0.55,
+                             cex.main=.75,
+                             cex.lab=.1,
                              layout=c(3,2)
                             )
        }
