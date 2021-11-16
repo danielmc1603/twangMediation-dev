@@ -159,7 +159,7 @@ plot.mediation <- function(x,
                                      auto.key = TRUE,
                                      ylab = "Proportion",
                                      xlab = "Weighted Mediator",
-                                     main = ptitle,
+                                     main = list(label=ptitle,cex=.8),
                                      horiz = FALSE,
                                      cex.main=0.85)
   }
@@ -203,7 +203,7 @@ plot.mediation <- function(x,
                                         auto.key = TRUE,
                                         ylab = "Density",
                                         xlab = "Weighted Mediator",
-                                        main = ptitle,
+                                        main = list(label=ptitle,cex=.8),
                                         cex.main=0.55)
     }
   }
