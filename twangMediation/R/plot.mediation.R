@@ -161,7 +161,7 @@ plot.mediation <- function(x,
                                      xlab = "Weighted Mediator",
                                      main = list(label=ptitle,cex=.8),
                                      horiz = FALSE,
-                                     cex.main=0.85)
+                                     cex.main=0.6)
   }
   }
   
