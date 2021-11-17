@@ -51,16 +51,16 @@ print.mediation <- function(x, ...)
     }else{ps_tables[[i]]<- ps_tables[[i]][2,] # delete the "unw" rows
     }
     if(names(ps_tables)[[i]]=="NIE1") {
-      cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
+      cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n")
     }
     if(names(ps_tables)[[i]]=="NDE0") {
       cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
     }
     if(names(ps_tables)[[i]]=="NIE0") {
-      cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+      cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" group group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
     }
     if(names(ps_tables)[[i]]=="NDE1") {
-      cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control weighted by w01 weights \n")
+      cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
     }
     cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     print(round(ps_tables[[i]],digits=3))

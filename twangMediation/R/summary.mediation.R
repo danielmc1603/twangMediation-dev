@@ -83,13 +83,13 @@ summary.mediation	<-
       }else{ps_tables[[i]]<- ps_tables[[i]][2,]# delete the "unw" rows
       } 
       if(names(ps_tables)[[i]]=="NIE1") {
-        cat("Note: Balance for Covariates NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment weighted by w10 weights \n")
+        cat("Note: Balance for Covariates NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE0") {
         cat("Note: Balance for Covariates NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NIE0") {
-        cat("Note: Balance for Covariates NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        cat("Note: Balance for Covariates NIE0 -- \n \"treat\" control group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
       if(names(ps_tables)[[i]]=="NDE1") {
         cat("Note: Balance for Covariates NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")

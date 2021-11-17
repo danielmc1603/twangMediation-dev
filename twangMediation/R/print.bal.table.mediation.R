@@ -34,16 +34,16 @@ print.bal.table.mediation <- function(x,...){
                         cat("Note: Balance for Covariates for Total Effects -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w00 weights \n")
                 }
                 if(names(x)[[i]]=="NIE1") {
-                        cat("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment weighted by w10 weights \n")
+                        cat("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment group weighted by w10 weights \n")
                 }
                 if(names(x)[[i]]=="NDE0") {
                         cat("Note: Balance for Covariates for NDE0 -- \n \"tx\" treatment group weighted by w10 weights, \n \"ct\" control group weighted by w00 weights \n")
                 }
                 if(names(x)[[i]]=="NIE0") {
-                        cat("Note: Balance for Covariates for NIE0 -- \n \"tx\" treatment group weighted by w01 weights, \n \"ct\" control group weighted by w00 weights \n")
+                        cat("Note: Balance for Covariates for NIE0 -- \n \"tx\" control group weighted by w01 weights, \n \"ct\" control group weighted by w00 weights \n")
                 }
                 if(names(x)[[i]]=="NDE1") {
-                        cat("Note: Balance for Covariates for NDE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control weighted by w01 weights \n")
+                        cat("Note: Balance for Covariates for NDE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w01 weights \n")
                 }
                 cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
                 cat(paste0("$",names(x)[i]," \n"))
