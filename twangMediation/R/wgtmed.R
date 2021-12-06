@@ -192,7 +192,7 @@ wgtmed <- function(formula.med,
                         total_effect_ps	<- NULL
                 }
                 if(!is.vector(total_effect_wts)) stop("total_effect_wts must be a vector")
-                if(!is.null(total_effect_wts) & length(unique(total_effect_wts))>1 ) {warning("Reminder to check that all confounders used for treatment (to obtain supplied\ntotal effect weights) were included in confounders for the mediation model")} 
+                if(!is.null(total_effect_wts) & length(unique(total_effect_wts))>1 ) {warning("Reminder: Check that all confounders used to estimate supplied total effect weights are included as confounders in formula.med.")} 
         }	else{
                 if(total_effect_ps$estimand != "ATE") stop("Total effect must be ATE. Estimand in total_effect_ps != 'ATE'")
                 if(length(total_effect_stop_rule) > 1) warning("Multiple stopping rules provided for total_effect_ps. Only the first is used")
