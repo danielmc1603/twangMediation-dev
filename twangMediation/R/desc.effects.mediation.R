@@ -66,6 +66,19 @@ function(x, y_outcome = NULL,...)
   w_00 <- attr(x, 'w_00')
   w_10 <- attr(x, 'w_10')
   w_01 <- attr(x, 'w_01') 
+  sampw <- attr(x, 'sampw')
+  if(is.null(sampw)) {
+    sampW <- 1
+  } else {
+    sampW <- sampw
+    warning("The computation of the standard errors of the effects use the product of the 
+  sampling weights and cross-world or total effect weights. 
+  Further adjustments for complex sampling designs must be done separately by the user.")
+  }
+  w_11 <- w_11*sampW
+  w_00 <- w_00*sampW
+  w_10 <- w_10*sampW
+  w_01 <- w_01*sampW
 
   # Check to make sure that either `y_outcome` has been provided, or that
   # `y_outcome` was provided in the original weighted mediation` calculation

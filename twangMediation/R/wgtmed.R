@@ -419,6 +419,7 @@ wgtmed <- function(formula.med,
         attr(results, "w_00") <- w_00
         attr(results, "w_10") <- w_10
         attr(results, "w_01") <- w_01
+        attr(results, "sampw") <- sampw
         if (is.null(y_outcome)) {
                 return(results)
         }
