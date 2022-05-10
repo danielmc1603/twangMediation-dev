@@ -50,6 +50,9 @@ summary.mediation	<-
     ## Helper function used because I need ESS for for sets of weights and possibly  multiple stopping rules
     get_ess <- function(wgt, x){
       ww <- attr(x, wgt)
+      if(!is.null(attr(x,"sampw"))) {
+         ww <- ww*attr(x,"sampw")
+      }
       .ess <- apply(ww, 2, function(w){tmp <- na.omit(w)
       return(sum(tmp)^2/sum(tmp^2))})
       return(.ess) 

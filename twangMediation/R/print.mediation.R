@@ -57,7 +57,7 @@ print.mediation <- function(x, ...)
       cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
     }
     if(names(ps_tables)[[i]]=="NIE0") {
-      cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" group group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+      cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
     }
     if(names(ps_tables)[[i]]=="NDE1") {
       cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")

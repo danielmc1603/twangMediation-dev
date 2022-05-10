@@ -450,7 +450,7 @@ wgtmed <- function(formula.med,
         wts_TE[ctrlgrp] <- w_00[ctrlgrp,1]
         dx.wts_TE <- dx.wts.mediation(wts_TE, data = data, 
                                       vars = var.names.med, treat.var = a_treatment, x.as.weights = TRUE, 
-                                      estimand = "ATE")
+                                      estimand = "ATE",sampw=sampw)
         
         
         ## NIE1 
@@ -460,7 +460,7 @@ wgtmed <- function(formula.med,
         dtmp <- rbind(data.frame(data[txgrp,], txtmp=1), data.frame(data[txgrp,], txtmp=0))
         dx.wts_NIE1 <- dx.wts.mediation(wts_NIE1, data = dtmp, 
                                         vars = var.names.med, treat.var = "txtmp", x.as.weights = TRUE, 
-                                        estimand = "ATE")
+                                        estimand = "ATE",sampw=c(sampw[txgrp],sampw[txgrp]))
         
         ## NDE0 
         wts_NDE0 <- w_10
@@ -469,7 +469,7 @@ wgtmed <- function(formula.med,
                 colnames(wts_NDE0) <- method}
         dx.wts_NDE0 <- dx.wts.mediation(wts_NDE0, data = data, 
                                         vars = var.names.med, treat.var = a_treatment, x.as.weights = TRUE, 
-                                        estimand = "ATE")
+                                        estimand = "ATE",sampw=sampw)
         
         ## NIE0 
         wts_NIE0 <- rbind(as.matrix(w_01[ctrlgrp,]), as.matrix(w_00[ctrlgrp,]))
@@ -478,7 +478,7 @@ wgtmed <- function(formula.med,
         dtmp <- rbind(data.frame(data[ctrlgrp,], txtmp=1), data.frame(data[ctrlgrp,], txtmp=0))
         dx.wts_NIE0 <- dx.wts.mediation(wts_NIE0, data = dtmp, 
                                         vars = var.names.med, treat.var = "txtmp", x.as.weights = TRUE, 
-                                        estimand = "ATE")
+                                        estimand = "ATE",sampw=c(sampw[ctrlgrp],sampw[ctrlgrp]))
         
         ## NDE1 
         wts_NDE1 <- w_11
@@ -487,7 +487,7 @@ wgtmed <- function(formula.med,
                 colnames(wts_NDE1) <- method}
         dx.wts_NDE1 <- dx.wts.mediation(wts_NDE1, data = data, 
                                         vars = var.names.med, treat.var = a_treatment, x.as.weights = TRUE, 
-                                        estimand = "ATE")
+                                        estimand = "ATE",sampw=sampw)
         ## NIE1 Mediators
         wts_NIE1_m <- w_00
         wts_NIE1_m[txgrp,] <- w_10[txgrp,]
@@ -495,7 +495,7 @@ wgtmed <- function(formula.med,
                 colnames(wts_NIE1_m) <- method}
         dx.wts_NIE1_m <- dx.wts.mediation(wts_NIE1_m, data = data, 
                                           vars = m_mediators, treat.var = a_treatment, x.as.weights = TRUE, 
-                                          estimand = "ATE")
+                                          estimand = "ATE",sampw=sampw)
         
         ## NIE0 Mediators
         wts_NIE0_m <- w_01
@@ -504,7 +504,7 @@ wgtmed <- function(formula.med,
                 colnames(wts_NIE0_m) <- method}
         dx.wts_NIE0_m <- dx.wts.mediation(wts_NIE0_m, data = data, 
                                           vars = m_mediators, treat.var = a_treatment, x.as.weights = TRUE, 
-                                          estimand = "ATE")
+                                          estimand = "ATE",sampw=sampw)
         
         results[["dx.wts"]] <- list(TE=dx.wts_TE, NIE1=dx.wts_NIE1, NDE0=dx.wts_NDE0, 
                                     NIE0=dx.wts_NIE0, NDE1=dx.wts_NDE1, 

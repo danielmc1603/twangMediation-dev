@@ -44,6 +44,7 @@ bal.table.mediation <-
     w_10 <- attr(x, "w_10")
     w_01 <- attr(x, "w_01")
     w_11 <- attr(x, "w_11")
+    sampw <- attr(x,"sampw")
     column_names <- colnames(data)
     m_and_x_names <- c(x$mediator_names,x$covariate_names)
     
@@ -149,7 +150,7 @@ bal.table.mediation <-
         
         tmp_a <- bal.table.ps(dx.wts.mediation(wts_a, data = data, 
                                                vars = x$covariate_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
-                                               estimand = "ATE"),digits=digits)
+                                               estimand = "ATE",sampw=sampw),digits=digits)
         names(tmp_a)[2] <- x$method
         balance_a <- do.call(rbind, tmp_a)
         balance_a['model'] <- 'Model A'
@@ -166,7 +167,7 @@ bal.table.mediation <-
         wts_m0 <- ifelse(data[,x$a_treatment]==0,1,1/exp(model_m_preds))
         tmp_m0 <- dx.wts.mediation(wts_m0, data = data, 
                                    vars = m_and_x_names, treat.var = "trt0", x.as.weights = TRUE, 
-                                   estimand = "ATT")
+                                   estimand = "ATT",sampw=sampw)
         tmp_m0$desc <- lapply(tmp_m0$desc, swapTxCtrl)
         tmp_m0 <- bal.table.ps(tmp_m0, digits=digits)
         names(tmp_m0)[2] <- x$method
@@ -177,7 +178,7 @@ bal.table.mediation <-
         wts_m1 <- ifelse(data[,x$a_treatment]==0,exp(model_m_preds),1)
         tmp_m1 <- bal.table.ps(dx.wts.mediation(wts_m1, data = data, 
                                                 vars = m_and_x_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
-                                                estimand = "ATT"),digits=digits)
+                                                estimand = "ATT",sampw=sampw),digits=digits)
         names(tmp_m1)[2] <- x$method
         balance_m1<- do.call(rbind, tmp_m1)
         balance_m1["model"] <- "Model M1"
