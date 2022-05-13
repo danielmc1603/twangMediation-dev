@@ -88,6 +88,13 @@ plot.mediation <- function(x,
         # get the actual weights from the mediation object
         w_pop <- attr(x, 'w_00')
         w_cfac <- attr(x, 'w_10')
+
+	  ##multiply by sampling wts
+        sampw <- attr(x,"sampw")
+        if(!is.null(sampw)) {
+		w_pop <- w_pop*sampw
+            w_cfac <- w_cfac*sampw
+         }
       
         # finally, create indicators for treatment and control
         cfac <- which(treatment == 1)
@@ -103,6 +110,13 @@ plot.mediation <- function(x,
         # w_pop is the population wait -- now f
         w_pop <- attr(x, 'w_11')
         w_cfac <- attr(x, 'w_01')
+
+	  ##multiply by sampling wts
+        sampw <- attr(x,"sampw")
+        if(!is.null(sampw)) {
+		w_pop <- w_pop*sampw
+            w_cfac <- w_cfac*sampw
+         }
    
         # finally, create indicators for treatment and control
         cfac <- which(treatment == 0)
