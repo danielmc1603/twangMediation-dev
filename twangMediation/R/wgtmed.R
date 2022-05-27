@@ -18,6 +18,10 @@
 #' @param y_outcome 
 #'   The (character) name of the outcome variable, y. If this is not provided, then
 #'   no effects will be calculated and a warning will be raised. Default : `NULL`.
+#' @param med_interact
+#'   The (character) vector of names of variables specified on the right-hand side 
+#'   of formula.med that consist of crossproducts or interactions between a covariate
+#    and the mediator. See the tutorial for details on these variables.
 #' @param total_effect_wts 
 #'   A vector of total effect weights, which if left `NULL`
 #'   then total_effect_ps must be supplied. Default : `NULL`.
@@ -149,6 +153,7 @@ wgtmed <- function(formula.med,
                       data,
                       a_treatment,
                       y_outcome = NULL,
+                      med_interact = NULL,
                       total_effect_wts = NULL,
                       total_effect_ps = NULL,
                       total_effect_stop_rule = NULL,
@@ -246,10 +251,21 @@ wgtmed <- function(formula.med,
                 if(y_outcome %in% var.names.med){stop("The outcome variables equals a covariate")}
                 if(!(y_outcome %in% names(data))){stop("The outcome variable is not in the dataset")}
         }
-        
+  
+        #* The variables in med_interact must be in the covariates specified in formula.med
+        if(!is.null(med_interact)){
+            if(!all(med_interact %in% var.names.med)){stop("The variables in med_interact must be in the covariates specified in formula.med")}
+        }
+          
         # Create formula for tx without mediator
         #* Model to weights for total effect
-        form <- as.formula(paste(a_treatment, "~", paste(var.names.med, collapse="+"))) 
+        #* Remove any interaction terms that include the mediator
+        if(is.null(med_interact)){
+             var.names.med.tmp <- var.names.med
+        }else{
+             var.names.med.tmp <- var.names.med[-match(med_interact, var.names.med)]
+        }
+        form <- as.formula(paste(a_treatment, "~", paste(var.names.med.tmp, collapse="+"))) 
         
         check_missing(data[,a_treatment])
         check_missing(data[,m_mediators])
