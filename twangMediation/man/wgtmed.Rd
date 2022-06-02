@@ -9,6 +9,7 @@ wgtmed(
   data,
   a_treatment,
   y_outcome = NULL,
+  med_interact = NULL,
   total_effect_wts = NULL,
   total_effect_ps = NULL,
   total_effect_stop_rule = NULL,
@@ -41,6 +42,10 @@ dichotomous (0, 1).}
 
 \item{y_outcome}{The (character) name of the outcome variable, y. If this is not provided, then
 no effects will be calculated and a warning will be raised. Default : \code{NULL}.}
+
+\item{med_interact}{The (character) vector of names of variables specified on the right-hand side
+of formula.med that consist of crossproducts or interactions between a covariate
+and the mediator. See the tutorial for details on these variables.}
 
 \item{total_effect_wts}{A vector of total effect weights, which if left \code{NULL}
 then total_effect_ps must be supplied. Default : \code{NULL}.}

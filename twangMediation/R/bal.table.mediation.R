@@ -149,7 +149,7 @@ bal.table.mediation <-
         wts_a <- ifelse(data[,x$a_treatment]==1,1/model_a_preds,1/(1-model_a_preds))
         
         tmp_a <- bal.table.ps(dx.wts.mediation(wts_a, data = data, 
-                                               vars = x$covariate_names, treat.var = x$a_treatment, x.as.weights = TRUE, 
+                                               vars = x$covariate_names[!x$covariate_names %in% x$med_interactions], treat.var = x$a_treatment, x.as.weights = TRUE, 
                                                estimand = "ATE",sampw=sampw),digits=digits)
         names(tmp_a)[2] <- x$method
         balance_a <- do.call(rbind, tmp_a)
@@ -215,7 +215,7 @@ bal.table.mediation <-
        cov_plots <- vector("list",length(stopping_methods))
        for(k in 1:length(stopping_methods)) {
          allbal <- Allbal[Allbal$type %in% c("unw","ps",stopping_methods[k]),]
-         allbal$covariate <- factor(allbal$covariate,levels=rownames(balance_res$TE[[1]]))
+         allbal$covariate <- factor(allbal$covariate,levels=rownames(balance_res$NDE0[[1]]))
          allbal$Effect <- factor(allbal$Effect,levels=c("NDE0","NDE1","TE","NIE0","NIE1"))
          allbal$type2 <- ifelse(allbal$type=="unw","unweighted","weighted")  
 

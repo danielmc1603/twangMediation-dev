@@ -21,7 +21,7 @@
 #' @param med_interact
 #'   The (character) vector of names of variables specified on the right-hand side 
 #'   of formula.med that consist of crossproducts or interactions between a covariate
-#    and the mediator. See the tutorial for details on these variables.
+#'    and the mediator. See the tutorial for details on these variables.
 #' @param total_effect_wts 
 #'   A vector of total effect weights, which if left `NULL`
 #'   then total_effect_ps must be supplied. Default : `NULL`.
@@ -428,7 +428,7 @@ wgtmed <- function(formula.med,
         }
         results <- list(method=method, model_m0 = model_m0_res, model_m1 = model_m1_res, 
                         model_a = model_a_res, mediator_names = m_mediators, covariate_names = var.names.med, 
-                        a_treatment=a_treatment, y_outcome=y_outcome, 
+                        med_interactions=med_interact,a_treatment=a_treatment, y_outcome=y_outcome, 
                         stopping_methods = ps_stop.method, data = data, datestamp = date())
         class(results) <- "mediation"
         attr(results, "w_11") <- w_11
@@ -465,7 +465,7 @@ wgtmed <- function(formula.med,
         wts_TE <- w_11[,1]
         wts_TE[ctrlgrp] <- w_00[ctrlgrp,1]
         dx.wts_TE <- dx.wts.mediation(wts_TE, data = data, 
-                                      vars = var.names.med, treat.var = a_treatment, x.as.weights = TRUE, 
+                                      vars = var.names.med.tmp, treat.var = a_treatment, x.as.weights = TRUE, 
                                       estimand = "ATE",sampw=sampw)
         
         
