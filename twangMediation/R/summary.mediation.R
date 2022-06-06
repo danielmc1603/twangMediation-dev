@@ -39,7 +39,7 @@ summary.mediation	<-
       desc_effects  <- NULL
     }
     cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
-    for(i in length(desc_effects)) {
+    for(i in 1:length(desc_effects)) {
       cat(paste("95% Confidence Intervals for Effect Estimates:",names(desc_effects)[i],"\n"))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
       print(round(desc_effects[[i]],digits=3))
@@ -66,6 +66,27 @@ summary.mediation	<-
     colnames(ess_table) <- c("E[Y(0, M(0))]", "E[Y(1, M(1))]", "E[Y(1, M(0))]", "E[Y(0, M(1))]") 
     rownames(ess_table) <- c("Sample Size", object$stopping_methods)
     cat("ESS for Total Effect and Cross-World Weights for estimating four population means used\nto estimate the total effect and the natural direct and indirect effects\n")
+    if(!is.null(attr(object,"sampw"))) {
+        methodnms <- object$stopping_methods
+        if(length(methodnms)==1) { 
+		methods <- paste0("\"",methodnms,"\" reflects")
+	} 
+	if(length(methodnms)==2) {
+		methods <- character()
+        	for(i in methodnms) {
+        		methods <- c(methods,paste0("\"",i,"\""))
+		}
+		methods <- paste(paste(methods,collapse=" and "),"relfect")
+	}
+	if(length(methodnms)>2) {
+		methods <- character()
+        	for(i in methodnms[1:(length(methodnms)-1)]) {
+        		methods <- c(methods,paste0("\"",i,"\""))
+		}
+		methods <- paste0(paste(methods,collapse=", "),", and \"",methodnms[length(methodnms)],"\" reflect")
+	}
+      cat(paste0("Note. Results for ",methods," weighting by both \nthe sampling weights and cross-world weights.\n"))
+    }
     cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
     print(round(ess_table, digits=3))
     cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
@@ -77,26 +98,46 @@ summary.mediation	<-
     return(tmp)})
     
     # add a row name to the 2nd row in the balance table for total effect
-    rownames(ps_tables[[1]])[2] <- rownames(ps_tables[[2]])[2]
-    
+    rownames(ps_tables[[1]])[2] <- object$method
+
     for(i in 1:(length(ps_tables)-2)) {
       cat(paste("Balance Summary Tables:",names(ps_tables)[i],"\n"))
       if(names(ps_tables)[[i]]=="TE") {
-        cat("Note: Balance for Covariates Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
-      }else{ps_tables[[i]]<- ps_tables[[i]][2,]# delete the "unw" rows
+        if(!is.null(attr(object,"sampw"))) {
+          cat(paste0("Note: Balance for Covariates for Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n \"unw\" reflects weighting with sampling weights only \n \"",rownames(ps_tables[["TE"]])[2],"\" reflects weighting by both the sampling weights and cross-world weights \n"))
+        } else {
+          cat("Note: Balance for Covariates for Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        }
+      }else{ps_tables[[i]]<- ps_tables[[i]][-1,]# delete the "unw" rows
       } 
-      if(names(ps_tables)[[i]]=="NIE1") {
-        cat("Note: Balance for Covariates NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n")
+    if(names(ps_tables)[[i]]=="NIE1") {
+      if(!is.null(attr(object,"sampw"))) {
+        cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+      } else {
+        cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n")
       }
-      if(names(ps_tables)[[i]]=="NDE0") {
-        cat("Note: Balance for Covariates NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NDE0") {
+      if(!is.null(attr(object,"sampw"))) {
+        cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+      } else {
+        cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
-      if(names(ps_tables)[[i]]=="NIE0") {
-        cat("Note: Balance for Covariates NIE0 -- \n \"treat\" control group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NIE0") {
+      if(!is.null(attr(object,"sampw"))) {
+        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+      } else {
+        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
-      if(names(ps_tables)[[i]]=="NDE1") {
-        cat("Note: Balance for Covariates NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
+    }
+    if(names(ps_tables)[[i]]=="NDE1") {
+      if(!is.null(attr(object,"sampw"))) {
+        cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+      } else {
+        cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
       }
+    }
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
       print(round(ps_tables[[i]],digits=3))
       cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))

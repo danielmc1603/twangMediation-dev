@@ -116,6 +116,11 @@ bal.table.mediation <-
     balance_res[["check_counterfactual_nie_1"]] <- balance_nie_1 
     balance_res[["check_counterfactual_nie_0"]] <- balance_nie_0
     
+    if(!is.null(sampw)) {
+	attr(balance_res,"sampw") <- TRUE
+    } else {
+	attr(balance_res,"sampw") <- FALSE
+    }
     attr(balance_res, "class") <- "bal.table.mediation"
     
     if(details){
@@ -197,7 +202,30 @@ bal.table.mediation <-
       details  <- list(balance_a = balance_a, balance_m0 = balance_m0,balance_m1 = balance_m1) 
       
       attr(details, "note") <- "**********************************************************\nNotes: \nA. Model A estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model M0 is used for NDE_0 and NIE_1 effects. \nct.sd is used for the denominator of std.eff.sz. \nC. Model M1 is used for NDE_1 and NIE_0 effects.\ntx.sd is used for the denominator of std.eff.sz. \nSee the bal.table.mediation help file for more information. \n**********************************************************\n"
-      
+      if(!is.null(sampw)) {
+
+        methodnms <- names(balance_res$NIE1)
+        if(length(methodnms)==1) { 
+		methods <- paste0("\"",methodnms,"\" reflects")
+	} 
+	if(length(methodnms)==2) {
+		methods <- character()
+        	for(i in methodnms) {
+        		methods <- c(methods,paste0("\"",i,"\""))
+		}
+		methods <- paste(paste(methods,collapse=" and "),"relfect")
+	}
+	if(length(methodnms)>2) {
+		methods <- character()
+        	for(i in methodnms[1:(length(methodnms)-1)]) {
+        		methods <- c(methods,paste0("\"",i,"\""))
+		}
+		methods <- paste0(paste(methods,collapse=", "),", and \"",methodnms[length(methodnms)],"\" reflect")
+	}
+
+ 	attr(details, "note") <- paste0("**********************************************************\nNotes: \nA. Model A estimates the probability of exposure given \nthe covariates specified in wgtmed. The results are used \nby wgtmed to estimate E[Y(1,M(0))] and E[Y(0,M(1))]. \nThey are not used to estimate the total effect. \nB. Model M0 is used for NDE_0 and NIE_1 effects. \nct.sd is used for the denominator of std.eff.sz. \nC. Model M1 is used for NDE_1 and NIE_0 effects.\ntx.sd is used for the denominator of std.eff.sz. \nD. \"unw\" reflects weighting with sampling weights \nonly. ",methods," weighting by both \nthe sampling weights and cross-world weights.\nSee the bal.table.mediation help file for more information. \n**********************************************************\n")
+      }     
+
       balance_res[["details"]] <- details
       
     } ## Ends if details
