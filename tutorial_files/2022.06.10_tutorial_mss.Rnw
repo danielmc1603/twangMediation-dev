@@ -1,0 +1,599 @@
+\documentclass{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FORMATTING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{plain}
+\usepackage[active]{srcltx}
+\usepackage{url}
+\usepackage[htt]{hyphenat}
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{0.75in}
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+
+\newcommand{\EV}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\aRule}{\begin{center} \rule{5in}{1mm} \end{center}}
+
+\usepackage{amsmath,amssymb,graphicx,multirow,textcomp,color}
+\usepackage{epsfig,dcolumn,float,setspace}
+\usepackage{tikz}
+\usetikzlibrary{decorations.fractals,arrows,positioning}
+\usepackage{hyperref}
+
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           text width=6.5em,
+           minimum height=2em,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,},
+    lip/.style={
+           <-,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,}
+}
+
+\newcommand{\mathgbf}[1]{{\mbox{\boldmath$#1$\unboldmath}}}
+
+\usepackage{Sweave}
+\begin{document}
+
+<<chunk1, echo=F>>=
+if(!dir.exists("tmpout"))dir.create("tmpout", recursive = TRUE)
+@
+
+\SweaveOpts{concordance=TRUE, prefix.string=tmpout/t, split=TRUE, ae=FALSE, height=8, width=6}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TITLE PAGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{A tutorial for conducting causal mediation analysis with the \texttt{twangMediation} package}
+
+\author{Donna L. Coffman, Megan S. Schuler, Daniel F. McCaffrey,\\ Katherine E. Castellano, Haoyu Zhou, Brian Vegetabile, and Beth Ann Griffin}
+
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The \texttt{twangMediation} R package is an extension of the Toolkit for Weighting and Analysis of Nonequivalent Groups (\texttt{twang}) R package that contains a set of functions to support causal modeling of observational data through the estimation and evaluation of propensity scores and propensity score-based weights. Currently, \texttt{twang} can be used to estimate treatment effects with two or more treatment groups and time-varying treatments. The \texttt{twangMediation} package builds on the \texttt{twang} package to estimate mediation effects for binary, ordinal, multinomial (categorical), or continuous mediator(s) of a binary exposure variable. This tutorial provides an introduction to causal mediation analysis using \texttt{twangMediation} and demonstrates its use through an illustrative example. We first provide a brief overview of causal mediation, including definitions of the natural direct and indirect estimands of interest, as well as the required identification assumptions. If you are already familiar with causal mediation, you can skip to Section \ref{sec:example} for an introduction to our illustrative example and to Section \ref{sec:using} for step-by-step instructions for the \texttt{twangMediation} functions for estimating causal mediation effects. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{An Overview of Causal Mediation}
+\label{sec:overview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+An important scientific goal in many fields of research is determining to what extent the total effect of an exposure on an outcome is mediated by an intermediate variable on the causal pathway between the exposure and outcome. A simple mediation model is illustrated in Figure 1 where $Y\equiv$ outcome, $A\equiv$ exposure, $X\equiv$ pre-exposure covariates, and $M\equiv$ mediator. Note that we use ``exposure" broadly to refer to a non-randomized or randomized condition, treatment, or intervention.
+
+\vspace{\baselineskip}
+\textbf{Figure 1:} Graphical depiction of a simple mediation model.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm, auto,]
+ %nodes
+ \node[] (Y) {$Y$};
+ \node[left= of Y] (dummy) {};
+ \node[above= of dummy] (M) {$M$}
+    edge[pil] (Y.north west);
+ \node[left= of dummy] (A) {$A$}
+    edge[pil] (M.south west)
+    edge[pil] (Y.west);
+    % edge[pil, bend left=45] (M.west);
+ \node[left= of A] (dummy2) {};
+ \node[above= of dummy2] (X) {$X$}
+    edge[pil] (A.north west)
+    edge[pil] (M.west)
+    edge[pil, bend left=90] (Y.north);
+\end{tikzpicture}
+\end{center}
+
+The \textbf{total effect} of $A$ on $Y$ includes two possible causal paths from $A$ to $Y$: the path $A \rightarrow M \rightarrow Y$ is the \textbf{indirect effect} of $A$ on $Y$ through $M$ and the path $A \rightarrow Y$ is the \textbf{direct effect} of $A$ on $Y$ that does not go through $M$. Direct and indirect effects are of scientific interest because they provide a framework to quantify and characterize the mechanism by which an exposure affects a given outcome.
+
+Traditionally, direct and indirect effects have been evaluated using linear model specifications for the observed data, assuming no interactions or nonlinearities involving $A$ and $M$. The definitions of the direct and indirect effects themselves rely on this linear specification. In response, a fast-growing literature in causal inference focuses on the definition, identification, and estimation of direct and indirect effects in fully non-parametric models (i.e., does not rely on a linear model specification) primarily based on ideas developed by Robins and Greenland (1992) and Pearl (2001). These developments use potential outcomes/counterfactuals to give non-parametric definitions of the effects involved in mediation analysis, known as controlled direct effects, natural direct and indirect effects, and interventional effects. For an introduction to all of these effects, see \href{https://arxiv.org/pdf/1904.08515.pdf}{Nguyen et. al. (2020)}. Here, we focus on the natural (in)direct effects.
+        
+Mediation is inherently about \textbf{causal} effects, which are defined as the difference between two potential outcomes for an individual. We begin by introducing the potential outcomes needed to define the natural direct and indirect effects.
+
+Consider the case in which $A$ is a binary indicator of the exposure, indicating the exposed condition ($A=1$) or the comparison condition ($A=0$). There are two potential outcomes for each study participant corresponding to each exposure level $a$: the outcome had they received the exposure, denoted  $Y_1$, and the outcome had they received the comparison condition, denoted $Y_0$. These two potential outcomes, $Y_1$ and $Y_0$, exist for all individuals in the population regardless of whether the individual received the exposure or comparison condition. However, we can observe only one of these outcomes for each participant depending on which exposure condition the individual actually receives.
+
+The mediator is an ``intermediate" outcome of the exposure and itself has potential values. For each exposure level $a$ there is a corresponding potential mediator value, denoted $M_a$. Also, there is a corresponding potential outcome that reflects the outcome value that would arise under the specific exposure level $a$ and the specific potential mediator value $M_a$ -- this potential outcome is denoted $Y_{(a, M_a)}$. Causal definitions of direct and indirect effects require extending the potential outcomes framework such that there is a potential outcome for each treatment and mediator pair. For the case of a binary exposure $A$, there are four potential outcomes for an individual, formed by crossing both potential exposure values with both potential mediator values: $Y_{(1, M_1)}$, $Y_{(0, M_0)}$, $Y_{(1, M_0)}$, and $Y_{(0, M_1)}$. Only $Y_{(1, M_1)}$ or $Y_{(0, M_0)}$, which correspond to the individual receiving $A=1$ or $A=0$ respectively, can be observed in practice. The other two potential outcomes are hypothetical quantities (i.e., the mediator value is manipulated to take on the value it would have under the other exposure condition); these are necessary to define the causal estimands of interest, as we detail later. Furthermore, for a given individual $i$, we can observe only one outcome, namely that which corresponds to the exposure level $a$ that the individual received: $Y_{i,(A_i=a, M_{i,a}=m)}$. Before defining the natural direct and indirect effect estimands, we introduce our motivating example so that we may use it to more concretely define these effects.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Motivating Example}
+\label{sec:example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Our motivating example applies mediation analysis to health disparities research. Our specific focus is examining potential mediating pathways that explain substance use disparities among sexual minority (e.g., gay, lesbian, or bisexual) women, using data from the National Survey of Drug Use and Health (NSDUH). Specifically, lesbian, gay, and bisexual (LGB) women report higher rates of smoking and alcohol use than heterosexual women. We conceptualize sexual minority status as the exposure of interest, in that it gives rise to experiences of ``minority stress," namely excess social stressors experienced by individuals in a marginalized social group (e.g., LGB individuals). Manifestations of minority stress may include experiences of stigma, discrimination, bullying, and family rejection, among others. Substance use among LGB individuals has been theorized to reflect, in part, a coping strategy to minority stress experiences. In our example, the particular outcome of interest is current smoking among LGB women, which we know to be disproportionately higher than among heterosexual women (Schuler \& Collins, 2019). We apply mediation analysis to elucidate potential causal pathways that may give rise to these elevated rates of smoking. Specifically, our hypothesized mediator is early smoking initiation (i.e., prior to age 15); that is, we hypothesize that LGB girls are more likely to begin smoking at an early age than heterosexual women, potentially in response to minority stressors. Resultantly, early smoking initiation, which is a strong risk factor for developing nicotine dependence, contributes to higher rates of smoking among LGB women. In summary, the exposure is defined as sexual minority status (1=LGB women, 0=heterosexual women), the mediator is early smoking initiation (1=early initiation, 0=no early initiation), and the outcome is current smoking in adulthood (1=yes, 0=no). Baseline covariates include age, race/ethnicity, education level, household income, employment status, marital status, and urban vs. rural residence. Figure 2 illustrates our motivating example:
+
+\vspace{\baselineskip}
+\textbf{Figure 2:} Graphical depiction of the effect of LGB status on adult smoking status as mediated by early smoking initiation.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm, auto,]
+ %nodes
+ \node[] (Y) {Current smoking (Y)};
+ \node[left= of Y] (dummy) {};
+ \node[above= of dummy] (M) {Early smoking initiation (M)}
+    edge[pil] (Y.north west);
+ \node[left= of dummy] (A) {LGB status (A)}
+    edge[pil] (M.south west)
+    edge[pil] (Y.west);
+    % edge[pil, bend left=45] (M.west);
+ \node[left= of A] (dummy2) {};
+ \node[above= of dummy2] (X) {$X$}
+    edge[pil] (A.north west)
+    edge[pil] (M.west)
+    edge[pil, bend left=90] (Y.north);
+\end{tikzpicture}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Estimands: Natural direct and indirect effects}
+\label{sec:def}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Causal effects are defined as contrasts between different potential outcomes. Specifically, our causal estimands of interest are the natural direct and natural indirect effects, defined below. First, we define the potential outcomes in the context of our motivating example. We consider two possible exposure values: LGB status, $A=1$, and heterosexual status, $A=0$ (note that these groups reflect the measurement of sexual identity in the NSDUH; individuals may identify as a broader range of sexual identities). Correspondingly, there are two potential mediator values: early smoking initiation status corresponding to LGB status, $M_1$, and early smoking initiation status corresponding to heterosexual status, $M_0$.
+
+When we cross the possible exposure values and potential mediator values, there are four potential outcome values:
+\begin{itemize}
+  \item  $Y_{(1, M_1)}$, the potential outcome for adult smoking status when an individual is LGB and has the early smoking initiation status corresponding to LGB status.
+  \item  $Y_{(0, M_0)}$, the potential outcome for adult smoking status when an individual is heterosexual and has the early smoking initiation status corresponding to heterosexual status.
+  \item  $Y_{(1, M_0)}$, the potential outcome for adult smoking status when an individual is LGB but has the early smoking initiation status corresponding to heterosexual status.
+  \item  $Y_{(0, M_1)}$, the potential outcome for adult smoking status when an individual is heterosexual but has the early smoking initiation status corresponding to LGB status.
+\end{itemize}
+
+As discussed previously, the latter two potential outcomes, $Y_{(1, M_0)}$ and $Y_{(0, M_1)}$, are never observed for any individual, yet allow us to more precisely define causal estimands for direct and indirect effects. We begin by defining the total effect (TE) of $A$ on $Y$ in the case of a binary exposure ($a=1$ and $a'=0$ or $a=0$ and $a'=1$):
+\begin{eqnarray}
+ TE = E\left(Y_{(a, M_a)} -  Y_{(a', M_{a'})} \right) = E\left(Y_{a} -  Y_{a'} \right)
+\end{eqnarray}
+where the expectation is over individuals.
+
+The natural direct effect (NDE) and natural indirect effect (NIE), which sum to produce the total effect, are defined as follows:
+\begin{eqnarray}
+    NDE_{a'} &= E\left( \color{red} Y_{(a, M_{a'})} \color{black} - Y_{(a', M_{a'})} \right) \\
+    NIE_a &= E\left(Y_{(a, M_a)} - \color{red} Y_{(a, M_{a'})} \color{black}\right)
+\end{eqnarray}
+Note that the $NDE$ and $NIE$ definitions rely on hypothetical (unobservable) potential outcomes, denoted in red and often referred to as cross-world counterfactuals or cross-world potential outcomes. The subscripts for $NDE$ denote the condition to which the mediator is held constant, whereas the subscripts for $NIE$ denote the condition to which the exposure is held constant. Each decomposition includes an $NIE$ and an $NDE$ corresponding to opposite subscripts.
+
+As shown below, the $NDE$ and $NIE$ sum to the $TE$. Consider the following decomposition of $TE$ in the case of a binary exposure for $a=1$ and $a'=0$, obtained by adding and subtracting $\color{red} E\left(Y_{(1, M_0)}\right)$:
+  
+\begin{eqnarray}
+  \overset{\text{total effect}}{\overbrace{E\left(Y_{1}-Y_{0}\right)}} &=& E\left(Y_{(1,M_{1})}-Y_{(0,M_{0})}\right) \notag \\
+  &=& \overset{\text{natural indirect effect}}{\overbrace{E\left(Y_{(1,M_{1})}-Y_{(1,M_{0})}\right)}}\overset{\text{natural direct effect}}{+\overbrace{E\left(Y_{(1,M_{0})}-Y_{(0,M_{0})}\right)}}  \notag \\
+  &=& NIE_1 + NDE_0  
+\label{decomp1}
+\end{eqnarray}
+
+In the context of our motivating example, the $NDE_0$ term, $E\left(Y_{(1,M_0)}-Y_{(0,M_0)}\right)$, compares adult smoking status corresponding to LGB versus heterosexual status, holding early smoking initiation status to the value that would be obtained if heterosexual. The $NDE_0$ will be non-null only if LGB status has an effect on adult smoking status when early smoking initiation status is held fixed -- namely, if LGB status has a \textbf{direct} effect on the outcome, not through the mediator.
+
+The $NIE_1$ term $E\left( Y_{(1,M_1)}-Y_{(1, M_0)} \right)$ compares adult smoking status under the early smoking initiation status that would arise with and without the exposure condition (i.e., LGB status), for those in the exposure group (i.e., LGB women). The $NIE_1$ will be non-null only if LGB status has an \textbf{indirect} effect on adult smoking status via early smoking initiation among LGB women.
+        
+The previous TE decomposition comprised of $NDE_0$ and $NIE_1$ is obtained by adding and subtracting the term $\color{red} E\left(Y_{(1, M_0)}\right)$. We can similarly define an alternative TE decomposition comprised of $NDE_1$ and $NIE_0$, by adding and subtracting $\color{red} E\left(Y_{(0, M_1)}\right)$ as follows:
+
+\begin{eqnarray}
+\overset{\text{total effect}}{\overbrace{E\left(Y_1 - Y_0\right)}} &=& E\left(Y_{(1,M_1)} - Y_{(0,M_0)}\right) \notag \\
+&=& \overset{\text{natural direct effect}}{\overbrace{E\left(Y_{(1,M_1)} - Y_{(0,M_1)\right)}}}\overset{\text{natural indirect effect}}{+
+\overbrace{E\left(Y_{(0,M_{1})} - Y_{(0,M_{0})\right)}}}  \notag \\
+&=& NDE_1 + NIE_0 
+\label{decomp0}
+\end{eqnarray}
+
+The \texttt{twangMediation} package provides estimates of both direct effects, $NDE_0$ and $NDE_1$, as well as both indirect effects, $NIE_0$ and $NIE_1$. Generally, if the treatment variable is defined as an exposure of interest versus a comparison group then the $NIE_1$ will be the mediating effect of interest. If the treatment variable reflects two alternative exposures of interest then the $NIE_1$ and $NIE_0$ are likely both of interest. See \href{https://arxiv.org/pdf/1904.08515.pdf}{Nguyen et al. (2020)} for a discussion of the differences between the two decompositions and how to decide which decomposition is of interest. For our case study, the $NIE_1$ is primarily the mediating effect of interest. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Identification Assumptions}
+\label{sec:assump}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In order to identify the natural (in)direct effects, we must impose assumptions that link the potential outcomes to our actual observed data. The approach implemented in \texttt{twangMediation} assumes positivity, consistency, and sequential ignorability, detailed below. 
+  
+First, the \underline{positivity assumption} requires that all individuals have some positive probability of receiving each level of the exposure and each level of the mediator. If individuals do not have a positive probability of receiving a particular level of the exposure or mediator, it is best to remove them from the sample because a causal effect is not meaningful for those individuals.
+
+Additionally, the \underline{consistency assumption} states that the outcome observed for an individual is identical to (i.e., consistent with) the potential outcome that corresponds to their observed exposure value; similarly, their observed mediator value is the potential mediator value that corresponds to their observed exposure value. In our example, if an individual's sexual identity is LGB ($A=1$), then their observed mediator value $M$ equals $M_1$ and their observed outcome $Y$ equals $Y_{(1,M_1)}$. Similarly, if an individual's sexual identity is heterosexual ($A=0$), then their observed mediator value $M$ equals $M_0$ and their observed outcome $Y$ equals $Y_{(0,M_0)}$. 
+
+Finally, \underline{sequential ignorability} refers to a set of assumptions regarding confounding. The nonparametric assumptions typically made for identification of NDE and NIE conditioning on pre-exposure variables $X$ are the following:
+\begin{enumerate}
+  \item   No unobserved confounding of the effect of $A$ on $M$
+  \item   No unobserved confounding of the effect of $A$ on $Y$
+  \item   No unobserved confounding of the effect of $M$ on $Y$
+  \item   No confounder (observed or unobserved) of the effect of $M$ on $Y$ that is affected by $A$
+\end{enumerate}
+
+If individuals are randomly assigned to levels of the exposure, then assumptions 1 and 2 should hold. However, assumptions 3 and 4 may not hold even when there is random assignment to the exposure. See VanderWeele (2015) for further discussion of these identifying assumptions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Estimation}
+\label{sec:est}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The basic idea is to obtain estimates of $E\left(Y_{(1,M_1)}\right)$, $E\left(Y_{(0,M_0)}\right)$, $E\left(Y_{(1,M_0)}\right)$, and $E\left(Y_{(0,M_1)}\right)$ which are then plugged into Equations \ref{decomp1} or \ref{decomp0} to obtain estimates of the natural indirect and direct effects. Hong (2010) first defined the following weights $w_{aa'}$ to estimate each potential outcome, $E\left(Y_{(a,M_{a'})}\right)$:
+
+\begin{equation}
+ w_{aa'} = \frac{p(M=m | A=a', X=x)}{p(M=m | A=a, X=x)p(A=a | X=x)}.
+\label{hong}
+\end{equation}
+(Note that $w_{aa'}$ is a function of $X$ as well as $a$ and $a'$ but we omit $X$ from the $w_{aa'}$ notation for simplicity). Under the previously stated assumptions of consistency, positivity, and sequential ignorability (i.e., $X$ strictly pre-exposure, or not affected by $A$), Huber (2014) used the following manipulation (i.e., Bayes Rule)
+
+\begin{align*}
+     p(M=m | A =a, X=x) &= \frac{p(A=a | M=m, X=x) p(M=m | X=x)}{p(A=a | X=x)}
+\end{align*}
+to obtain an easier set of weights to estimate:
+
+\begin{eqnarray}
+  w_{aa'} = \frac{p(M=m|A=a', X=x)}{p(M =m | A=a, X=x)  p(A=a | X=x)}
+     = \overset{\text{Odds Weight}}{\overbrace{\frac{p(A=a'|M=m, X=x)}{p(A=a|M=m, X=x)}}} \overset{\text{IPW}}{\overbrace{\frac{1}{p(A = a'|X = x)}}}
+\label{crossweights}
+\end{eqnarray}
+These weights have been referred to as \textbf{cross-world weights} (Nguyen et al., 2021) as they are used to estimate the average cross-world potential outcomes (i.e., $E\left(Y_{(1, M_0)}\right)$ or $E\left(Y_{(0, M_1)}\right)$). In the denominator of Equation \ref{crossweights}, note that $p(A=a|X=x)$ appears on the left hand side whereas $p(A=a'|X=x)$ appears on the right hand side; the change is the result of applying Bayes rule for the numerator and denominator of Equation \ref{hong}. Following Nguyen et al. (2021), we will refer to the first term comprising the product on the right hand side of Equation \ref{crossweights} as an odds weight and the second term as an inverse probability weight (IPW). These terms are so named because the IPW is of the standard IPW form and the odds weight term is the usual form for estimating the average treatment effect among the treated/exposed (ATT), with the addition of conditioning on the mediator. In practice, the odds weight and IPW weight are calculated separately and then multiplied together to obtain the final cross-world weights. 
+
+As implemented in \texttt{twangMediation}, Generalized Boosted Modeling (GBM) is the default method used to estimate cross-world weights, whereas Huber (2014) used logistic or probit regression. As described below, \texttt{twangMediation} additionally provides the option to estimate the cross-world weights using logistic regression. Given that both TE decompositions (as shown in Equation \ref{decomp1} and Equation \ref{decomp0}) may be of interest to the user, \texttt{twangMediation} estimates the required weights to estimate $NDE_1$, $NDE_0$, $NIE_1$ and $NIE_0$. 
+
+We begin with $E\left(Y_{(1,M_1)}\right)$ and $E\left(Y_{(0,M_0)}\right)$ -- for these estimands, $a=a'$ in Equation \ref{crossweights}. Consider the case of $a=a'=1$.
+
+\begin{eqnarray}
+ w_{11} = \overset{\text{Odds Weight}}{\overbrace{\frac{p(A=1|M=m, X=x)}{p(A=1|M=m, X=x)}}} \overset{\text{IPW}}{\overbrace{\frac{1}{p(A = 1|X = x)}}} = \overset{\text{Odds Weight}}{\overbrace{1}}\overset{\text{IPW}}{\overbrace{\frac{1}{p(A = 1|X = x)}}}
+\label{A1eq}
+\end{eqnarray}
+
+As we can see, in this case, the odds weight term cancels out to become 1 and our final weight $w_{11}$ is simply the standard IPW (i.e., IPW that would be used to balance non-randomized exposure groups in the absence of a mediator), estimated for the probability of $A=1$. Similarly, when $a=a'=0$, the odds weight term also cancels out to become 1 and our final weight $w_{00}$ is the IPW, estimated for the probability of $A=0$. In these cases where the final weight is equivalent to the corresponding IPW weight, we will refer to these weights as ``total effect weights." We note that \texttt{twangMediation} does not estimate these total effect weights; rather, prior to using \texttt{twangMediation}, the user must estimate these weights (e.g., using a GBM propensity score model) and pass them to \texttt{twangMediation} (see Section \ref{sec:reqarg}). We emphasize that the user should check balance and diagnostics for the total effect weights prior to using \texttt{twangMediation}. 
+
+Next, we detail how \texttt{twangMediation} estimates the cross-world weights needed to obtain estimates of $E\left(Y_{(1,M_0)}\right)$ (for the decomposition in Equation \ref{decomp1}) and $E\left(Y_{(0,M_1)}\right)$ (for the decomposition in Equation \ref{decomp0}). Consider the case when $a=0$ and $a'=1$:
+
+\begin{eqnarray}
+  w_{01} = \overset{\text{Odds Weight}}{\overbrace{\frac{p(A=1|M=m, X=x)}{p(A=0|M=m, X=x)}}} \overset{\text{IPW}}{\overbrace{\frac{1}{p(A = 1|X = x)}}}
+\label{cw1}
+\end{eqnarray}
+To calculate the odds weight term, \texttt{twangMediation} calls the \texttt{ps} function in \texttt{twang} to estimate a propensity score model predicting membership in the $A=1$ group based on the covariates $X$ and mediator $M$. To calculate the IPW term, \texttt{twangMediation} calls the \texttt{ps} function in \texttt{twang} to estimate a propensity score model predicting membership in the $A=1$ group based on the covariates $X$. The final cross-world weights $w_{01}$ are calculated by multiplying the IPW with the respective odds weight term. 
+
+We note that although the IPW term in Equation \ref{cw1} looks like the standard total effect weights provided by the user and used in Equation \ref{A1eq}, \texttt{twangMediation} estimates this term in the context of Equation \ref{cw1} to allow greater flexibility to the user. Specifically, this allows the user to use different covariates for the mediation analysis than for estimating the total effect weights, as might be appropriate if there are confounders related to the mediator and the outcome that do not confound the exposure and the outcome. Alternatively, if there is random assignment to the exposure, the user may wish to provide \texttt{twangMediation} with a vector of ones for the total effect weights but specify a non-null set of covariates $X$ for the cross-world IPW. Additionally, this option allows the user to use different estimation methods for the total effect weights and the cross-world IPW.
+
+Similarly, consider the case when $a=1$ and $a'=0$:
+
+\begin{eqnarray}
+  w_{10} = \overset{\text{Odds Weight}}{\overbrace{\frac{p(A=0|M=m, X=x)}{p(A=1|M=m, X=x)}}} \overset{\text{IPW}}{\overbrace{\frac{1}{p(A = 0|X = x)}}}
+\label{cw2}
+\end{eqnarray}
+To calculate the odds weight term of Equation \ref{cw2}, \texttt{twangMediation} calls the \texttt{ps} function in \texttt{twang} to estimate a propensity score model predicting membership in the $A=0$ group based on the covariates $X$ and mediator $M$. To calculate the IPW term, \texttt{twangMediation} calls the \texttt{ps} function in \texttt{twang} to estimate a propensity score model predicting membership in the $A=0$ group based on the covariates $X$. The final cross-world weights $w_{10}$ are calculated by multiplying the IPW with the respective odds weight term. 
+
+\vspace{0.5em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using \texttt{twangMediation} for causal mediation}
+\label{sec:using}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Overview of the \texttt{wgtmed} function}
+\label{sec:wgtmed}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Below we detail the syntax for the \texttt{twangMediation} \texttt{wgtmed} function, which provides estimates of the total effect, natural indirect effects, and natural direct effects. The \texttt{wgtmed} function returns a \texttt{mediation} object. The \texttt{wgtmed} function is an extension of the \texttt{twang} \texttt{ps} function for estimating propensity score weights using GBM. As such, much of the syntax is similar between the \texttt{wgtmed} and \texttt{ps} functions. Please refer to the \href{https://cran.r-project.org/web/packages/twang/vignettes/twang.pdf}{\texttt{twang} documentation} for a comprehensive overview of the \texttt{ps} function. 
+
+Regarding data requirements, the \texttt{wgtmed} function works only with binary exposure variables. However, the mediator(s) may be defined as binary, ordinal, multinomial (categorical), or continuous variables. The ability to handle complex mediators is one of the advantages of specifying models for the exposure in the cross-world weights, rather than for the mediator as originally proposed by Hong (2010). The outcome may be defined as a binary or continuous variable. In our applied example, the exposure, mediator, and outcome are all binary variables. For analyses that include multiple mediators simultaneously, the mediators may be different variable types (e.g., a binary mediator and a continuous mediator). Missing data is allowed for covariates, but not the exposure, mediator, or outcome.
+
+If you have not already done so, install \texttt{twangMediation} from CRAN by typing\\ \texttt{install.packages("twangMediation")}. \texttt{twangMediation} relies on other R packages, especially \texttt{gbm}, \texttt{survey}, \texttt{twang}, and \texttt{lattice}. You may have to run \texttt{install.packages()} for these as well if they are not already installed. You will only need to do this step once. In the future, running \texttt{update.packages()} regularly will ensure that you have the latest versions of the packages, including bug fixes and new features. To start, load the \texttt{twangMediation} package. You may also need to load the \texttt{twang} package for estimating the total effect weights. You will have to do this step once for each new R session. 
+
+<<>>=
+library(twangMediation)
+library(twang)
+@
+
+The dataset for the motivating example described above is available with the package and is named \texttt{NSDUH\_female}. The variable \texttt{lgb\_flag} is the exposure, defined as 1 for LGB individuals and 0 for heterosexual individuals. The mediator, \texttt{cig15}, denotes early smoking initiation (prior to age 15), with 1=yes and 0=no. The outcome, \texttt{cigmon}, denotes adult smoking status (any past-month smoking), with 1=yes and 0=no. The remaining variables are potential confounders which will be used in estimating the weights.
+
+<<>>=
+data(NSDUH_female)
+@
+
+The first analytic step is to estimate propensity score weights for the exposure (i.e., total effect weights). These are the usual inverse propensity weights which account for baseline differences across exposure groups. Note that these weights must be ATE weights rather than ATT weights. While these weights can be estimated in any manner, we demonstrate estimating these weights with GBM using the \texttt{twang} \texttt{ps} function. The first argument specifies a formula relating the exposure, \texttt{lgb\_flag}, to the covariates that are used to generate the total effect weights. The code below generates an object \texttt{TEps} that contains the total effect weights that will be passed to the \texttt{wgtmed} function. 
+
+\begin{footnotesize}
+<<>>=
+TEps <- ps(formula = lgb_flag ~ age + race + educ + income + employ,
+            data=NSDUH_female, verbose=F, n.trees=6000, estimand="ATE", stop.method="ks.mean")
+@
+\end{footnotesize}
+
+Next, we use the \texttt{wgtmed} function to obtain the mediation estimates of interest. The \texttt{wgtmed} function estimates the cross-world weights using GBM (although logistic regression may also be specified) and then estimates the total, natural direct, and natural indirect effects (using both the total effect weights and the cross-world weights). The \texttt{wgtmed} function returns a \texttt{mediation} object (here named \texttt{cig\_med}). This estimation step is computationally intensive and can take a few minutes. We detail the required and optional arguments of this function below. Note that, while the default number of GBM trees is 10,000 in \texttt{wgtmed}, our sample code in this tutorial uses \texttt{ps\_n.trees}=6000 to reduce computation time. In practice, when using a Windows machine, it may be necessary to increase the memory limit for R's working session using the \texttt{memory.limit()} function (e.g., \texttt{memory.limit(size = 32000)}). 
+
+\begin{footnotesize}
+<<>>=
+cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
+                a_treatment="lgb_flag",
+                y_outcome="cigmon",
+                data=NSDUH_female,
+                method="ps",
+                total_effect_ps=TEps,
+                total_effect_stop_rule="ks.mean",
+                ps_version="gbm",
+                ps_n.trees=6000,
+                ps_interaction.depth=3,
+                ps_shrinkage=0.01,
+                ps_stop.method="ks.mean",
+                ps_verbose=FALSE)
+@
+\end{footnotesize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\texttt{wgtmed}: Required arguments}
+\label{sec:reqarg}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{description}
+
+\item[formula.med] Specifies a formula relating the mediator, \texttt{cig15}, to the covariates that are used to estimate the cross-world weights. Note that a model predicting the mediator based on the specified covariates is never explicitly estimated; this formula notation is merely a convenient way to distinguish which variables are the mediator(s) versus the covariates. In our example, we use the same set of covariates to estimate both the total effect and the cross-world weights. However, if conceptually appropriate, the user can specify different covariates for the cross-world weight models (in \texttt{wgtmed}) and total effect models (estimated prior to running \texttt{wgtmed}). However, all variables used in the total effect model should appear in the model for the cross-world weights (but variables used in the cross-world weight model might not appear in the model for the total effect weights). 
+
+\item[a\_treatment] Specifies the name of the treatment (exposure) variable, \texttt{lgb\_flag}. The treatment variable must be defined as a 0/1 indicator. The variable name should be entered in quotes, as this argument expects a character string. 
+
+\item[y\_outcome] Specifies the name of the outcome variable, \texttt{cigmon}. The variable name should be entered in quotes, as this argument expects a character string. 
+
+\item[med\_interact] Specifies variables included in \texttt{formula.med} that equal interactions (or cross-products) of moderators and the other covariates. It should be \texttt{NULL} when there are no such interactions specified in \texttt{formula.med} and it should not include variables that equal interactions (or cross-products) of the other covariates. See the discussion of interactions later in the tutorial for further details on specifying interactions among variables in \texttt{wgtmed}. 
+
+\item[data] Specifies the name of the dataset. 
+
+\item[method] Specifies the method for estimating the cross-world weights. The default, \texttt{method = "ps"}, estimates the weights with GBM using the \texttt{ps} function in \texttt{twang}. If \texttt{method = "logistic"}, the weights are estimated using logistic regression, the approach originally proposed by Huber (2014). If \texttt{method = "crossval"}, the weights are estimated with GBM, but using cross-validation (rather than stopping rules) to choose the number of GBM iterations. For \texttt{method = "crossval"}, the number of cross-validation folds may be specified using the argument \texttt{ps\_cv.folds}; the default is 10. 
+
+\item[total\_effect\_ps; total\_effect\_weights] The object that contains the total effect weights must be specified. If the \texttt{twang} \texttt{ps} function is used to estimate the total effect weights, the argument \texttt{total\_effect\_ps} is used to specify the \texttt{ps} object containing these weights; correspondingly, the \texttt{total\_effect\_weights} argument is left NULL. If \texttt{total\_effect\_ps} is specified, then the \texttt{total\_effect\_stop\_rule} argument must also be included to specify which stopping rule (of those used in the \texttt{ps} call) should be used for the total effect weights. Alternatively, the user may specify a vector of total effect weights using the \texttt{total\_effect\_weights} argument; in this case, the \texttt{total\_effect\_ps} argument is left NULL. If \texttt{total\_effect\_weights} are provided, the user will get a warning that says ``Reminder: Check that all confounders used to estimate supplied total effect weights are included as confounders in formula.med." We note that if the treatment condition was randomized, the vector of total effect weights may be set to 1 since the treatment groups would not be expected to differ with regard to covariates. 
+
+\end{description}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\texttt{wgtmed}: Optional arguments}
+\label{sec:optarg}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{description}
+
+\item[ps\_stop.method] This argument allows the user to specify one or more stopping rules used to select the optimal number of GBM iterations for estimating the cross-world weights. The stopping rules are all metrics that quantify balance (or equivalence) between treatment groups with respect to the covariates. The package includes four built-in \texttt{ps\_stop.method} objects: \texttt{es.mean}, \texttt{es.max}, \texttt{ks.mean}, and \texttt{ks.max}. The default is \texttt{c("ks.mean", "ks.max")}. Please refer to the \href{https://cran.r-project.org/web/packages/twang/vignettes/twang.pdf}{\texttt{twang} documentation} for further details.
+
+\item[ps\_n.trees, ps\_interaction.depth, ps\_shrinkage] These are parameters for the GBMs that \texttt{wgtmed} fits and stores when estimating the cross-world weights. The argument \texttt{ps\_n.trees} specifies the maximum number of GBM iterations; the default is 10000. The \texttt{ps\_shrinkage} argument controls the amount of shrinkage used for smoothing in the GBM algorithm. This argument must be a numeric value between 0 and 1 (denoting the learning rate); the default is 0.01. Small values such as 0.005 or 0.001 yield smooth fits but require greater values of \texttt{ps\_n.trees} to achieve adequate fits. Computational time increases inversely with small values of the \texttt{ps\_shrinkage} argument. \texttt{wgtmed} will issue a warning if the estimated optimal number of iterations is too close to the maximum number of GBM iterations, as this indicates that balance may improve if more complex models are considered -- the user should increase \texttt{ps\_n.trees} or increase \texttt{ps\_shrinkage} if this warning appears. The argument \texttt{ps\_interaction.depth} controls the level of interactions allowed in the GBMs; the default is 3. 
+
+\item[ps\_n.keep]  A numeric variable indicating the algorithm should only consider 1 of every ps\_n.keep iterations of the propensity score model and optimize balance over this set instead of all iterations. Default: 1.
+
+\item[ps\_version] Specifies whether GBM is implemented using the R package \texttt{gbm} or the R package \texttt{xgboost}; the default is \texttt{gbm}.
+
+\item[ps\_verbose] This argument controls the amount of information printed to the console and is set to FALSE by default. 
+
+\item[sampw] Allows the user to specify sampling weights and is set to NULL by default. 
+
+\end{description}
+
+There are several other more advanced arguments that are directly passed to the \texttt{ps} function including \texttt{ps\_perm.test.iters}, \texttt{ps\_bag.fraction}, \texttt{ps\_minobsinnode}, \texttt{ps\_ks.exact}, and \texttt{ps\_n.grid} that are described in the main \texttt{twang} tutorial. All these arguments are optional and have specified defaults.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interactions between the treatment and the mediator}
+\label{sec:interact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In some applications, it may be appropriate to allow the relationship between a covariate and moderator to depend on the values of treatment. In linear models, such heterogeneity would be captured by an interaction between the covariate and treatment indicator in the mediator model. When weighting the interactions need to be in the models for cross-world weights. Similarly, models might also include interactions between two or more covariates. The GBM model is sufficiently flexible to capture interactions without requiring they be explicitly specified. If GBM is used for estimating the conditional probability models through either \texttt{method=ps} or \texttt{method=crossval}, then no interactions must be explicitly specified. However, they can be. Furthermore, if \texttt{method=logistic} then interactions must be specified. Unfortunately, specifying interactions with \texttt{wgtmed} is complicated. First, although the concern is interactions between covariates and treatment, as discussed previously  in Section~\ref{sec:est}, \textttt{wgtmed} calculates the cross-world weights by estimating the conditional probability of treatment given the covariates and mediator or mediators. This means interactions must be specified as interactions between the mediator and covariates, not treatment and the covariates. Hence, if an analyst believes and a covariate \texttt{X} would interact with treatment in a model for an mediator, then an interaction between ``X'' and the mediator should be included \texttt{formula.med}. The second complication to specifying interactions is that GBM does not accept explicitly specified interactions, i.e., users will receive an error if they include an interaction specified with a ``:'' as in ``X:M''. Hence, interactions must between specified by creating a variable in the input dataset that equals the product between covariates or covariates and the mediator or product of covariates. These cross-product variables must then specified in \texttt{formula.med}.This includes interactions that include the mediator. This might be confusing because \texttt{formula.med} specifies the meditiator as a function of covariates. This does not matter. Any interaction must specified on the right-hand side of the $~$ in \texttt{formula.med}. The final complication arises because calculation of the cross-world weights requires estimates of both the probability treatment conditional on the mediator and the covariates and the probability of treatment conditional on the covariates only, as described in Section~\ref{sec:est}. The probability of treatment conditional on the covariates only cannot include any of the cross-products between the mediator and the covariates. However, because interactions are specified as variables, which equal the cross-products, \texttt{wgtmed} cannot distinguish interactions from other covariates. In particular, it cannot distinguish cross-products that include the mediator from other covariates. This is a problem because these cross-products must be in the model for treatment given the covariates and the mediator but \emph{not} included in the model for treatment given only the covariates. To solve this problem, users must list in the parameter \texttt{med\_interact} any variables that equal cross-products involving one or more mediators. For example, if an analyst wants to include an interaction between the covariate ``X'' and the mediator variable ``M'' and creates a cross-product ``XM'',  then ``XM'' must be included on the right-hand side of $~$ in \texttt{formula.med} and ``XM'' must be specified in \texttt{med\_interact}, e.g., \texttt{med\_interact = XM}. All these complications can be avoided by using GBM and allowing it to identify interactions.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Assessing balance diagnostics}
+\label{sec:diagnostics}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Overview of balance in causal mediation context}
+\label{sec:balance}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Causal mediation analysis involves the comparison of groups with observed differences in their treatment (exposure) and mediator status. The key assumptions of causal mediation analysis is that conditional on observed covariates, those comparisons are unconfounded. As we detail below, analyst should assess whether the estimated casual mediation weights achieve adequate balance across treatment groups with respect to both the covariates and the mediator.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Checking the Covariate Distributions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For the causal mediation weighting approach described in this tutorial, estimated weights must result in weighted distributions of the observed covariates that are balanced across treatment groups for each of the estimators ($TE$, $NIE_1$, $NDE_0$, $NIE_1$, and $NDE_0$). For example, $NIE_1$ is estimated by $\sum w_{i,11} Y_i/\sum w_{i,11} - \sum w_{i,10} Y_i/\sum w_{i,10}$ where summation is over the treatment group ($A=1$). Hence, to avoid confounding the estimate of $NIE_1$ the distributions of the covariates for the treatment group weighted by $w_{11}$ should match the distributions of the covariates for the treatment group weighted by $w_{10}$. Similar checks of covariate balance should be run for each of the other estimands.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Checking the Mediator Counterfactual Distributions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In addition to covariate balance, one must also consider whether estimated weights have achieved adequate balance with regard to the mediator. Recall that $NIE_1$ is defined as $E\left(Y_{(1,M_1)}-Y_{(1,M_0)}\right)$. Weighting is supposed to weight the distribution of mediator $M_1$ values among the exposure group sample to match the distribution of the values of $M_0$ for the entire population to create the counterfactual distribution of $Y_{(1,M_0)}$. The distribution of mediator values for the comparison group sample, weighted by the total effect weights, estimates the distribution of $M_0$ for the total population. Hence, if the estimated cross-world weights, ${w_{10}}$ are well-estimated then the distribution of the mediator in the exposure group weighted by the ${w_{10}}$ weights should match the distribution of the mediator in the control group weighted by the total effect weights ${w_{00}}$. Likewise, estimating $E(Y_{(0,M_1)})$, $NIE_0$, and $NDE_1$ requires the counterfactual distribution of $Y_{(0,M_1)}$. It is estimated by weighting the mediator distribution in the control group to match the $M_1$ in the population. The distribution of $M_1$ in the population is estimated by the distribution of the mediator in the exposure group weighted by the total effect weight. Hence, if the estimated cross-world weights, ${w_{01}}$ are well-estimated then the distribution of the mediator in the control group weighted by the ${w_{01}}$ weights should match the distribution of the mediator in the exposure group weighted by the total effect weight ${w_{11}}$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Balance tables using \texttt{bal.table.mediation} function}
+\label{sec:balance}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The analyst should perform balance diagnostic checks before interpreting the estimated mediation effects. The \texttt{twangMediation} function \texttt{bal.table.mediation} supports these balance checks. After estimating weights using \texttt{wgtmed}, one can use the \texttt{bal.table.mediation} function on the returned mediation object to obtain six balance tables (for each stopping rule): one unweighted balance table and one weighted balance table for the TE estimand (denoted \texttt{unw} and \texttt{ps}, respectively), and four weighted balance tables respectively corresponding to $NIE_1$, $NDE_0$, $NIE_0$, and $NDE_1$. The two tables labeled \texttt{TE} present covariate balance between treatment groups both in the unweighted data and using the total effect weights (${w_{00}}$, ${w_{11}}$). The following 4 tables are similar to the total effect table, but check covariate balance using the weights for estimating $NIE_1$, $NDE_0$, $NIE_0$, and $NDE_1$, respectively. Weighted summaries are presented for each stopping rule selected in separate tables and labeled (e.g., \texttt{$ks.mean$}). These balance tables have the same format as covariate balance tables provided when using the \texttt{ps} command in \texttt{twang}.\footnote{When sampling weights are specified, i.e., \texttt{sampw} is not \textttt{NULL}, then the statistics for the ``unweighted'' tables are calculated using the sampling weights and the statistics for ``weighted'' tables use a composite of the sampling weights and either the total effect weights or the cross-world weights depending on the weights being evaluated. Also, when sampling weights are specified, they are used in the calculation of the cross-world weights and composites of the sampling weights and the total effect or cross-world weights are used to estimate the total, direct, and indirect effects.}
+
+The \texttt{bal.table.mediation} function returns balance tables for $TE$, $NIE_1$, $NDE_0$, $NIE_0$, and $NDE_1$ comprised of the following columns:
+
+\begin{description}
+
+  \item[tx.mn, ct.mn] The mean for each covariate in the treatment (exposure) group, \texttt{tx.mn}, and control (comparison) group, \texttt{ct.mn}.
+
+  \item[tx.sd, ct.sd] The standard deviation for each covariate in the treatment group, \texttt{tx.sd}, and control group, \texttt{ct.sd}. 
+
+  \item[std.eff.sz] The standardized mean difference is defined as the treatment group mean minus the control group mean divided by the control group standard deviation for the decomposition in Equation \ref{decomp1} and the treatment group standard deviation for the decomposition in Equation \ref{decomp0}. If the standard deviation is very small, the resulting standardized mean difference will be very large; for readability, we set all standardized mean differences larger than 500 to \texttt{NA} (missing values).
+
+  \item[stat, p] Depending on whether the covariate is continuous or categorical, \texttt{stat} is a t-statistic or a $\chi^2$ statistic corresponding to a statistical test of means across treatment groups. \texttt{p} is the associated p-value.
+
+  \item[ks] The Kolmogorov-Smirnov test statistic (testing for differences in the covariate distribution across treatment groups). 
+
+\end{description}
+
+The function \texttt{bal.table.mediation} also provides checks of the weighted mediator distributions with a comparison of the weighted means and a KS statistic comparing the weighted distribution functions. These comparison are in the last two tables produced by the function labeled ``Mediator distribution check: check\_counterfactual\_nie\_1'' for checking the weights used to estimate $E(Y_{(1,M_0)})$, $NIE_1$, and $NDE_0$, and ``Mediator distribution check: check\_counterfactual\_nie\_0'' for checking the weights used to estimate $E(Y_{(0,M_1)}$, $NIE_0$ and $NDE_1$.
+
+The \texttt{Mediator Distribution Check} tables are comprised of the following columns:
+
+\begin{description}
+
+  \item[cntfact.mn]  Mean of the mediator under the counterfactual condition. For $NIE_1$, this is the estimate of the (counterfactual) mean of the mediator under the comparison (control) condition, $E(M_0)$, estimated from the exposure (treatment) group -- the cross-world-weighted mean for the exposure (treatment) group. For $NIE_0$, this is the estimate of the (counterfactual) mean of the mediator under the exposure (treatment) condition, $E(M_1)$, estimated from the comparison (control) group -- the cross-world-weighted mean for the comparison group.
+
+  \item[target.mn] Mean of the mediator under the observed condition. For $NIE_1$, this is the mean of the mediator under the treatment condition estimated from the treatment group -- the total effects weighted mean for the treatment group. For $NIE_0$, this is the mean of the mediator under the control condition estimated from the control group -- the total effects weighted mean for the control group.
+  
+  \item[cntfact.sd, target.sd] The weighted estimates of the standard deviations of the mediator distributions under the counterfactual and target (i.e., observed) groups.
+  
+  \item[std.eff.sz] Standardized mean difference, which is now calculated between the counterfactual and target (i.e., observed) groups.
+  
+  \item[stat, p, ks] Similarly, \texttt{stat} and \texttt{ks} now refer to statistical tests across counterfactual and target (i.e., observed) groups. 
+  
+\end{description}
+
+In addition to the tabular results from the \texttt{bal.table.mediation} function, \texttt{twangMediation} provides 2 balance diagnostic graphs: 
+
+\begin{enumerate}
+  \item \textbf{Covariate Standardized Effect Size Plot}: To request this plot, add the argument \texttt{plot = "TRUE"} to \texttt{bal.table.mediation()}. This figure shows standardized effect sizes for each covariate using weights for each of the $TE$, $NIE_1$, $NDE_0$, $NIE_0$, and $NDE_1$ estimands (as reported in the balance tables) to allow users to visually assess covariate balance after weighting.
+
+  \item \textbf{Mediator Density Plot}: To request this plot, use the \texttt{plot} function applied to the mediation object from \texttt{wgtmed}. This figure provides a visual check on the match of the weighted mediator distributions for both $NIE_1$ and $NIE_0$ (as reported in the balance tables). If the mediator is binary, then the plot is a bar chart; if mediator is continuous, the plot is a density curve. The plot is interactive: users must hit the \texttt{return} key to advance from the $NIE_1$ plot to the $NIE_0$ plot. The analyst should review the plot(s) corresponding to the NIE estimate(s) of interest. 
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Balance diagnostics from our case study}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The balance table results for our applied example are shown below. We first examine the balance tables for total effects (TE). Prior to weighting, our two exposure groups (LGB women and heterosexual women) differed significantly with respect to all covariates (e.g., LGB women were younger and had lower household incomes than heterosexual women). After weighting, for all covariates, the absolute value of the \texttt{std.eff.sz} -- known as absolute standardized mean difference (ASMD) -- were well below 0.10. Next, since the $NIE_1$ and $NDE_0$ are the mediating effects of interest in our example, we examine the balance table for $NIE_1$, and $NDE_0$. Again, we see that weighting reduced the differences of all the covariates across exposure groups -- all ASMDs were well below 0.10 after weighting.
+
+Next we examine the Standardized Effect Size plot. For our example, as shown in the the total effects plot (labeled \texttt{TE}), the standard effect sizes for the covariates ranged from -0.31 to 0.49 prior to weighting, indicating significant differences between exposure groups. After weighting, the standard effect sizes are all near 0. In the plots for the natural indirect and direct effects both decompositions labeled \texttt{NIE1}, \texttt{NDE0}, \texttt{NIE0}, \texttt{NDE1} the standard effect sizes are also close to 0 for all covariates, indicating weights removed any imbalances in the observed covariates for these estimands.
+
+\begin{footnotesize}
+<<>>=
+bal.table.mediation(cig_med, plot = "TRUE")
+@
+\end{footnotesize}
+
+\begin{footnotesize}
+<<fig2plot, include = FALSE, echo = TRUE, fig = TRUE>>=
+bal.table.mediation(cig_med, plot = "TRUE")
+@
+\end{footnotesize}
+
+\begin{center}
+  \includegraphics[width=6in,height=8in]{tmpout/t-fig2plot}
+\end{center}
+\newpage
+%% this is the density plot
+\begin{Schunk}
+\begin{Sinput}
+> plot(cig_med)
+\end{Sinput}
+\end{Schunk}
+
+<<fig1plot, include = FALSE, echo = TRUE, fig = TRUE>>=
+plot(cig_med)
+@
+
+\begin{center}
+  \includegraphics[width=5in]{tmpout/t-fig1plot}
+\end{center}
+
+Finally, we examine the Mediator Density plot. As shown in the plot above, we see that weighted distributions for the population and the counterfactual distributions are well-matched in the context of $NIE_1$, indicating good weight performance. Based on these favorable diagnostic checks, we will proceed to our final effect estimates.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Obtaining the estimated weights}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Note that if the user wishes to obtain the estimated weights from \texttt{wgtmed} to construct their own plots or tables, they can be obtained as follows:
+
+<<>>=
+w_00 <- attr(cig_med, 'w_00') #weight for estimating E[Y(0, M(0))]
+w_11 <- attr(cig_med, 'w_11') #weight for estimating E[Y(1, M(1))]
+w_10 <- attr(cig_med, 'w_10') #weight for estimating E[Y(1, M(0))]
+w_01 <- attr(cig_med, 'w_01') #weight for estimating E[Y(0, M(1))]
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Interpreting the Effects: the \texttt{summary()} function}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The \texttt{summary()} function applied to the mediation object from \texttt{wgtmed} provides a summary of all the important output including the effect estimates, covariate balance, effective sample size (ESS), and distribution checks for the mediator.
+
+The ESS is reported because weighted means can have greater sampling variance than unweighted means from a sample of equal size. For example, the total effect and natural direct and indirect effects estimates equal differences of pairs of estimates of the four population means $E(Y_{(0,M_0)})$, $E(Y_{(1,M_1)})$, $E(Y_{(1,M_0)})$, and $E(Y_{(0,M_1)})$. Each population mean is estimated as a weighted mean. The means $E(Y_{(0,M_0)})$ and $E(Y_{(1,M_1)})$ use the appropriate total effect weights and the counterfactual means $E(Y_{(1,M_0)})$ and $E(Y_{(0,M_1)})$ use the corresponding cross-world weights. The variability of the weights will reduce the precision of the mean estimates and, subsequently, the estimated total, direct, and indirect effects. Large variability of the weights can also signal outliers where a small number of observations have very large weight relative to the average. The ESS is approximately the number of observations from a simple random sample that yields an estimate with sampling variation equal to the sampling variation obtained with the weighted comparison observations. It is an intuitive way to present the variability in the weights. Small values relative to the actual sample size indicate large variability in the weights, potential outliers, and possible low precision in the estimated mean and effect. This could signal the need to review data for the application. For each of the means:
+
+\begin{equation}
+ESS = \frac{\left(\sum_{i \in C}w_i\right)^2}{\sum_{i \in C}w^2_i}
+\end{equation}
+
+where $C$ is the set of indices for participants in the group used to estimate the mean, the exposure group for $E(Y_{(1,M_1)})$ and $E(Y_{(1,M_0)})$ or the comparison group for $E(Y_{(0,M_0)})$ and $E(Y_{(0,M_1)})$.\footnote{The ESS is an accurate measure of the relative size of the variance of means when the weights are fixed or they are uncorrelated with outcomes. Otherwise the ESS is an underestimate (Little \& Vartivarian, 2004). With propensity score weights, it is rare that weights are uncorrelated with outcomes. Hence, the ESS typically gives a lower bound, but it still serves as a useful measure for describing the variability of the weights and assessing the overall quality of a model, even if it provides a possibly conservative picture of the loss in precision due to weighting.} 
+
+The ESS for the four population means are presented in the second table in the output of the \texttt{summary} function. The output also includes the ESS for the odds weights and IPW weights used in calculating the cross-world weights. These ESSs are provided to help analysts diagnose the variability in the odds weight and IPW components to indicate the sources of variability in the cross-world weights and support model evaluation. 
+
+\begin{footnotesize}
+<<>>=
+summary(cig_med)
+@
+\end{footnotesize}
+
+The first table reports the total effect (TE), as well as the natural indirect and direct effects for both decompositions, $NDE_0$, $NIE_1$ and $NDE_1$, $NIE_0$, and their corresponding 95\% confidence intervals. An $NIE$ confidence interval that does not contain 0 indicates a statistically significant mediation effect at the 0.05 level.  
+The next several tables are \texttt{Balance Summary Tables}, which offer a compact summary of sample sizes and balance measures for $NIE_1$, $NDE_0$, $NIE_0$, and NDE_1$. The \texttt{Balance Summary Tables} are comprised of the following columns:
+
+\begin{description}
+
+   \item[n.treat, n.ctrl]  The observed sample size in the exposure and comparison groups, respectively. 
+   
+   \item[ess.treat, ess.ctrl] The ESS after weighting for the exposure and comparison groups, respectively.
+
+  \item[max.es, mean.es, max.ks, mean.ks] Reports the maximum standardized mean difference, the mean standardized mean difference, the maximum KS statistic, and the mean KS statistic across all of the covariates, respectively. The last column, \texttt{iter}, gives the iteration number for each of the stop methods. This is not applicable to the unweighted model and thus, is given a value of \texttt{NA}. 
+
+\end{description}
+
+We will now interpret the TE as well as the the decomposition of interest, $NDE_0$ and $NIE_1$, in the table labeled \texttt{95\% Confidence Intervals for Effect Estimates} for our case study. Estimates from \texttt{wgtmed} are reported as marginal risk differences. The \texttt{TE} represents the total effect of LGB sexual identity on adult smoking status among women. The TE estimate of 0.123 represents a difference in magnitude of 12.3\% in adult smoking rates between LGB and heterosexual women; statistical significance indicates that LGB women are significantly more likely than heterosexual women to be current smokers. The \texttt{NIE\_1} is the natural indirect effect of early smoking initiation on adult smoking, holding LGB sexual identity ($A=1$) constant. The $NIE_1$ estimate (0.026) is positive and statistically significant, indicating that early smoking initiation represents a significant pathway regarding adult smoking status (with early initiation accounting for approximately a 2.6\% increase in magnitude in adult smoking rates). Examining the ratio of the \texttt{NIE\_1} to the \texttt{TE} (0.026/0.123) indicates that approximately 21\% of the total effect is through the mediator of early smoking initiation. The \texttt{NDE\_0} is the natural direct effect of LGB status on smoking, holding early smoking initiation status constant to what it would be if a woman was heterosexual, $A=0$. The $NDE_0$ is positive and statistically significant, indicating that LGB status is associated with smoking in adulthood, through mechanisms independent of early smoking initiation. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Estimating joint mediation effect of multiple mediators}
+\label{sec:multiple}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Finally, we highlight that the \texttt{wgtmed} package can accept multiple mediators. When multiple mediators are included, the $NIE$ and $NDE$ estimands are calculated to reflect mediation jointly through all mediators (VanderWeele \& Vansteelandt, 2014), rather than separate path-specific mediation effects (e.g., Daniel et al., 2015). The example below is an extension of our prior LGB disparities analysis. Now, our outcome is an indicator for whether an individual meets criteria for either alcohol or nicotine dependence \texttt{alc\_cig\_depend} and we consider 2 mediators: early smoking initiation \texttt{cig15} and early alcohol initiation \texttt{alc15}. To specify multiple mediators, include them on the left-hand side of the \texttt{formula.med} separated by ``+". 
+
+\begin{footnotesize}
+<<>>=
+ TEps <- ps(lgb_flag ~ age + race + educ + income + employ,
+             data=NSDUH_female, verbose=F, n.trees=6000, n.keep=5, estimand="ATE")
+
+ cig_alc_med <- wgtmed(cig15 + alc15 ~ age + race + educ + income + employ,
+                 a_treatment="lgb_flag",
+                 y_outcome="alc_cig_depend",
+                 data=NSDUH_female,
+                 method="ps",
+                 total_effect_ps=TEps,
+                 total_effect_stop_rule="ks.mean",
+                 ps_version="gbm",
+                 ps_n.trees=6000,
+                 ps_n.keep = 5,
+                 ps_stop.method="ks.mean")
+@
+\end{footnotesize}
+
+\begin{footnotesize}
+<<>>=
+summary(cig_alc_med)
+@
+\end{footnotesize}
+
+As shown in the table above, the TE estimate of 0.084 represents a difference in magnitude of 8.4\% in the rates of alcohol or nicotine dependence between LGB and heterosexual women, indicating a significant disparity. The $NIE_1$ estimate (0.025) is significant, indicating that early initiation of alcohol and smoking jointly represent a significant mediating pathway to adult dependence status among LGB women, with early initiation accounting for approximately a 2.5\% increase in magnitude in adult dependence rates. Examining the ratio of NIE to TE, we conclude that early initiation accounts for approximately 30\% of the adult disparity in alcohol or nicotine dependence. Additionally, the $NDE_0$ estimate is significant, indicating that LGB identity also has a significant effect on adult alcohol or nicotine dependence that is not attributed to early initiation of
+alcohol or smoking.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{About this Tutorial}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This tutorial was supported by funding from grant 1R01DA034065 from the National Institute on Drug Abuse. The overarching goal of the grant is to develop statistical methods and tools that will provide addiction health services researchers and others with the tools and training they need to study the effectiveness of treatments using observational data. The work is an extension of the Toolkit for Weighting and Analysis of Nonequivalent Groups, or TWANG, which contains a set of functions to support causal modeling of observational data through the estimation and evaluation of propensity score weights. The TWANG package was first developed in 2004 by RAND researchers for the R statistical computing language and environment and has since been expanded to include tools for SAS, Stata, and Shiny. For more information about TWANG and other causal tools being developed, see \url{www.rand.org/statistics/twang}.
+
+RAND Social and Economic Well-Being is a division of the RAND Corporation that seeks to actively improve the health and social and economic well-being of populations and communities throughout the world. This research was conducted in the Social and Behavioral Policy Program within RAND Social and Economic Well-Being. The program focuses on such topics as risk factors and prevention programs, social safety net programs and other social supports, poverty, aging, disability, child and youth health and well-being, and quality of life, as well as other policy concerns that are influenced by social and behavioral actions and systems that affect well-being.
+
+\subsection{Acknowledgments}
+We would like to thank Trang Q. Nguyen, Emma Thomas, and Shu Xu for feedback on this tutorial and for beta testing the \texttt{twangMediation} package.
+
+
+\begin{thebibliography}{77}     % start the bibliography
+\small                          % put the bibliography in a small font
+
+\bibitem{Daniel:2015} Daniel, R. M., De Stavola, B. L., Cousens, S. N., \& Vansteelandt, S. (2015). Causal mediation analysis with multiple mediators. \textit{Biometrics, 71}, 1-15. 
+
+\bibitem{Hong:2015} Hong, G., Deutsch, J., \& Hill, H. D. (2015). Ratio-of-Mediator-Probability Weighting for Causal Mediation Analysis in the Presence of Treatment-by-Mediator Interaction. \textit{Journal of Educational and Behavioral Statistics, 40}(3), 307-340.
+
+\bibitem{Hong:2010} Hong, G. (2010). Ratio of mediator probability weighting for estimating natural direct and indirect effects. \textit{ASA Proceedings of the Joint Statistical Meetings}, pp. 2401–2415, American Statistical Association (Alexandria, VA)
+
+\bibitem{Huber} Huber, M. (2014). Identifying Causal Mechanisms (Primarily) Based on Inverse Probability Weighting. \textit{Journal of Applied Econometrics, 29}(6), 920-943.
+
+\bibitem{Litt:Vart:2004} Little, R. J., \& Vartivarian, S. (2004).
+Does weighting for nonresponse increase the variance of survey
+means? \textit{ASA Proceedings of the Joint Statistical Meetings},
+3897-3904 American Statistical Association (Alexandria, VA)
+\url{http://www.bepress.com/cgi/viewcontent.cgi?article=1034&context=umichbiostat}
+
+\bibitem{McCaffrey:Ridgeway:Morral:2004}
+McCaffrey, D., Ridgeway, G., \& Morral, A. (2004). Propensity score estimation with boosted regression for evaluating adolescent substance abuse treatment. \textit{Psychological Methods, 9}(4), 403-425.
+
+\bibitem{Trang:2020} Nguyen, T. Q., Schmid, I., \& Stuart, E. A. (2021). Clarifying causal mediation analysis for the applied researcher: Defining effects based on what we want to learn. \textit{Psychological Methods, 26}(2), 255-271.
+
+\bibitem{Trang:2021} Nguyen, T. Q., Ogburn, E. L., Sarker, E. B., Greifer, N., Schmid, I., Koning, I. M., \& Stuart, E. A. (2021). Causal mediation analysis: From simple to more robust strategies for estimation of marginal natural (in)direct effects. 
+\url{https://arxiv.org/abs/2102.06048v2}
+
+\bibitem{Pearl:2001} Pearl, J. (2001). Direct and indirect effects. In Proceedings of the Seventeenth Conference on Uncertainty in Artificial Intelligence. San Francisco: Morgan Kaufman.
+
+\bibitem{Robins:Greenland:1992} Robins, J. M., \& Greenland, S. (1992). Identifiability and exchangeability for direct and indirect effects. \textit{Epidemiology, 3}(2), 143-155.
+
+\bibitem{Schuler:Collins:2019} Schuler, M. S., \& Collins, R. L. (2019). Early alcohol and smoking initiation: A contributor to sexual minority disparities in adult use. \textit{American Journal of Preventive Medicine, 57}(6), 808-817.
+
+\bibitem{VanderWeele:2015} VanderWeele, T. J. (2015). \textit{Explanation in causal inference: Methods for mediation and interaction.} Oxford University Press. 
+
+\bibitem{multmed} VanderWeele, T. J., \& Vansteelandt, S. (2014). Mediation analysis with multiple mediators. \textit{Epidemiol Methods, 2}(1), 95-115.
+
+\end{thebibliography}           % end the bibliography
+
+\end{document}
