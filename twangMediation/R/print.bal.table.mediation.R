@@ -52,35 +52,35 @@ print.bal.table.mediation <- function(x,...){
         for(i in 1:5){
                 if(names(x)[[i]]=="TE") {
                         if(attr(x,"sampw")==TRUE) {
-                        	cat(paste0("Note: Balance for Covariates for Total Effects -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w00 weights \n \"unw\" reflects weighting with sampling weights only \n \"",names(x[["TE"]])[2],"\" reflects weighting by both the sampling weights and cross-world weights \n"))
+                        	cat(paste0("Note: Balance for Covariates for Total Effects -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w00 weights \n \"unw\" reflects weighting with sampling weights only \n \"",names(x[["TE"]])[2],"\" reflects weighting by both the sampling weights and total-effect weights \n"))
 			} else {
 				cat("Note: Balance for Covariates for Total Effects -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w00 weights \n")
 			}
                 }
                 if(names(x)[[i]]=="NIE1") {
                        if(attr(x,"sampw")==TRUE) {
-                        	cat(paste0("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment group weighted by w10 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n"))
+                        	cat(paste0("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment group weighted by w10 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n"))
 			} else {
                         	cat("Note: Balance for Covariates for NIE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" treatment group weighted by w10 weights \n")
 			}
                 }
                 if(names(x)[[i]]=="NDE0") {
                        if(attr(x,"sampw")==TRUE) {
-                        	cat(paste0("Note: Balance for Covariates for NDE0 -- \n \"tx\" treatment group weighted by w10 weights, \n \"ct\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n"))
+                        	cat(paste0("Note: Balance for Covariates for NDE0 -- \n \"tx\" treatment group weighted by w10 weights, \n \"ct\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n"))
 			} else {
 				cat("Note: Balance for Covariates for NDE0 -- \n \"tx\" treatment group weighted by w10 weights, \n \"ct\" control group weighted by w00 weights \n")
 			}
                 }
                 if(names(x)[[i]]=="NIE0") {
                        if(attr(x,"sampw")==TRUE) {
-	                        cat(paste0("Note: Balance for Covariates for NIE0 -- \n \"tx\" control group weighted by w01 weights, \n \"ct\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n"))
+	                        cat(paste0("Note: Balance for Covariates for NIE0 -- \n \"tx\" control group weighted by w01 weights, \n \"ct\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n"))
         		} else {
                         cat("Note: Balance for Covariates for NIE0 -- \n \"tx\" control group weighted by w01 weights, \n \"ct\" control group weighted by w00 weights \n")
         		}
 	        }
                 if(names(x)[[i]]=="NDE1") {
                        if(attr(x,"sampw")==TRUE) {
-                        	cat(paste0("Note: Balance for Covariates for NDE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w01 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n"))
+                        	cat(paste0("Note: Balance for Covariates for NDE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w01 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n"))
     		       } else {
 	           		cat("Note: Balance for Covariates for NDE1 -- \n \"tx\" treatment group weighted by w11 weights, \n \"ct\" control group weighted by w01 weights \n")
     		   	}
@@ -97,7 +97,7 @@ print.bal.table.mediation <- function(x,...){
         for(i in 6:7) {
                 cat(paste("Mediator Distribution Check:",names(x)[i],"\n"))
 		if(attr(x,"sampw")==TRUE) {
-		  cat(paste0("\"unw\" reflects weighting with sampling weights only \n",methods," weighting by both the sampling weights and cross-world weights \n"))
+		  cat(paste0("\"unw\" reflects weighting with sampling weights only \n",methods," weighting by both the sampling weights and total-effect/cross-world weights \n"))
 		}
                 cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
                 print(round(x[[i]], digits=3))

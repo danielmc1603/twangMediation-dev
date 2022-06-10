@@ -69,7 +69,7 @@ print.mediation <- function(x, ...)
   for (i in 1:5){
     if(names(ps_tables)[[i]]=="TE") {
       if(!is.null(attr(x,"sampw"))) {
-        cat(paste0("Note: Balance for Covariates for Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n \"unw\" reflects weighting with sampling weights only \n \"",rownames(ps_tables[["TE"]])[2],"\" reflects weighting by both the sampling weights and cross-world weights \n"))
+        cat(paste0("Note: Balance for Covariates for Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n \"unw\" reflects weighting with sampling weights only \n \"",rownames(ps_tables[["TE"]])[2],"\" reflects weighting by both the sampling weights and total-effect weights \n"))
       } else {
         cat("Note: Balance for Covariates for Total Effects -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
@@ -77,28 +77,28 @@ print.mediation <- function(x, ...)
     }
     if(names(ps_tables)[[i]]=="NIE1") {
       if(!is.null(attr(x,"sampw"))) {
-        cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+        cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n")
       } else {
         cat("Note: Balance for Covariates for NIE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" treatment group weighted by w10 weights \n")
       }
     }
     if(names(ps_tables)[[i]]=="NDE0") {
       if(!is.null(attr(x,"sampw"))) {
-        cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+        cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n")
       } else {
         cat("Note: Balance for Covariates for NDE0 -- \n \"treat\" treatment group weighted by w10 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
     }
     if(names(ps_tables)[[i]]=="NIE0") {
       if(!is.null(attr(x,"sampw"))) {
-        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n")
       } else {
         cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
     }
     if(names(ps_tables)[[i]]=="NDE1") {
       if(!is.null(attr(x,"sampw"))) {
-        cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n Results reflect weighting by both the sampling weights and cross-world weights \n")
+        cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n")
       } else {
         cat("Note: Balance for Covariates for NDE1 -- \n \"treat\" treatment group weighted by w11 weights, \n \"ctrl\" control group weighted by w01 weights \n")
       }
@@ -119,7 +119,7 @@ print.mediation <- function(x, ...)
     for(i in c("check_counterfactual_nie_1","check_counterfactual_nie_0")) {
        cat(paste("Mediator Distribution Check:",i,"\n"))
        if(!is.null(attr(x,"sampw"))) {
-	  cat(paste0("\"unw\" reflects weighting with sampling weights only \n",methods," weighting by both the sampling weights and cross-world weights \n"))
+	  cat(paste0("\"unw\" reflects weighting with sampling weights only \n",methods," weighting by both the sampling weights and total-effect/cross-world weights \n"))
 	}
         cat(paste(paste(rep('-', 90), collapse = ''), '\n', sep=''))
         print(round(mediator_distribution_check[[i]], digits=3))
