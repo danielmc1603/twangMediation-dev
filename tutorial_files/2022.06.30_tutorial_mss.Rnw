@@ -322,13 +322,13 @@ cig_med <- wgtmed(formula.med = cig15 ~ age + race + educ + income + employ,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{description}
 
-\item[formula.med] Specifies a formula relating the mediator, \texttt{cig15}, to the covariates that are used to estimate the cross-world weights. Note that a model predicting the mediator based on the specified covariates is never explicitly estimated; this formula notation is merely a convenient way to distinguish which variables are the mediator(s) versus the covariates. In our example, we use the same set of covariates to estimate both the total effect and the cross-world weights. However, if conceptually appropriate, the user can specify different covariates for the cross-world weight models (in \texttt{wgtmed}) and total effect models (estimated prior to running \texttt{wgtmed}). However, all variables used in the total effect model should appear in the model for the cross-world weights (but variables used in the cross-world weight model might not appear in the model for the total effect weights). 
+\item[formula.med] Specifies a formula relating the mediator (e.g., \texttt{cig15}) to the covariates that are used to estimate the cross-world weights. Note that a model predicting the mediator based on the specified covariates is never explicitly estimated; this formula notation is merely a convenient way to distinguish which variables are the mediator(s) versus the covariates. In our example, we use the same set of covariates to estimate both the total effect and the cross-world weights. However, if conceptually appropriate, the user can specify different covariates for the cross-world weight models (in \texttt{wgtmed}) and total effect models (estimated prior to running \texttt{wgtmed}). However, all variables used in the total effect model should appear in the model for the cross-world weights (but variables used in the cross-world weight model might not appear in the model for the total effect weights). 
 
-\item[a\_treatment] Specifies the name of the treatment (exposure) variable, \texttt{lgb\_flag}. The treatment variable must be defined as a 0/1 indicator. The variable name should be entered in quotes, as this argument expects a character string. 
+\item[a\_treatment] Specifies the name of the treatment (exposure) variable (e.g., \texttt{lgb\_flag}). The treatment variable must be defined as a 0/1 indicator. The variable name should be entered in quotes, as this argument expects a character string. 
 
-\item[y\_outcome] Specifies the name of the outcome variable, \texttt{cigmon}. The variable name should be entered in quotes, as this argument expects a character string. 
+\item[y\_outcome] Specifies the name of the outcome variable (e.g., \texttt{cigmon}). The variable name should be entered in quotes, as this argument expects a character string. 
 
-\item[med\_interact] Specifies variables included in \texttt{formula.med} that equal interactions (or cross-products) of mediators and the other covariates. It should be \texttt{NULL} when there are no such interactions specified in \texttt{formula.med} and it should not include variables that equal interactions (or cross-products) of the other covariates. See the discussion of interactions later in the tutorial (Section~\ref{sec:interact}) for further details on specifying interactions among variables in \texttt{wgtmed}. 
+\item[med\_interact] Specifies variables included in \texttt{formula.med} that equal interactions (or cross-products) of mediators and the other covariates. This statement should not include interaction terms that comprise only covariates (and not the mediator). It should be \texttt{NULL} when there are no such interactions specified in \texttt{formula.med}. See the discussion of interactions later in the tutorial (Section~\ref{sec:interact}) for further details on specifying interactions among variables in \texttt{wgtmed}. 
 
 \item[data] Specifies the name of the dataset. 
 
@@ -363,14 +363,14 @@ There are several other more advanced arguments that are directly passed to the 
 \subsection{Interactions between the treatment and the mediator}
 \label{sec:interact}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In some applications, it may be appropriate to allow the relationship between a covariate and mediator to depend on the values of treatment. In linear models, such heterogeneity would be captured by an interaction between the covariate and treatment indicator in the mediator model. When weighting, the interactions need to be in the models for cross-world weights. Similarly, models might also include interactions between two or more covariates. The GBM model is sufficiently flexible to capture interactions without requiring they be explicitly specified. If GBM is used for estimating the conditional probability models through either \texttt{method=ps} or \texttt{method=crossval}, then no interactions must be explicitly specified. However, they can be, if the user wants to ensure they are included in the model. Furthermore, if \texttt{method=logistic}, then interactions must be specified. Unfortunately, specifying interactions with \texttt{wgtmed} is complicated. 
+In some applications, it may be appropriate to allow the relationship between the treatment and mediator to depend on the values of a covariate. In linear models, such heterogeneity would be captured by an interaction between the covariate and treatment variables in the mediator model. When weighting, these interactions would need to be included in the models for cross-world weights. In addition to treatment-covariate interactions, models might also include interactions between two or more covariates. A key advantage of the GBM model is that this algorithm automatically captures interactions without requiring the user to explicitly specify a priori. If GBM is used for estimating the weights -- with either \texttt{method=ps} or \texttt{method=crossval} -- then no interactions need to be explicitly specified. However, they can be, if the user wants to ensure they are included in the model. Furthermore, if \texttt{method=logistic} is used, then interactions must be specified explicitly to be included. Unfortunately, specifying interactions with \texttt{wgtmed} is complicated. 
 
-First, as discussed previously in Section~\ref{sec:est}, \texttt{wgtmed} calculates the cross-world weights by estimating the conditional probability of treatment given the covariates and mediator or mediators. This means that although the concern is interactions between covariates and treatment, interactions must be specified as interactions between the mediator and covariates, not treatment and the covariates. Hence, if an analyst believes a covariate \texttt{X} would interact with treatment in a model for an mediator, then an interaction between ``X'' and the mediator should be included \texttt{formula.med}. 
+First, as discussed previously in Section~\ref{sec:est}, \texttt{wgtmed} calculates the cross-world weights by estimating the conditional probability of treatment given the covariates and mediator(s). This means, that although the concern is interactions between covariates and treatment, interactions must be specified as interactions between the mediator and covariates, not treatment and the covariates. Hence, if an analyst believes a covariate \texttt{X} modifies the relationship between the treatment and the mediator, then an interaction between ``X'' and the mediator should be included \texttt{formula.med}. 
 
-The second complication to specifying interactions is that GBM does not accept explicitly specified interactions, i.e., users will receive an error if they include an interaction specified with a ``:'' as in ``X:M''. Hence, interactions must be specified by creating a variable in the input dataset that equals the product of covariates or the product of covariates and one or more mediators. These cross-product variables must then be specified in \texttt{formula.med}. This includes interactions that include the mediator. This might be confusing because \texttt{formula.med} specifies the meditiator as a function of covariates. This does not matter because \texttt{formula.med} is just used to identify mediator variables and covariates or interaction variables. Every interaction must be specified on the right-hand side of the $\sim$ in \texttt{formula.med}. 
+The second complication to specifying interactions is that GBM does not accept interaction specified with a ``:'' as in ``X:M''. Hence, interactions must be specified by manually creating interaction variable(s) in the input dataset prior to implementing \texttt{wgtmed}. These cross-product variables would then be specified in \texttt{formula.med} on the right-hand side of the $\sim$ symbol. On face value, including interaction terms that involve the mediator in the \texttt{formula.med} statement may seem confusing. However, recall that in the \texttt{wgtmed} function, the formula statements are not used in the ``traditional'' sense of specifying a regression statement, but rather simply to identify a set of covariates. 
 
-The final complication arises because calculation of the cross-world weights requires estimates of both the probability treatment conditional on the mediator and the covariates ($p(A|M,X)$) and the probability of treatment conditional on the covariates only ($p(A|X)$), as described in Section~\ref{sec:est}. The probability of treatment conditional on the covariates only cannot include any of the cross-products between the mediator and the covariates. However, because interactions are specified as variables, which equal the cross-products, \texttt{wgtmed} cannot distinguish interactions from other covariates. In particular, it cannot distinguish cross-products that include the mediator from other covariates. This is a problem because these cross-products must be in the model for treatment given the covariates and the mediator but \emph{not} included in the model for treatment given only the covariates. To solve this problem, users must list in the parameter \texttt{med\_interact} any variables that equal cross-products involving one or more mediators. For example, suppose we expect there might be an interaction between treatment and age in the model for the mediator \texttt{cig15} in the smoking case study. We then need to create a cross-product between \texttt{cig15} and \texttt{age}, \texttt{agecig15 = age * cig15} and ``agecig15'' must be included on the right-hand side of $\sim$ in 
-\texttt{formula.med}\\ \\
+The final complication arises because calculation of the cross-world weights requires estimates of both the probability of treatment, conditional on the mediator and the covariates ($p(A|M,X)$), and the probability of treatment, conditional only on the covariates ($p(A|X)$), as described in Section~\ref{sec:est}. The probability of treatment, conditional only on the covariates, cannot include any of the cross-products between the mediator and covariates. However, \texttt{wgtmed} cannot distinguish interactions from other covariates among the list of variables provided in the \texttt{formula.med} statement. In particular, it cannot distinguish cross-products that include the mediator -- this is a problem because these cross-products must be in the model for treatment, given the covariates and the mediator, but \emph{not} included in the model for treatment, given only the covariates. To solve this problem, users must specify using \texttt{med\_interact} any variables that equal cross-products involving one or more mediators. For example, suppose we hypothesize that age modifies the relationship between treatment and the mediator \texttt{cig15} in the smoking case study. We then need to create a cross-product between \texttt{cig15} and \texttt{age}, \texttt{agecig15 = age * cig15} and ``agecig15'' must be included on the right-hand side of $\sim$ in 
+\texttt{formula.med} as follows: \\ \\
 \centerline{\texttt{formula.med = cig15 $\sim$ age + race + educ + income + employ + agecig15}} \\ \\
 and ``agecig15''must be specified in \texttt{med\_interact} as a string,\\ \\
 \centerline{\texttt{med\_interact = `agecig15'}}.\\ \\
@@ -534,14 +534,14 @@ We will now interpret the TE as well as the the decomposition of interest, $NDE_
 \section{Estimating joint mediation effect of multiple mediators}
 \label{sec:multiple}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Finally, we highlight that the \texttt{wgtmed} package can accept multiple mediators. When multiple mediators are included, the $NIE$ and $NDE$ estimands are calculated to reflect mediation jointly through all mediators (VanderWeele \& Vansteelandt, 2014), rather than separate path-specific mediation effects (e.g., Daniel et al., 2015). The example below is an extension of our prior LGB disparities analysis. Now, our outcome is an indicator for whether an individual meets criteria for either alcohol or nicotine dependence \texttt{alc\_cig\_depend} and we consider 2 mediators: early smoking initiation \texttt{cig15} and early alcohol initiation \texttt{alc15}. To specify multiple mediators, include them on the left-hand side of the \texttt{formula.med} separated by ``+". 
+Finally, we highlight that the \texttt{wgtmed} package can accept multiple mediators. When multiple mediators are included, the $NIE$ and $NDE$ estimands are calculated to reflect mediation jointly through all mediators (VanderWeele \& Vansteelandt, 2014), rather than separate path-specific mediation effects (e.g., Daniel et al., 2015). The example below is an extension of our prior LGB disparities analysis. Now, our outcome is an indicator for whether an individual meets criteria for either alcohol or nicotine dependence \texttt{alc\_cig\_depend} and we consider 2 mediators: early smoking initiation \texttt{cig15} and early alcohol initiation \texttt{alc15}. To specify multiple mediators, include them on the left-hand side of the \texttt{formula.med} separated by ``+". We note that we also included the argument \texttt{n.keep = 5} in both the \texttt{ps} function and the \texttt{wgtmed} function to reduce memory use. 
 
 \begin{footnotesize}
 <<>>=
  TEps <- ps(lgb_flag ~ age + race + educ + income + employ,
              data=NSDUH_female, verbose=F, n.trees=6000, n.keep=5, estimand="ATE")
 
- cig_alc_med <- wgtmed(cig15 + alc15 ~ age + race + educ + income + employ,
+ cig_alc_med <- wgtmed(formula.med=cig15 + alc15 ~ age + race + educ + income + employ,
                  a_treatment="lgb_flag",
                  y_outcome="alc_cig_depend",
                  data=NSDUH_female,
@@ -550,7 +550,7 @@ Finally, we highlight that the \texttt{wgtmed} package can accept multiple media
                  total_effect_stop_rule="ks.mean",
                  ps_version="gbm",
                  ps_n.trees=6000,
-                 ps_n.keep = 5,
+                 ps_n.keep=5,
                  ps_stop.method="ks.mean")
 @
 \end{footnotesize}
@@ -563,6 +563,44 @@ summary(cig_alc_med)
 
 As shown in the table above, the TE estimate of 0.084 represents a difference in magnitude of 8.4\% in the rates of alcohol or nicotine dependence between LGB and heterosexual women, indicating a significant disparity. The $NIE_1$ estimate (0.025) is significant, indicating that early initiation of alcohol and smoking jointly represent a significant mediating pathway to adult dependence status among LGB women, with early initiation accounting for approximately a 2.5\% increase in magnitude in adult dependence rates. Examining the ratio of NIE to TE, we conclude that early initiation accounts for approximately 30\% of the adult disparity in alcohol or nicotine dependence. Additionally, the $NDE_0$ estimate is significant, indicating that LGB identity also has a significant effect on adult alcohol or nicotine dependence that is not attributed to early initiation of
 alcohol or smoking.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Inclusion of sampling weights}
+\label{sec:sampweights}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We highlight that the \texttt{wgtmed} package can accept sampling weights (e.g., survey weights). In the context of mediation analysis, sampling weights should be used in both the estimation of the total effect weights (i.e., the exposure propensity score model estimated prior to calling the \texttt{wgtmed} function) and the estimation of mediation weights from \texttt{wgtmed}. The code below demonstrates this approach. Both the \texttt{ps} and \texttt{wgtmed} functions accept sampling weights using the \texttt{sampw} option. In our case study data, NSDUH survey weights are denoted by the variable \texttt{NSDUHwt}. We use the \texttt{summary} function to obtain a compact summary of the effect estimates and their 95\% confidence intervals. 
+
+\begin{footnotesize}
+<<>>=
+  rm(TEps, cig_med)
+  TEps_wt <- ps(lgb_flag ~ age + race + educ + income + employ,
+              data=NSDUH_female, verbose=F, n.trees=5000, n.keep = 5,
+              estimand = "ATE",
+              sampw = NSDUH_female$NSDUHwt)
+  
+  cig_med_wt <- wgtmed(formula.med=cig15 ~ age + race + educ + income + employ,
+                  a_treatment="lgb_flag",
+                  y_outcome="cigmon",
+                  data=NSDUH_female,
+                  method="ps",
+                  total_effect_ps=TEps_wt,
+                  total_effect_stop_rule="ks.mean",
+                  ps_version="gbm",
+                  ps_n.trees=5000,
+                  ps_n.keep=5,
+                  ps_stop.method="ks.mean",
+                  sampw=NSDUH_female$NSDUHwt)
+@
+\end{footnotesize}
+
+\begin{footnotesize}
+<<>>=
+ summary(cig_med_wt)
+@
+\end{footnotesize}
+
+We note that if the user requests the estimated weights from \texttt{wgtmed} function after running it with sampling weights, the weights that are output will be ``raw'' mediation weights. The user would need to manually multiply these mediation weights by the sampling weights in order to obtain the composite weights that are used in \texttt{wgtmed} estimation. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{About this Tutorial}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
