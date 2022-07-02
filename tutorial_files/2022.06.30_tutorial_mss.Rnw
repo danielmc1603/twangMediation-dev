@@ -599,7 +599,7 @@ We highlight that the \texttt{wgtmed} package can accept sampling weights (e.g.,
 @
 \end{footnotesize}
 
-We note that if the user requests the estimated weights from \texttt{wgtmed} function after running it with sampling weights (e.g., \texttt{attr(cig_med_wt,``w_01'')}), the weights that are outputted will be the ``raw'' mediation weights. The user would need to manually multiply these mediation weights by the sampling weights in order to obtain the composite weights that are used in the \texttt{wgtmed} estimation. All downstream functions (e.g., \texttt{summary}, \texttt{desc.effects}, \texttt{bal.table.mediation}) do this multiplication of the raw mediation weights and sampling weights and use these composite weights in their outputted results. 
+We note that if the user requests the estimated weights from \texttt{wgtmed} function after running it with sampling weights (e.g., \texttt{attr(cig\_med\_wt, `w\_01')}), the weights that are outputted will be the ``raw'' mediation weights. The user would need to manually multiply these mediation weights by the sampling weights in order to obtain the composite weights that are used in the \texttt{wgtmed} estimation. All downstream functions (e.g., \texttt{summary}, \texttt{desc.effects}, \texttt{bal.table.mediation}) do this multiplication of the raw mediation weights and sampling weights and use these composite weights in their outputted results. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{About this Tutorial}
