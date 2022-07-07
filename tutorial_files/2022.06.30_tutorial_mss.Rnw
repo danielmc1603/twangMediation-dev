@@ -385,7 +385,7 @@ All these complications can be avoided by using GBM and allowing it to identify 
 \subsection{Overview of balance in causal mediation context}
 \label{sec:balance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Causal mediation analysis involves the comparison of groups with observed differences in their treatment (exposure) and mediator status. The key assumptions of causal mediation analysis is that conditional on observed covariates, those comparisons are unconfounded. As we detail below, analysts should assess whether the estimated causal mediation weights achieve adequate balance across treatment groups with respect to both the covariates and the mediator.
+Causal mediation analysis involves the comparison of groups with observed differences in their treatment (exposure) and mediator status. The key assumptions of causal mediation analysis is that conditional on observed covariates, those comparisons are unconfounded. As we detail below, analysts should assess whether the estimated causal total effect or cross-world weights achieve adequate balance across treatment groups with respect to both the covariates and the mediator.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Checking the Covariate Distributions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -515,7 +515,7 @@ summary(cig_med)
 \end{footnotesize}
 
 The first table reports the total effect (TE), as well as the natural indirect and direct effects for both decompositions, $NDE_0$, $NIE_1$ and $NDE_1$, $NIE_0$, and their corresponding 95\% confidence intervals. An $NIE$ confidence interval that does not contain 0 indicates a statistically significant mediation effect at the 0.05 level.  
-The next several tables are \texttt{Balance Summary Tables}, which offer a compact summary of sample sizes and balance measures for $NIE_1$, $NDE_0$, $NIE_0$, and NDE_1$. The \texttt{Balance Summary Tables} are comprised of the following columns:
+The next several tables are \texttt{Balance Summary Tables}, which offer a compact summary of sample sizes and balance measures for $NIE_1$, $NDE_0$, $NIE_0$, and $NDE_1$. The \texttt{Balance Summary Tables} are comprised of the following columns:
 
 \begin{description}
 
@@ -566,7 +566,7 @@ alcohol or smoking.
 \section{Inclusion of sampling weights}
 \label{sec:sampweights}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We highlight that the \texttt{wgtmed} package can accept sampling weights (e.g., survey weights). In the context of mediation analysis, sampling weights should be used in both the estimation of the total effect weights (i.e., the exposure propensity score model estimated prior to calling the \texttt{wgtmed} function) and the estimation of mediation weights from \texttt{wgtmed}. The code below demonstrates this approach. Both the \texttt{ps} and \texttt{wgtmed} functions accept sampling weights using the \texttt{sampw} option. In our case study data, NSDUH survey weights are denoted by the variable \texttt{NSDUHwt}. We use the \texttt{summary} function to obtain a compact summary of the effect estimates and their 95\% confidence intervals. 
+We highlight that the \texttt{wgtmed} package can accept sampling weights (e.g., survey weights). In the context of mediation analysis, sampling weights should be used in both the estimation of the total effect weights (i.e., the exposure propensity score model estimated prior to calling the \texttt{wgtmed} function) and the estimation of cross-world weights from \texttt{wgtmed}. The code below demonstrates this approach. Both the \texttt{ps} and \texttt{wgtmed} functions accept sampling weights using the \texttt{sampw} option. In our case study data, NSDUH survey weights are denoted by the variable \texttt{NSDUHwt}. We use the \texttt{summary} function to obtain a compact summary of the effect estimates and their 95\% confidence intervals as well as a summary of the balance tables. 
 
 \begin{footnotesize}
 <<>>=
@@ -597,7 +597,7 @@ We highlight that the \texttt{wgtmed} package can accept sampling weights (e.g.,
 @
 \end{footnotesize}
 
-We note that if the user requests the estimated weights from \texttt{wgtmed} function after running it with sampling weights (e.g., \texttt{attr(cig\_med\_wt, `w\_01')}), the weights that are outputted will be the ``raw'' mediation weights. The user would need to manually multiply these mediation weights by the sampling weights in order to obtain the composite weights that are used in the \texttt{wgtmed} estimation. All downstream functions (e.g., \texttt{summary}, \texttt{desc.effects}, \texttt{bal.table.mediation}) do this multiplication of the raw mediation weights and sampling weights and use these composite weights in their outputted results. 
+We note that if the user requests the estimated weights from \texttt{wgtmed} function after running it with sampling weights (e.g., \texttt{attr(cig\_med\_wt, `w\_01')}), the weights that are outputted will be the ``raw'' total effect and cross-world weights. The user would need to manually multiply these weights by the sampling weights in order to obtain the composite weights that are used in the \texttt{wgtmed} estimation. All downstream functions (e.g., \texttt{summary}, \texttt{desc.effects}, \texttt{bal.table.mediation}) do this multiplication of the raw weights and sampling weights and use these composite weights in their outputted results. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{About this Tutorial}
