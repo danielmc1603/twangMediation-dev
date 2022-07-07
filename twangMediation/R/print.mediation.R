@@ -91,9 +91,9 @@ print.mediation <- function(x, ...)
     }
     if(names(ps_tables)[[i]]=="NIE0") {
       if(!is.null(attr(x,"sampw"))) {
-        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n")
+        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" control group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n Results reflect weighting by both the sampling weights and total-effect/cross-world weights \n")
       } else {
-        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" treatment group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
+        cat("Note: Balance for Covariates for NIE0 -- \n \"treat\" control group weighted by w01 weights, \n \"ctrl\" control group weighted by w00 weights \n")
       }
     }
     if(names(ps_tables)[[i]]=="NDE1") {
