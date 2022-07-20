@@ -26,7 +26,7 @@
 #' @export
 print.bal.table.mediation <- function(x,...){
         
-        if(class(x) != "bal.table.mediation"){stop("x must be of class bal.table.mediation")}
+        if(inherits(x,"bal.table.mediation")==FALSE){stop("x must be of class bal.table.mediation")}
 
         methodnms <- names(x$NIE1)
         if(length(methodnms)==1) { 
