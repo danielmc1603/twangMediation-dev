@@ -1,6 +1,6 @@
 Package: twangMediation
 Title: Twang Causal Mediation Modeling via Weighting
-Version: 1.1
+Version: 1.2
 Authors@R: 
     c(person(given = "Dan",
            family = "McCaffrey",
