@@ -20,7 +20,7 @@
 #'   specifies propensity score weights or propensity scores. 
 #'   Ignored if `x` is a ps object. Default: `TRUE`.
 #' @param sampw Optional sampling weights. If `x` is a `ps` object, then the 
-#'   sampling weights should have been passed to [ps] and 
+#'   sampling weights should have been passed to \link[twang]{ps} and 
 #'   not specified here. `dx.wts.mediation` will issue a warning if 
 #'   `x` is a ps object and `sampw` is also specified.
 #' @param perm.test.iters A non-negative integer giving the number of iterations
