@@ -3,9 +3,9 @@
 #' Estimate causal mediation mechanism of a treatment
 #' using propensity score weighting.
 #'
-#' For users comfortable with [ps], any options prefaced with
+#' For users comfortable with \link[twang]{ps}, any options prefaced with
 #' `ps_` are passed directly to the `ps()` function.
-#' Model A is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in `formula.med`. If `method` equals `"ps"` model A is fit using the [twang] `ps` function with estimand= `"ATE"`. If `method` equals `"logistic"` then model A is fit using logistic regression. If `method` equals `"crossval"` then [gbm] using cross-validation is used to estimate model A. Because X might include variables not used to estimate the user-provided total effect weights, model A is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the cross-world weights and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model A will match the model the user used to obtain the provided total effect weights. 
+#' Model A is used to estimate Pr(A=1 | X) where X is the vector of background covariates specified in `formula.med`. If `method` equals `"ps"` model A is fit using the \link[twang]{twang} `ps` function with estimand= `"ATE"`. If `method` equals `"logistic"` then model A is fit using logistic regression. If `method` equals `"crossval"` then \link[twang]{gbm} using cross-validation is used to estimate model A. Because X might include variables not used to estimate the user-provided total effect weights, model A is fit rather than using the user-provided total effect weights to derive Pr(A | X). If the user uses the same set of variables to estimate their provided total effect weights as they enter in the wgtmed function to estimate the cross-world weights and the user uses the same estimation method and arguments as specified in the wgtmed function, then the estimated model A will match the model the user used to obtain the provided total effect weights. 
 #'
 #' @param formula.med 
 #'   A object of class [formula] relating the mediatior(s)
@@ -32,20 +32,20 @@
 #' @param sampw 
 #'   Optional sampling weights Default : `NULL`.
 #' @param ps_n.trees 
-#'   Number of gbm iterations passed on to [gbm]. Default: 10000.
+#'   Number of gbm iterations passed on to \link[twang]{gbm}. Default: 10000.
 #' @param ps_interaction.depth 
 #'   A positive integer denoting the tree depth used in
 #'   gradient boosting. Default: 3.
 #' @param ps_shrinkage
 #'   A numeric value between 0 and 1 denoting the learning rate.
-#'   See [gbm] for more details. Default: 0.01.
+#'   See \link[twang]{gbm} for more details. Default: 0.01.
 #' @param ps_bag.fraction 
 #'   A numeric value between 0 and 1 denoting the fraction of
 #'   the observations randomly selected in each iteration of the gradient
-#'   boosting algorithm to propose the next tree. See [gbm] for
+#'   boosting algorithm to propose the next tree. See \link[twang]{gbm} for
 #'   more details. Default: 1.0.
 #' @param ps_n.minobsinnode An integer specifying the minimum number of observations 
-#'   in the terminal nodes of the trees used in the gradient boosting.  See [gbm] for
+#'   in the terminal nodes of the trees used in the gradient boosting.  See \link[twang]{gbm} for
 #'   more details. Default: 10.
 #' @param ps_perm.test.iters 
 #'   A non-negative integer giving the number of iterations
@@ -64,7 +64,7 @@
 #'   Default: `c("ks.mean", "ks.max")`.
 #' @param ps_version 
 #'  "gbm", "xgboost", or "legacy", indicating which version of the twang package to use.
-#'   * `"gbm"` uses gradient boosting from the \code{\link[gbm]{gbm}} package.
+#'   * `"gbm"` uses gradient boosting from the \code{\link[twang]{gbm}} package.
 #'   * `"xgboost"` uses gradient boosting from the \code{\link[xgboost]{xgboost}} package.
 #'   * `"legacy"` uses the prior implementation of the `ps` function.
 #' @param ps_ks.exact `NULL` or a logical indicating whether the
